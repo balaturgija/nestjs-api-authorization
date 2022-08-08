@@ -1,5 +1,3 @@
-console.log('tu sasm');
-
 const config = {
   development: {
     username: process.env.DB_USER || 'postgres',
