@@ -4,6 +4,7 @@ import { DatabaseModule } from './database/database.module';
 
 @Module({
   imports: [
+    // load and parse env file
     ConfigModule.forRoot({
       envFilePath: [`./env/.${process.env.NODE_ENV}`],
       isGlobal: true,
