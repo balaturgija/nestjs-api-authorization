@@ -12,3 +12,10 @@ export enum TableName {
   Users = 'users',
   UserBatteries = 'user_batteries',
 }
+
+export const SWAGGER_CONFIG = {
+  title: 'title',
+  description: 'descrioption',
+  version: '0.0.00',
+  tags: ['Robot', 'Battery'],
+};
