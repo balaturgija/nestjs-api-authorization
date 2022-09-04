@@ -3,13 +3,11 @@ import {
   Column,
   DataType,
   ForeignKey,
-  Model,
   Table,
 } from 'sequelize-typescript';
 import { TableName } from 'src/constants';
-import { Exclude } from 'class-transformer';
-import { v4 as uuidv4 } from 'uuid';
 import { BatteryEntity } from 'src/batteries/entities/battery.entity';
+import { BaseEntity } from 'src/base/base.entity';
 
 interface Robot {
   id: string;
@@ -27,14 +25,7 @@ interface Robot {
   updatedAt: true,
   deletedAt: true,
 })
-export class RobotEntity extends Model<RobotEntity> implements Robot {
-  @Column({
-    primaryKey: true,
-    type: 'uuid',
-    defaultValue: () => uuidv4(),
-  })
-  id: string;
-
+export class RobotEntity extends BaseEntity<RobotEntity> {
   @Column({
     type: DataType.STRING,
     unique: true,
@@ -46,15 +37,6 @@ export class RobotEntity extends Model<RobotEntity> implements Robot {
     type: 'uuid',
   })
   batteryId: string;
-
-  @Exclude()
-  createdAt: Date;
-
-  @Exclude()
-  updatedAt: Date;
-
-  @Exclude()
-  deletedAt: Date;
 
   /* Associations */
   @BelongsTo(() => BatteryEntity, 'batterId')
