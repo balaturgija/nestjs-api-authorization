@@ -1,6 +1,15 @@
 import { BadGatewayException } from '@nestjs/common';
 import { Repository } from 'sequelize-typescript';
-import { WhereOptions } from 'sequelize/types';
+import {
+  ForeignKeyConstraintError,
+  Transaction,
+  UniqueConstraintError,
+  UpdateOptions,
+  ValidationError,
+  WhereOptions,
+} from 'sequelize/types';
+import { ActionResult } from 'src/helpers/ActionResult';
+import { CreateActionResult } from 'src/helpers/CreateActionResult';
 import { BaseEntity } from './base.entity';
 import { IBaseService } from './IBaseService';
 
@@ -13,32 +22,42 @@ export class BaseService<T extends BaseEntity<T>> implements IBaseService<T> {
       throw new BadGatewayException(error);
     }
   }
-  async get(id: string): Promise<T> {
+  async get(id: string): Promise<T | null> {
     try {
       return await this.genericRepository.findByPk(id);
     } catch (error) {
       throw new BadGatewayException(error);
     }
   }
-  async create(entity: any): Promise<T> {
+  async create(entity: any, t?: Transaction): Promise<CreateActionResult<T>> {
+    const options = t ? { transaction: t } : undefined;
+    const result = new CreateActionResult<T>();
     try {
-      return await this.genericRepository.create(entity);
+      const createResult = await this.genericRepository.create(entity, options);
+      //result.data = entity to dto;
     } catch (error) {
-      throw new BadGatewayException(error);
+      result.AddError(this.HandleDatabseErrors(error));
     }
+
+    return result;
   }
-  async put(entity: BaseEntity<T>, id: string): Promise<boolean> {
+  async put(
+    entity: Partial<T>,
+    id: string,
+    t?: Transaction,
+  ): Promise<ActionResult> {
+    const options: UpdateOptions = { where: { id: id } };
+    if (t) Object.assign(options, { transaction: t });
+    const result = new ActionResult();
     try {
-      const whereOptions: WhereOptions = { id: id };
-      return (
-        (await this.genericRepository.update(entity, {
-          where: { id: id },
-        })[0]) > 0
-      );
+      await this.genericRepository.update(entity, options);
     } catch (error) {
-      throw new BadGatewayException(error);
+      result.AddError(this.HandleDatabseErrors(error));
     }
+
+    return result;
   }
+
   async delete(id: string) {
     try {
       const whereOptions: WhereOptions = { id: id };
@@ -46,5 +65,22 @@ export class BaseService<T extends BaseEntity<T>> implements IBaseService<T> {
     } catch (error) {
       throw new BadGatewayException(error);
     }
+  }
+
+  protected HandleDatabseErrors(error: any): string {
+    let message: string;
+    if (error instanceof ForeignKeyConstraintError) {
+      message = `Foreign key constraint error on field ${error.fields}`;
+    } else if (error instanceof UniqueConstraintError) {
+      message = `Unique key constraint error ${error.errors
+        .map((x) => x.message)
+        .join(',')}`;
+    } else if (error instanceof ValidationError) {
+      message = error.errors.map((x) => x.message).join(',');
+    } else {
+      message = 'Database error caused.';
+    }
+
+    return message;
   }
 }
