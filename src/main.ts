@@ -5,6 +5,7 @@ import { AppModule } from './app.module';
 import { SWAGGER_CONFIG } from './constants';
 import * as express from 'express';
 import * as path from 'path';
+import { Cluster } from './cluster';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -34,4 +35,6 @@ async function bootstrap() {
   app.enableCors();
   await app.listen(3000);
 }
+
+//Cluster.register(4, bootstrap());
 bootstrap();
