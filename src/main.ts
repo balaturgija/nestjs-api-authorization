@@ -5,7 +5,7 @@ import { AppModule } from './app.module';
 import { SWAGGER_CONFIG } from './constants';
 import * as express from 'express';
 import * as path from 'path';
-import { Cluster } from './cluster';
+//import { Cluster } from './cluster';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);

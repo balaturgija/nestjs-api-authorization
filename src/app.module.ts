@@ -1,5 +1,6 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
+import { BatteriesModule } from './batteries/battery.module';
 import { DatabaseModule } from './database/database.module';
 
 @Module({
@@ -11,6 +12,7 @@ import { DatabaseModule } from './database/database.module';
       cache: true,
     }),
     DatabaseModule,
+    BatteriesModule,
   ],
   controllers: [],
   providers: [],
