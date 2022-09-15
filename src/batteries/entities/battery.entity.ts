@@ -1,14 +1,7 @@
 import { Exclude } from 'class-transformer';
-import {
-  BelongsTo,
-  Column,
-  DataType,
-  HasMany,
-  Table,
-} from 'sequelize-typescript';
+import { Column, DataType, Table } from 'sequelize-typescript';
 import { BaseEntity } from '../../base/base.entity';
 import { TableName } from '../../constants';
-import { RobotEntity } from '../../robots/entities/robot.entity';
 
 interface Battery {
   id: string;
@@ -25,10 +18,12 @@ interface Battery {
   updatedAt: true,
   deletedAt: true,
 })
-export class BatteryEntity extends BaseEntity<BatteryEntity> implements Battery {
-
+export class BatteryEntity
+  extends BaseEntity<BatteryEntity>
+  implements Battery
+{
   @Column({
-    type: DataType.STRING,
+    type: DataType.STRING(255),
     unique: true,
   })
   name: string;
@@ -43,6 +38,4 @@ export class BatteryEntity extends BaseEntity<BatteryEntity> implements Battery 
   deletedAt: Date;
 
   /* Associations */
-  @HasMany(() => RobotEntity)
-  batteries: RobotEntity[];
 }
