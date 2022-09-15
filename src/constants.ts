@@ -1,4 +1,4 @@
-export enum Provider {
+enum Provider {
   Sequelize = 'SEQUELIZE',
   BatteryRepository = 'BATTERY_REPOSITORY',
   RobotRepository = 'ROBOTS_REPOSITORY',
@@ -6,16 +6,18 @@ export enum Provider {
   UserBatteryRepository = 'USER_BATTERY_REPOSITORY',
 }
 
-export enum TableName {
+enum TableName {
   Batteries = 'batteries',
   Robots = 'robots',
   Users = 'users',
   UserBatteries = 'user_batteries',
 }
 
-export const SWAGGER_CONFIG = {
+const SWAGGER_CONFIG = {
   title: 'title',
   description: 'descrioption',
   version: '0.0.00',
   tags: ['Robot', 'Battery'],
 };
+
+export { Provider, TableName, SWAGGER_CONFIG };

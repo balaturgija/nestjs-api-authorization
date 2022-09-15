@@ -7,12 +7,12 @@ import {
   UpdateOptions,
   ValidationError,
   WhereOptions,
-} from 'sequelize/types';
-import { ActionResult } from 'src/helpers/ActionResult';
-import { CreateActionResult } from 'src/helpers/CreateActionResult';
-import { Pager } from 'src/helpers/Pager';
-import { PageResult } from 'src/helpers/PageResult';
-import { Sorter } from 'src/helpers/Sorter';
+} from 'sequelize';
+import { ActionResult } from '../helpers/ActionResult';
+import { CreateActionResult } from '../helpers/CreateActionResult';
+import { Pager } from '../helpers/Pager';
+import { PageResult } from '../helpers/PageResult';
+import { Sorter } from '../helpers/Sorter';
 import { BaseEntity } from './base.entity';
 import { IBaseService } from './IBaseService';
 

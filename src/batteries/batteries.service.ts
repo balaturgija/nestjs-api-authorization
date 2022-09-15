@@ -1,8 +1,8 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { BaseService } from 'src/base/base.service';
-import { Provider } from 'src/constants';
 import { BatteryEntity } from './entities/battery.entity';
 import { Repository } from 'sequelize-typescript';
+import { Provider } from '../constants';
+import { BaseService } from '../base/base.service';
 
 @Injectable()
 export class BatteriesService extends BaseService<BatteryEntity> {

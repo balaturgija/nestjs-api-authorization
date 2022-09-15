@@ -5,9 +5,9 @@ import {
   ForeignKey,
   Table,
 } from 'sequelize-typescript';
-import { TableName } from 'src/constants';
-import { BatteryEntity } from 'src/batteries/entities/battery.entity';
-import { BaseEntity } from 'src/base/base.entity';
+import { BaseEntity } from '../../base/base.entity';
+import { BatteryEntity } from '../../batteries/entities/battery.entity';
+import { TableName } from '../../constants';
 
 interface Robot {
   id: string;
@@ -25,7 +25,7 @@ interface Robot {
   updatedAt: true,
   deletedAt: true,
 })
-export class RobotEntity extends BaseEntity<RobotEntity> {
+export class RobotEntity extends BaseEntity<RobotEntity> implements Robot {
   @Column({
     type: DataType.STRING,
     unique: true,

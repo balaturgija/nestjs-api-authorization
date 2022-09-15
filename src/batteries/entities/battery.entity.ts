@@ -3,12 +3,12 @@ import {
   BelongsTo,
   Column,
   DataType,
-  Model,
+  HasMany,
   Table,
 } from 'sequelize-typescript';
-import { TableName } from 'src/constants';
-import { RobotEntity } from 'src/robots/entities/robot.entity';
-import { v4 as uuidv4 } from 'uuid';
+import { BaseEntity } from '../../base/base.entity';
+import { TableName } from '../../constants';
+import { RobotEntity } from '../../robots/entities/robot.entity';
 
 interface Battery {
   id: string;
@@ -25,13 +25,7 @@ interface Battery {
   updatedAt: true,
   deletedAt: true,
 })
-export class BatteryEntity extends Model<BatteryEntity> implements Battery {
-  @Column({
-    primaryKey: true,
-    type: 'uuid',
-    defaultValue: () => uuidv4(),
-  })
-  id: string;
+export class BatteryEntity extends BaseEntity<BatteryEntity> implements Battery {
 
   @Column({
     type: DataType.STRING,
@@ -49,6 +43,6 @@ export class BatteryEntity extends Model<BatteryEntity> implements Battery {
   deletedAt: Date;
 
   /* Associations */
-  @BelongsTo(() => RobotEntity)
-  battery: RobotEntity;
+  @HasMany(() => RobotEntity)
+  batteries: RobotEntity[];
 }

@@ -1,9 +1,9 @@
 import { Body, Controller, HttpStatus, Next, Post, Res } from '@nestjs/common';
 import { ApiResponse } from '@nestjs/swagger';
 import { Response } from 'express';
-import { ErrorHandler } from 'src/helpers/ErrorHandler';
-import { SuccessHandler } from 'src/helpers/SuccessHandler';
-import { handleSuccess } from 'src/middleware/handleSuccess';
+import { ErrorHandler } from '../helpers/ErrorHandler';
+import { SuccessHandler } from '../helpers/SuccessHandler';
+import { handleSuccess } from '../middleware/handleSuccess';
 import { BatteriesService } from './batteries.service';
 import { BatteryCreateDto } from './dto/battery.create.dto';
 import { BatteryDto } from './dto/battery.dto';

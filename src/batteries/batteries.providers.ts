@@ -1,4 +1,4 @@
-import { Provider } from 'src/constants';
+import { Provider } from '../constants';
 import { BatteryEntity } from './entities/battery.entity';
 
 export const batteriesProviders = [
