@@ -1,7 +1,8 @@
 import { Exclude } from 'class-transformer';
-import { Column, DataType, Table } from 'sequelize-typescript';
+import { Column, DataType, HasOne, Table } from 'sequelize-typescript';
 import { BaseEntity } from '../../base/base.entity';
 import { TableName } from '../../constants';
+import { RobotEntity } from '../../robots/entities/robot.entity';
 
 interface Battery {
   id: string;

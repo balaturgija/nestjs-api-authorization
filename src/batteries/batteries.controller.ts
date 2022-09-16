@@ -1,16 +1,19 @@
-import { Body, Controller, HttpStatus, Next, Post, Res } from '@nestjs/common';
+import { Body, Controller, HttpStatus, Post, Req, Res } from '@nestjs/common';
 import { ApiResponse } from '@nestjs/swagger';
 import { Response } from 'express';
-import { ErrorHandler } from '../helpers/ErrorHandler';
-import { SuccessHandler } from '../helpers/SuccessHandler';
-import { handleSuccess } from '../middleware/handleSuccess';
+import BaseController from '../base/base.controller';
 import { BatteriesService } from './batteries.service';
 import { BatteryCreateDto } from './dto/battery.create.dto';
 import { BatteryDto } from './dto/battery.dto';
+// import { ErrorHandler } from '../helpers/ErrorHandler';
+// import { SuccessHandler } from '../helpers/SuccessHandler';
+// import { handleSuccess } from '../middleware/handleSuccess';
 
 @Controller('batteries')
-export class BatteriesController {
-  constructor(private readonly batteriesService: BatteriesService) {}
+export class BatteriesController extends BaseController {
+  constructor(private readonly batteriesService: BatteriesService) {
+    super();
+  }
 
   @Post()
   @ApiResponse({
@@ -24,21 +27,10 @@ export class BatteriesController {
   async create(
     @Res() res: Response,
     @Body() batteryCreateDto: BatteryCreateDto,
-    @Next() next: any,
-  ) {
-    const dto: BatteryCreateDto = batteryCreateDto;
-    const result = await this.batteriesService.createAsync(dto);
-    if (result.success)
-      return handleSuccess(
-        new SuccessHandler(HttpStatus.OK, result.data[0]),
-        res,
-      );
+  ): Promise<Response> {
+    const result = await this.batteriesService.createAsync(batteryCreateDto);
+    if (result.success) return this.Created(res, result);
 
-    return next(
-      new ErrorHandler(
-        HttpStatus.INTERNAL_SERVER_ERROR,
-        result.errors.join(','),
-      ),
-    );
+    return this.Error(res, result.errors);
   }
 }

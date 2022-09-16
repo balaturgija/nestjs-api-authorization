@@ -1,8 +1,8 @@
 import {
+  BelongsTo,
   Column,
   DataType,
   ForeignKey,
-  HasOne,
   Table,
 } from 'sequelize-typescript';
 import { BaseEntity } from '../../base/base.entity';
@@ -39,6 +39,6 @@ export class RobotEntity extends BaseEntity<RobotEntity> implements Robot {
   batteryId: string;
 
   /* Associations */
-  @HasOne(() => BatteryEntity, 'batteryId')
+  @BelongsTo(() => BatteryEntity, 'battery_id')
   battery: BatteryEntity;
 }
