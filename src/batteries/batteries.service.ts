@@ -5,6 +5,7 @@ import { ActionResult } from '../helpers/ActionResult';
 import { BatteryCreate } from './interfaces/batteryCreate.interface';
 import { WhereOptions } from 'sequelize';
 import { Battery } from './interfaces/battery.interface';
+import { BatteryUpdateDto } from './dto/battery.update.dto';
 // import { Repository } from 'sequelize-typescript';
 // import { BaseService } from '../base/base.service';
 
@@ -20,6 +21,20 @@ export class BatteriesService {
 
   async getByIdAsync(id: string): Promise<Battery | null> {
     return await this.batteryRepository.findByPk(id);
+  }
+
+  async updateAsync(
+    id: string,
+    batteryUpdateDto: BatteryUpdateDto,
+  ): Promise<ActionResult> {
+    const result = new ActionResult();
+    const resultUpdate = await this.batteryRepository.update(batteryUpdateDto, {
+      where: { id: id },
+    });
+
+    if (resultUpdate[0] != 1) result.AddError('Error on update.');
+
+    return result;
   }
 
   async createAsync(createBatteryDto: BatteryCreate): Promise<ActionResult> {

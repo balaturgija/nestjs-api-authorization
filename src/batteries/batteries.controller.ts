@@ -6,6 +6,7 @@ import {
   HttpStatus,
   Param,
   Post,
+  Put,
   Res,
 } from '@nestjs/common';
 import { ApiResponse } from '@nestjs/swagger';
@@ -15,6 +16,7 @@ import { BatteriesService } from './batteries.service';
 import { BatteryCreateDto } from './dto/battery.create.dto';
 import { BatteryDto } from './dto/battery.dto';
 import { BatteryParamDto } from './dto/battery.param.dto';
+import { BatteryUpdateDto } from './dto/battery.update.dto';
 // import { ErrorHandler } from '../helpers/ErrorHandler';
 // import { SuccessHandler } from '../helpers/SuccessHandler';
 // import { handleSuccess } from '../middleware/handleSuccess';
@@ -58,6 +60,26 @@ export class BatteriesController extends BaseController {
     if (result.success) return this.Created(res, batteryCreateDto);
 
     return this.Error(res, result.errors);
+  }
+
+  @Put(':id')
+  async put(
+    @Res() res: Response,
+    @Param() params: BatteryParamDto,
+    @Body() batteryUpdateDto: BatteryUpdateDto,
+  ): Promise<Response> {
+    const model = await this.batteriesService.getByIdAsync(params.id);
+    if (!model) return this.NotFound(res, 'Battery not found.');
+
+    Object.assign(model, batteryUpdateDto);
+    const result = await this.batteriesService.updateAsync(
+      params.id,
+      JSON.parse(JSON.stringify(model)),
+    );
+
+    if (result.success) return this.Ok(res);
+
+    return this.Error(res);
   }
 
   @Delete(':id')
