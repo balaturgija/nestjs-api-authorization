@@ -6,9 +6,8 @@
   "license": "MIT",
   "scripts": {
     "prebuild": "rimraf dist",
-    "db-container": "docker run --name postgres-db -e POSTGRES_PASSWORD=docker -p 5432:5432 -d postgres",
-    "db-create": "npx sequelize-cli db:create",
-    "db-migrate": "npx sequelize-cli db:migrate",
+    "db:create": "npx sequelize-cli db:create",
+    "db:migrate": "npx sequelize-cli db:migrate",
     "build": "nest build",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
     "start": "NODE_ENV=development nodemon src/main.ts",
