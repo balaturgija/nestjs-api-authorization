@@ -3,9 +3,12 @@ import { BatteryEntity } from './entities/battery.entity';
 import { Provider } from '../constants';
 import { ActionResult } from '../helpers/ActionResult';
 import { BatteryCreate } from './interfaces/batteryCreate.interface';
-import { WhereOptions } from 'sequelize';
+import { OrderItem, WhereOptions } from 'sequelize';
 import { Battery } from './interfaces/battery.interface';
 import { BatteryUpdateDto } from './dto/battery.update.dto';
+import { Pager } from '../helpers/Pager';
+import { SortDirection, Sorter } from '../helpers/Sorter';
+import { PageResult } from '../helpers/PageResult';
 // import { Repository } from 'sequelize-typescript';
 // import { BaseService } from '../base/base.service';
 
@@ -17,6 +20,29 @@ export class BatteriesService {
     private readonly batteryRepository: typeof BatteryEntity, // private readonly batteryRepository: Repository<BatteryEntity>,
   ) {
     // super(batteryRepository);
+  }
+
+  async findAllAsync(
+    pager: Pager,
+    sorter: Sorter,
+  ): Promise<PageResult<Battery>> {
+    let orderBy: OrderItem[] = [
+      ['id', sorter.direction() ? sorter.direction() : SortDirection.Asc],
+    ];
+
+    if (sorter.orderBy() === 'name')
+      orderBy = [
+        ['name', sorter.direction() ? sorter.direction() : SortDirection.Asc],
+      ];
+
+    const options = {
+      order: orderBy,
+      limit: pager.pageSize(),
+      offset: (pager.pageNumber() - 1) * pager.pageSize(),
+    };
+    const data = await this.batteryRepository.findAndCountAll(options);
+    const result = new PageResult<Battery>(data.count, data.rows);
+    return result;
   }
 
   async getByIdAsync(id: string): Promise<Battery | null> {

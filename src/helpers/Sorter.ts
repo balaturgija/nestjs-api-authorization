@@ -14,5 +14,5 @@ export class Sorter {
 
   orderBy = () => this.propertyOrderBy;
 
-  direction = () => this.propertyDirection.toUpperCase();
+  direction = () => this.propertyDirection;
 }

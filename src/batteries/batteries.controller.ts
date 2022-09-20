@@ -7,14 +7,18 @@ import {
   Param,
   Post,
   Put,
+  Query,
   Res,
 } from '@nestjs/common';
 import { ApiResponse } from '@nestjs/swagger';
 import { Response } from 'express';
 import BaseController from '../base/base.controller';
+import { Pager } from '../helpers/Pager';
+import { Sorter } from '../helpers/Sorter';
 import { BatteriesService } from './batteries.service';
 import { BatteryCreateDto } from './dto/battery.create.dto';
 import { BatteryDto } from './dto/battery.dto';
+import { BatteryFilterDto } from './dto/battery.filter.dto';
 import { BatteryParamDto } from './dto/battery.param.dto';
 import { BatteryUpdateDto } from './dto/battery.update.dto';
 // import { ErrorHandler } from '../helpers/ErrorHandler';
@@ -25,6 +29,20 @@ import { BatteryUpdateDto } from './dto/battery.update.dto';
 export class BatteriesController extends BaseController {
   constructor(private readonly batteriesService: BatteriesService) {
     super();
+  }
+
+  @Get()
+  @ApiResponse({
+    status: HttpStatus.OK,
+  })
+  async findAll(
+    @Res() res: Response,
+    @Query() query: BatteryFilterDto,
+  ): Promise<Response> {
+    const pager = new Pager(query.page, query.rpp);
+    const sorter = new Sorter(query.sortBy, query.sortDirection);
+    const result = await this.batteriesService.findAllAsync(pager, sorter);
+    return this.Ok(res, result);
   }
 
   @Get(':id')
