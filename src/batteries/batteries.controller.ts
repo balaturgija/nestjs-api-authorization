@@ -10,7 +10,7 @@ import {
     Query,
     Res,
 } from '@nestjs/common';
-import { ApiResponse } from '@nestjs/swagger';
+import { ApiResponse, ApiTags } from '@nestjs/swagger';
 import { Response } from 'express';
 import BaseController from '../base/base.controller';
 import { Pager } from '../helpers/Pager';
@@ -21,6 +21,7 @@ import { BatteryDto } from './dto/battery.dto';
 import { BatteryFilterDto } from './dto/filter-battery.dto';
 import { BatteryParamsDto } from './dto/params-battery.dto';
 import { BatteryUpdateDto } from './dto/update-battery.dto';
+import { TableName } from '../constants';
 
 @Controller('batteries')
 export class BatteriesController extends BaseController {
@@ -29,6 +30,7 @@ export class BatteriesController extends BaseController {
     }
 
     @Get()
+    @ApiTags(TableName.Batteries)
     @ApiResponse({
         status: HttpStatus.OK,
     })
@@ -43,6 +45,7 @@ export class BatteriesController extends BaseController {
     }
 
     @Get(':id')
+    @ApiTags(TableName.Batteries)
     @ApiResponse({
         status: HttpStatus.OK,
         type: BatteryDto,
@@ -59,6 +62,7 @@ export class BatteriesController extends BaseController {
     }
 
     @Post()
+    @ApiTags(TableName.Batteries)
     @ApiResponse({
         status: HttpStatus.CREATED,
         type: BatteryDto,
@@ -78,6 +82,7 @@ export class BatteriesController extends BaseController {
     }
 
     @Put(':id')
+    @ApiTags(TableName.Batteries)
     @ApiResponse({
         status: HttpStatus.OK,
     })
@@ -108,6 +113,7 @@ export class BatteriesController extends BaseController {
     }
 
     @Delete(':id')
+    @ApiTags(TableName.Batteries)
     @ApiResponse({
         status: HttpStatus.OK,
     })

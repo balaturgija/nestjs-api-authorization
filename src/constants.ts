@@ -17,7 +17,7 @@ const SWAGGER_CONFIG = {
     title: 'title',
     description: 'descrioption',
     version: '0.0.00',
-    tags: ['Robot', 'Battery'],
+    tags: ['robots', 'batteries'],
 };
 
 export { Provider, TableName, SWAGGER_CONFIG };

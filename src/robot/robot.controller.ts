@@ -10,8 +10,9 @@ import {
     Query,
     Res,
 } from '@nestjs/common';
-import { ApiResponse } from '@nestjs/swagger';
+import { ApiResponse, ApiTags } from '@nestjs/swagger';
 import { Response } from 'express';
+import { TableName } from '../constants';
 import BaseController from '../base/base.controller';
 import { Pager } from '../helpers/Pager';
 import { Sorter } from '../helpers/Sorter';
@@ -29,6 +30,7 @@ export class RobotsController extends BaseController {
     }
 
     @Get()
+    @ApiTags(TableName.Robots)
     @ApiResponse({
         status: HttpStatus.OK,
     })
@@ -43,6 +45,7 @@ export class RobotsController extends BaseController {
     }
 
     @Get(':id')
+    @ApiTags(TableName.Robots)
     @ApiResponse({
         status: HttpStatus.OK,
         type: RobotDto,
@@ -62,6 +65,7 @@ export class RobotsController extends BaseController {
     }
 
     @Post()
+    @ApiTags(TableName.Robots)
     @ApiResponse({
         status: HttpStatus.CREATED,
         type: RobotDto,
@@ -81,6 +85,7 @@ export class RobotsController extends BaseController {
     }
 
     @Put(':id')
+    @ApiTags(TableName.Robots)
     @ApiResponse({
         status: HttpStatus.OK,
     })
@@ -111,6 +116,7 @@ export class RobotsController extends BaseController {
     }
 
     @Delete(':id')
+    @ApiTags(TableName.Robots)
     @ApiResponse({
         status: HttpStatus.OK,
     })
