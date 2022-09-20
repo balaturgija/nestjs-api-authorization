@@ -3,7 +3,7 @@ import * as path from 'path';
 import { Sequelize } from 'sequelize-typescript';
 import { BatteryEntity } from '../batteries/entities/battery.entity';
 import { Provider } from '../constants';
-import { RobotEntity } from '../robots/entities/robot.entity';
+import { RobotEntity } from '../robot/entities/robot.entity';
 
 dotenv.config({
     path: path.resolve(`.env`),

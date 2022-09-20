@@ -1,4 +1,18 @@
 {
   "collection": "@nestjs/schematics",
-  "sourceRoot": "src"
+  "sourceRoot": "src",
+  "projects": {
+    "robot": {
+      "type": "library",
+      "root": "libs/robot",
+      "entryFile": "index",
+      "sourceRoot": "libs/robot/src",
+      "compilerOptions": {
+        "tsConfigPath": "libs/robot/tsconfig.lib.json"
+      }
+    }
+  },
+  "compilerOptions": {
+    "webpack": true
+  }
 }
