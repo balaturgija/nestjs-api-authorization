@@ -24,7 +24,6 @@ export class BatteryEntity
 {
     @Column({
         type: DataType.STRING(255),
-        unique: true,
     })
     name: string;
 
