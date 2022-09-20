@@ -21,7 +21,7 @@ import { RobotFilterDto } from './dto/filter-robot.dto';
 import { RobotParamsDto } from './dto/prams-robot.dto';
 import { RobotDto } from './dto/robot.dto';
 import { RobotUpdateDto } from './dto/update-robot.dto';
-import { RobotsService } from './robot.service';
+import { RobotsService } from './robots.service';
 
 @Controller('robots')
 export class RobotsController extends BaseController {
