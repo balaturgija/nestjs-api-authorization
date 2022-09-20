@@ -1,7 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsString, IsUUID } from 'class-validator';
 
-export class RobotParamDto {
+export class RobotParamsDto {
     @ApiProperty()
     @IsString()
     @IsUUID()

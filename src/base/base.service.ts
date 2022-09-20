@@ -1,4 +1,3 @@
-import { BadGatewayException } from '@nestjs/common';
 import { Repository } from 'sequelize-typescript';
 import {
     ForeignKeyConstraintError,
@@ -15,10 +14,9 @@ import { Pager } from '../helpers/Pager';
 import { PageResult } from '../helpers/PageResult';
 import { SortDirection, Sorter } from '../helpers/Sorter';
 import { BaseEntity } from './base.entity';
-import { IBaseService } from './IBaseService';
 
-export class BaseService<T extends BaseEntity<T>> implements IBaseService<T> {
-    constructor(private readonly genericRepository: Repository<T>) {}
+export class BaseService<T extends BaseEntity<T>> {
+    constructor(private readonly repository: Repository<T>) {}
 
     async findAllAsync(pager?: Pager, sorter?: Sorter): Promise<PageResult<T>> {
         const orderBy: OrderItem[] = [
@@ -29,31 +27,26 @@ export class BaseService<T extends BaseEntity<T>> implements IBaseService<T> {
             limit: pager.pageSize(),
             offset: (pager.pageNumber() - 1) * pager.pageSize(),
         };
-        const data = await this.genericRepository.findAndCountAll(options);
+        const data = await this.repository.findAndCountAll(options);
         const result = new PageResult<T>(data.count, data.rows);
         return result;
     }
 
-    async getAsync(
-        id: string,
-        include?: string[],
-        t?: Transaction
-    ): Promise<T | null> {
-        const options = this.constructInclude(include);
+    async getByIdAsync(id: string, t?: Transaction): Promise<T | null> {
+        const options = {};
         if (t) Object.assign(options, { transaction: t });
-        const result = await this.genericRepository.findByPk(id, options);
-        return result ? JSON.parse(JSON.stringify(result)) : null;
+        return await this.repository.findByPk(id, options);
     }
 
     async createAsync(
-        entity: any,
+        createDto: any,
         t?: Transaction
     ): Promise<CreateActionResult<T>> {
         const options = t ? { transaction: t } : undefined;
         const result = new CreateActionResult<T>();
         try {
-            const createResult = await this.genericRepository.create(
-                entity,
+            const createResult = await this.repository.create(
+                createDto,
                 options
             );
             result.data = JSON.parse(JSON.stringify(createResult));
@@ -65,15 +58,15 @@ export class BaseService<T extends BaseEntity<T>> implements IBaseService<T> {
     }
 
     async putAsync(
-        entity: Partial<T>,
         id: string,
+        entity: Partial<T>,
         t?: Transaction
     ): Promise<ActionResult> {
         const options: UpdateOptions = { where: { id: id } };
         if (t) Object.assign(options, { transaction: t });
         const result = new ActionResult();
         try {
-            await this.genericRepository.update(entity, options);
+            await this.repository.update(entity, options);
         } catch (error) {
             result.AddError(this.handleDatabseErrors(error));
         }
@@ -86,7 +79,7 @@ export class BaseService<T extends BaseEntity<T>> implements IBaseService<T> {
         const options: WhereOptions = { where: { id: id } };
         if (t) Object.assign(options, { transaction: t });
         try {
-            await this.genericRepository.destroy(options);
+            await this.repository.destroy(options);
         } catch (error) {
             result.AddError(this.handleDatabseErrors(error));
         }
@@ -108,51 +101,5 @@ export class BaseService<T extends BaseEntity<T>> implements IBaseService<T> {
         }
 
         return message;
-    }
-
-    protected constructSorter(sorter: Sorter, include?: string[]): any[] {
-        const sorterResult: any = [];
-        const splited = sorter.orderBy().split('.');
-        const splitedCap = splited.map((x) => {
-            return x;
-        });
-
-        const newInclude = splitedCap.slice(0, splited.length - 1).join('.');
-        if (
-            newInclude &&
-            (!include || !include.find((x) => newInclude === x))
-        ) {
-            if (!include) {
-                include = [newInclude];
-            } else {
-                include.push(newInclude);
-            }
-            sorterResult.push([...splitedCap, sorter.direction()]);
-            return sorterResult;
-        }
-    }
-
-    protected constructInclude(include?: string[]) {
-        if (include && include.length > 0) {
-            const models: any = [];
-            include.forEach((i) => {
-                const sliced = i.split('.');
-                const existingModel = models.find((x: any) => x.model == i[0]);
-                if (sliced.length === 1) {
-                    if (!existingModel)
-                        models.push({
-                            model: sliced[0],
-                        });
-                } else {
-                    if (existingModel) {
-                        Object.assign(existingModel, { include: sliced[1] });
-                    } else {
-                        models.push({ model: sliced[0], include: sliced[1] });
-                    }
-                }
-            });
-            return Object.assign({}, { include: models });
-        }
-        return {};
     }
 }

@@ -9,18 +9,14 @@ import { BatteryUpdateDto } from './dto/update-battery.dto';
 import { Pager } from '../helpers/Pager';
 import { SortDirection, Sorter } from '../helpers/Sorter';
 import { PageResult } from '../helpers/PageResult';
-// import { Repository } from 'sequelize-typescript';
-// import { BaseService } from '../base/base.service';
+import { CreateActionResult } from '../helpers/CreateActionResult';
 
 @Injectable()
-// extends BaseService<BatteryEntity>
 export class BatteriesService {
     constructor(
         @Inject(Provider.BatteryRepository)
-        private readonly batteryRepository: typeof BatteryEntity // private readonly batteryRepository: Repository<BatteryEntity>,
-    ) {
-        // super(batteryRepository);
-    }
+        private readonly batteryRepository: typeof BatteryEntity
+    ) {}
 
     async findAllAsync(
         pager: Pager,
@@ -52,6 +48,18 @@ export class BatteriesService {
         return await this.batteryRepository.findByPk(id);
     }
 
+    async createAsync(
+        createBatteryDto: BatteryCreate
+    ): Promise<CreateActionResult<Battery>> {
+        const result = new CreateActionResult<Battery>();
+        const createResult = await this.batteryRepository.create(
+            createBatteryDto
+        );
+        if (!createResult) result.AddError('Battery not created.');
+
+        return result;
+    }
+
     async updateAsync(
         id: string,
         batteryUpdateDto: BatteryUpdateDto
@@ -65,16 +73,6 @@ export class BatteriesService {
         );
 
         if (resultUpdate[0] != 1) result.AddError('Error on update.');
-
-        return result;
-    }
-
-    async createAsync(createBatteryDto: BatteryCreate): Promise<ActionResult> {
-        const result = new ActionResult();
-        const createResult = await this.batteryRepository.create(
-            createBatteryDto
-        );
-        if (!createResult) result.AddError('Battery not created.');
 
         return result;
     }

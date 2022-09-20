@@ -19,11 +19,8 @@ import { BatteriesService } from './batteries.service';
 import { BatteryCreateDto } from './dto/create-battery.dto';
 import { BatteryDto } from './dto/battery.dto';
 import { BatteryFilterDto } from './dto/filter-battery.dto';
-import { BatteryParamDto } from './dto/params-battery.dto';
+import { BatteryParamsDto } from './dto/params-battery.dto';
 import { BatteryUpdateDto } from './dto/update-battery.dto';
-// import { ErrorHandler } from '../helpers/ErrorHandler';
-// import { SuccessHandler } from '../helpers/SuccessHandler';
-// import { handleSuccess } from '../middleware/handleSuccess';
 
 @Controller('batteries')
 export class BatteriesController extends BaseController {
@@ -54,7 +51,7 @@ export class BatteriesController extends BaseController {
         status: HttpStatus.NOT_FOUND,
         description: 'Not found',
     })
-    async getById(@Res() res: Response, @Param() params: BatteryParamDto) {
+    async getById(@Res() res: Response, @Param() params: BatteryParamsDto) {
         const result = await this.batteriesService.getByIdAsync(params.id);
         if (result != null) return this.Ok(res, result);
 
@@ -72,26 +69,34 @@ export class BatteriesController extends BaseController {
     })
     async create(
         @Res() res: Response,
-        @Body() batteryCreateDto: BatteryCreateDto
+        @Body() body: BatteryCreateDto
     ): Promise<Response> {
-        const result = await this.batteriesService.createAsync(
-            batteryCreateDto
-        );
-        if (result.success) return this.Created(res, batteryCreateDto);
+        const result = await this.batteriesService.createAsync(body);
+        if (result.success) return this.Created(res, body);
 
         return this.Error(res, result.errors);
     }
 
     @Put(':id')
-    async put(
+    @ApiResponse({
+        status: HttpStatus.OK,
+    })
+    @ApiResponse({
+        status: HttpStatus.NOT_FOUND,
+        description: 'Not found',
+    })
+    @ApiResponse({
+        status: HttpStatus.INTERNAL_SERVER_ERROR,
+    })
+    async update(
         @Res() res: Response,
-        @Param() params: BatteryParamDto,
-        @Body() batteryUpdateDto: BatteryUpdateDto
+        @Param() params: BatteryParamsDto,
+        @Body() body: BatteryUpdateDto
     ): Promise<Response> {
         const model = await this.batteriesService.getByIdAsync(params.id);
         if (!model) return this.NotFound(res, 'Battery not found.');
 
-        Object.assign(model, batteryUpdateDto);
+        Object.assign(model, body);
         const result = await this.batteriesService.updateAsync(
             params.id,
             JSON.parse(JSON.stringify(model))
@@ -99,7 +104,7 @@ export class BatteriesController extends BaseController {
 
         if (result.success) return this.Ok(res);
 
-        return this.Error(res);
+        return this.Error(res, result.errors);
     }
 
     @Delete(':id')
@@ -116,10 +121,10 @@ export class BatteriesController extends BaseController {
     })
     async delete(
         @Res() res: Response,
-        @Param() params: BatteryParamDto
+        @Param() params: BatteryParamsDto
     ): Promise<Response> {
-        const resource = await this.batteriesService.getByIdAsync(params.id);
-        if (!resource) return this.NotFound(res, 'Battery not found.');
+        const model = await this.batteriesService.getByIdAsync(params.id);
+        if (!model) return this.NotFound(res, 'Battery not found.');
         const result = await this.batteriesService.deleteAsync(params.id);
         if (result.success) return this.Ok(res);
 
