@@ -1,4 +1,4 @@
-import { Provider } from 'src/constants';
+import { Provider } from '../constants';
 import { RobotEntity } from './entities/robot.entity';
 
 export const robotsProviders = [

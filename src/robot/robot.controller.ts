@@ -1,9 +1,9 @@
 import { Controller, Get, HttpStatus, Query, Res } from '@nestjs/common';
 import { ApiResponse } from '@nestjs/swagger';
 import { Response } from 'express';
-import BaseController from 'src/base/base.controller';
-import { Pager } from 'src/helpers/Pager';
-import { Sorter } from 'src/helpers/Sorter';
+import BaseController from '../base/base.controller';
+import { Pager } from '../helpers/Pager';
+import { Sorter } from '../helpers/Sorter';
 import { RobotFilterDto } from './dto/filter-robot.dto';
 import { RobotsService } from './robot.service';
 

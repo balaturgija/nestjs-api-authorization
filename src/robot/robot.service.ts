@@ -1,7 +1,7 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { Repository } from 'sequelize-typescript';
 import { BaseService } from '../base/base.service';
-import { Provider } from 'src/constants';
+import { Provider } from '../constants';
 import { RobotEntity } from './entities/robot.entity';
 
 @Injectable()
