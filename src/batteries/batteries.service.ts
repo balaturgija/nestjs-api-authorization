@@ -19,8 +19,8 @@ export class BatteriesService {
     ) {}
 
     async findAllAsync(
-        pager: Pager,
-        sorter: Sorter
+        pager?: Pager,
+        sorter?: Sorter
     ): Promise<PageResult<Battery>> {
         let orderBy: OrderItem[] = [
             ['id', sorter.direction() ? sorter.direction() : SortDirection.Asc],
