@@ -29,34 +29,40 @@
 ## Installation
 
 ```bash
-$ npm install
+$ yarn
 ```
-
-## Running the app
+## Make shure your node version is set on v16.14.2
+## Create .env file
 
 ```bash
-# development
-$ npm run start
-
-# watch mode
-$ npm run start:dev
-
-# production mode
-$ npm run start:prod
+  NODE_ENV=development
+  DB_HOST=
+  DB_PORT=
+  DB_USER=
+  DB_PASSWORD=
+  DB_NAME=RoboBuilder
 ```
 
-## Test
+## Running the app in development mode
 
 ```bash
-# unit tests
-$ npm run test
+# STEP1: create database container
+$ docker-compose build
 
-# e2e tests
-$ npm run test:e2e
+# STEP2: run database create
+$ yarn run db:create
 
-# test coverage
-$ npm run test:cov
+# STEP3: run migrations
+$ yarn run db:migrate
+
+# STEP4: run seeders
+$ yarn run db:seed
+
+# STEP5: start the app with nodemon
+$ yarn run start
 ```
+
+
 
 ## Support
 
