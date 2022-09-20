@@ -3,7 +3,7 @@ import { Transform } from 'class-transformer';
 import { IsEnum, IsInt, IsOptional, IsString, Min } from 'class-validator';
 import { SortDirection } from 'src/helpers/Sorter';
 
-export class BatteryFilterDto {
+export class RobotFilterDto {
     @ApiPropertyOptional()
     @Transform(({ value }) => (value ? Number(value) : value))
     @IsOptional()
