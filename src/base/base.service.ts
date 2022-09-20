@@ -2,6 +2,7 @@ import { BadGatewayException } from '@nestjs/common';
 import { Repository } from 'sequelize-typescript';
 import {
     ForeignKeyConstraintError,
+    OrderItem,
     Transaction,
     UniqueConstraintError,
     UpdateOptions,
@@ -12,57 +13,25 @@ import { ActionResult } from '../helpers/ActionResult';
 import { CreateActionResult } from '../helpers/CreateActionResult';
 import { Pager } from '../helpers/Pager';
 import { PageResult } from '../helpers/PageResult';
-import { Sorter } from '../helpers/Sorter';
+import { SortDirection, Sorter } from '../helpers/Sorter';
 import { BaseEntity } from './base.entity';
 import { IBaseService } from './IBaseService';
 
 export class BaseService<T extends BaseEntity<T>> implements IBaseService<T> {
     constructor(private readonly genericRepository: Repository<T>) {}
 
-    async findAllAsync(
-        pager?: Pager,
-        sorter?: Sorter,
-        whereClause?: object,
-        include?: string[]
-    ): Promise<PageResult<T>> {
+    async findAllAsync(pager?: Pager, sorter?: Sorter): Promise<PageResult<T>> {
+        const orderBy: OrderItem[] = [
+            ['id', sorter.direction() ? sorter.direction() : SortDirection.Asc],
+        ];
         const options = {
-            raw: true,
+            order: orderBy,
+            limit: pager.pageSize(),
+            offset: (pager.pageNumber() - 1) * pager.pageSize(),
         };
-
-        if (pager != null) {
-            Object.assign(options, {
-                limit: pager.pageSize(),
-                offset: (pager.pageNumber() - 1) * pager.pageSize(),
-            });
-        }
-
-        if (sorter != null) {
-            include = include ?? [];
-            const sortOrder = this.constructSorter(sorter, include);
-
-            Object.assign(options, {
-                order: sortOrder,
-            });
-        }
-
-        if (whereClause != null) {
-            Object.assign(options, {
-                where: whereClause,
-            });
-        }
-
-        Object.assign(options, this.constructInclude(include));
-        try {
-            const result = await this.genericRepository.findAndCountAll(
-                options
-            );
-            return new PageResult<T>(
-                result.count,
-                JSON.parse(JSON.stringify(result.rows))
-            );
-        } catch (error) {
-            throw new BadGatewayException(error);
-        }
+        const data = await this.genericRepository.findAndCountAll(options);
+        const result = new PageResult<T>(data.count, data.rows);
+        return result;
     }
 
     async getAsync(
