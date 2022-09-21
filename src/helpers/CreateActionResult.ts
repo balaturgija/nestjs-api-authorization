@@ -1,13 +1,13 @@
 import { ActionResult } from './ActionResult';
 
 export class CreateActionResult<T> extends ActionResult {
-    private propertyData: T[];
+    private _data: T[];
 
     public get data(): T[] {
-        return this.propertyData;
+        return this._data;
     }
 
     public set data(v: T[]) {
-        this.propertyData = v;
+        this._data = v;
     }
 }

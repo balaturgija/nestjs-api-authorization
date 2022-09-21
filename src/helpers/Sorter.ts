@@ -4,15 +4,15 @@ export enum SortDirection {
 }
 
 export class Sorter {
-    private propertyOrderBy: string;
-    private propertyDirection: SortDirection;
+    private _orderBy: string;
+    private _direction: SortDirection;
 
     constructor(orderBy = 'id', direction: SortDirection = SortDirection.Asc) {
-        this.propertyOrderBy = orderBy;
-        this.propertyDirection = direction;
+        this._orderBy = orderBy;
+        this._direction = direction;
     }
 
-    orderBy = () => this.propertyOrderBy;
+    orderBy = () => this._orderBy;
 
-    direction = () => this.propertyDirection;
+    direction = () => this._direction;
 }

@@ -1,25 +1,25 @@
 export class PageResult<T> {
-    private propertyCount: number;
-    private propertyItems: T[];
+    private _count: number;
+    private _items: T[];
 
     constructor(count: number, items: T[]) {
-        this.propertyCount = count;
-        this.propertyItems = items;
+        this._count = count;
+        this._items = items;
     }
 
     public get count(): number {
-        return this.propertyCount;
+        return this._count;
     }
 
-    public set count(v: number) {
-        this.propertyCount = v;
+    public set count(p: number) {
+        this._count = p;
     }
 
     public get items(): T[] {
-        return this.propertyItems;
+        return this._items;
     }
 
-    public set items(v: T[]) {
-        this.propertyItems = v;
+    public set items(p: T[]) {
+        this._items = p;
     }
 }

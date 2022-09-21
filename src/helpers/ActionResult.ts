@@ -1,23 +1,23 @@
 export class ActionResult {
-    private propertyErrors: string[];
+    private _errors: string[];
 
     constructor() {
-        this.propertyErrors = [];
+        this._errors = [];
     }
 
     public get errors(): string[] {
-        return this.propertyErrors;
+        return this._errors;
     }
 
     public get success(): boolean {
-        return this.propertyErrors.length === 0;
+        return this._errors.length === 0;
     }
 
     public AddError = (value: string) => {
-        this.propertyErrors.push(value);
+        this._errors.push(value);
     };
 
     public AddErrors = (values: string[]) => {
-        this.propertyErrors.push(...values);
+        this._errors.push(...values);
     };
 }
