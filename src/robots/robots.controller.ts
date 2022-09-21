@@ -18,7 +18,7 @@ import { Pager } from '../helpers/Pager';
 import { Sorter } from '../helpers/Sorter';
 import { RobotCreateDto } from './dto/create-robot.dto';
 import { RobotFilterDto } from './dto/filter-robot.dto';
-import { RobotParamsDto } from './dto/prams-robot.dto';
+import { RobotParamsDto } from './dto/params-robot.dto';
 import { RobotDto } from './dto/robot.dto';
 import { RobotUpdateDto } from './dto/update-robot.dto';
 import { RobotsService } from './robots.service';
