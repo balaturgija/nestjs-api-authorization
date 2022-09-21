@@ -27,10 +27,15 @@ module.exports = {
                         type: Sequelize.STRING(255),
                         allowNull: false,
                     },
+                    email: {
+                        field: 'email',
+                        type: Sequelize.STRING(255),
+                        allowNull: false,
+                    },
                     password: {
                         field: 'password',
                         type: Sequelize.TEXT,
-                        allowNull: true,
+                        allowNull: false,
                     },
                     roleId: {
                         field: 'role_id',
