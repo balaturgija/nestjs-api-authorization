@@ -2,15 +2,7 @@ import { Exclude } from 'class-transformer';
 import { Column, DataType, Table } from 'sequelize-typescript';
 import { BaseEntity } from '../../base/base.entity';
 import { TableName } from '../../constants';
-
-interface User {
-    id: string;
-    username: string;
-    password: string;
-    createdAt: Date;
-    updatedAt: Date;
-    deletedAt: Date;
-}
+import { User } from '../interfaces/user.interface';
 
 @Table({
     tableName: TableName.Users,
@@ -22,8 +14,14 @@ interface User {
 export class UserEntity extends BaseEntity<UserEntity> implements User {
     @Column({
         type: DataType.STRING(255),
+        unique: true,
     })
     username: string;
+
+    @Column({
+        type: DataType.STRING(255),
+    })
+    email: string;
 
     @Column({
         type: DataType.TEXT,
