@@ -2,14 +2,7 @@ import { Exclude } from 'class-transformer';
 import { Column, DataType, Table } from 'sequelize-typescript';
 import { BaseEntity } from '../../base/base.entity';
 import { TableName } from '../../constants';
-
-interface Battery {
-    id: string;
-    name: string;
-    createdAt: Date;
-    updatedAt: Date;
-    deletedAt: Date;
-}
+import { Battery } from '../interfaces/battery.interface';
 
 @Table({
     tableName: TableName.Batteries,
