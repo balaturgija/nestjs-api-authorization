@@ -15,6 +15,12 @@ enum TableName {
     UserBatteries = 'user_batteries',
 }
 
+enum Role {
+    Admin = 'Admin',
+    Engineer = 'Engineer',
+    Customer = 'Customer',
+}
+
 const SWAGGER_CONFIG = {
     title: 'title',
     description: 'descrioption',
@@ -22,4 +28,4 @@ const SWAGGER_CONFIG = {
     tags: ['robots', 'batteries', 'auth'],
 };
 
-export { Provider, TableName, SWAGGER_CONFIG };
+export { Provider, TableName, Role, SWAGGER_CONFIG };
