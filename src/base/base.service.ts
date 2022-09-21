@@ -38,6 +38,14 @@ export class BaseService<T extends BaseEntity<T>> {
         return await this.repository.findByPk(id, options);
     }
 
+    async getByAsync(whereClause: object, t?: Transaction): Promise<T | null> {
+        const options = {};
+        const whereOptions: WhereOptions = { where: whereClause };
+        Object.assign(options, whereOptions);
+        if (t) Object.assign(options, { transaction: t });
+        return await this.repository.findOne(options);
+    }
+
     async createAsync(
         createDto: any,
         t?: Transaction
@@ -49,7 +57,7 @@ export class BaseService<T extends BaseEntity<T>> {
                 createDto,
                 options
             );
-            result.data = JSON.parse(JSON.stringify(createResult));
+            result.data = await JSON.parse(JSON.stringify(createResult));
         } catch (error) {
             result.AddError(this.handleDatabseErrors(error));
         }

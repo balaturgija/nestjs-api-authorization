@@ -1,5 +1,11 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsEmail, IsNotEmpty, IsString, IsUUID } from 'class-validator';
+import {
+    IsEmail,
+    IsNotEmpty,
+    IsString,
+    IsUUID,
+    Matches,
+} from 'class-validator';
 
 export class UserCreateDto {
     @ApiProperty()
@@ -9,6 +15,7 @@ export class UserCreateDto {
 
     @ApiProperty()
     @IsEmail(undefined, { each: true })
+    @Matches(/\S+@\S+\.\S+/, { message: 'Email is not in valid format.' })
     email: string;
 
     @ApiProperty()

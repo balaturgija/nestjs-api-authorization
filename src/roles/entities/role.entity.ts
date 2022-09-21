@@ -1,16 +1,7 @@
-import { Exclude } from 'class-transformer';
 import { Column, DataType, Table } from 'sequelize-typescript';
 import { BaseEntity } from '../../base/base.entity';
 import { TableName } from '../../constants';
-
-interface Role {
-    id: string;
-    name: string;
-    abrv: string;
-    createdAt: Date;
-    updatedAt: Date;
-    deletedAt: Date;
-}
+import { Role } from '../interfaces/role.interface';
 
 @Table({
     tableName: TableName.Roles,
@@ -31,15 +22,6 @@ export class RoleEntity extends BaseEntity<RoleEntity> implements Role {
         unique: true,
     })
     abrv: string;
-
-    @Exclude()
-    createdAt: Date;
-
-    @Exclude()
-    updatedAt: Date;
-
-    @Exclude()
-    deletedAt: Date;
 
     /* Associations */
 }

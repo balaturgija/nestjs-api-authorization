@@ -1,7 +1,13 @@
-import { Exclude } from 'class-transformer';
-import { Column, DataType, Table } from 'sequelize-typescript';
+import {
+    BelongsTo,
+    Column,
+    DataType,
+    ForeignKey,
+    Table,
+} from 'sequelize-typescript';
 import { BaseEntity } from '../../base/base.entity';
 import { TableName } from '../../constants';
+import { RoleEntity } from '../../roles/entities/role.entity';
 import { User } from '../interfaces/user.interface';
 
 @Table({
@@ -13,13 +19,13 @@ import { User } from '../interfaces/user.interface';
 })
 export class UserEntity extends BaseEntity<UserEntity> implements User {
     @Column({
-        type: DataType.STRING(255),
+        type: DataType.STRING,
         unique: true,
     })
     username: string;
 
     @Column({
-        type: DataType.STRING(255),
+        type: DataType.STRING,
     })
     email: string;
 
@@ -28,14 +34,13 @@ export class UserEntity extends BaseEntity<UserEntity> implements User {
     })
     password: string;
 
-    @Exclude()
-    createdAt: Date;
-
-    @Exclude()
-    updatedAt: Date;
-
-    @Exclude()
-    deletedAt: Date;
+    @ForeignKey(() => RoleEntity)
+    @Column({
+        type: 'uuid',
+    })
+    roleId: string;
 
     /* Associations */
+    @BelongsTo(() => RoleEntity, 'role_id')
+    role: RoleEntity;
 }
