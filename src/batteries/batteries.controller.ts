@@ -8,9 +8,11 @@ import {
     Post,
     Put,
     Query,
+    Request,
     Res,
+    UseGuards,
 } from '@nestjs/common';
-import { ApiResponse, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { Response } from 'express';
 import BaseController from '../base/base.controller';
 import { Pager } from '../helpers/Pager';
@@ -22,6 +24,7 @@ import { BatteryFilterDto } from './dto/filter-battery.dto';
 import { BatteryParamsDto } from './dto/params-battery.dto';
 import { BatteryUpdateDto } from './dto/update-battery.dto';
 import { TableName } from '../constants';
+import { JwtAuthGuard } from '../auth/guards/jwt.auth.guard';
 
 @Controller('batteries')
 export class BatteriesController extends BaseController {
@@ -45,7 +48,9 @@ export class BatteriesController extends BaseController {
     }
 
     @Get(':id')
+    @UseGuards(JwtAuthGuard)
     @ApiTags(TableName.Batteries)
+    @ApiBearerAuth('access-token')
     @ApiResponse({
         status: HttpStatus.OK,
         type: BatteryDto,
@@ -54,7 +59,12 @@ export class BatteriesController extends BaseController {
         status: HttpStatus.NOT_FOUND,
         description: 'Not found',
     })
-    async getById(@Res() res: Response, @Param() params: BatteryParamsDto) {
+    async getById(
+        @Res() res: Response,
+        @Param() params: BatteryParamsDto,
+        @Request() req
+    ) {
+        console.log(req.user);
         const result = await this.batteriesService.getByIdAsync(params.id);
         if (result != null) return this.Ok(res, result);
 

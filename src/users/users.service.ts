@@ -8,6 +8,7 @@ import { UserDto } from './dto/user.dto';
 import { UserEntity } from './entities/user.entity';
 import { User } from './interfaces/user.interface';
 
+export type TUser = any;
 @Injectable()
 export class UsersService extends BaseService<UserEntity> {
     constructor(
@@ -15,6 +16,18 @@ export class UsersService extends BaseService<UserEntity> {
         private readonly userRepository: Repository<UserEntity>
     ) {
         super(userRepository);
+    }
+
+    private readonly users: TUser[] = [
+        {
+            userId: 1,
+            username: 'john',
+            password: 'jj',
+        },
+    ];
+
+    async find(username: string): Promise<TUser | undefined> {
+        return this.users.find((user) => user.username === username);
     }
 
     async getByEmailAsync(email: string): Promise<User | null> {
