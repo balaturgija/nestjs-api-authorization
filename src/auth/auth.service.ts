@@ -3,6 +3,10 @@ import { JwtService } from '@nestjs/jwt';
 import { UsersService } from '../users/users.service';
 import bcrypt from 'bcryptjs';
 import { User } from '../users/interfaces/user.interface';
+import { TokenOptions } from './interfaces/token-options.interface';
+import { LoginResponseData } from './interfaces/login-response-data.interface';
+import { toUserDto } from '../helpers/Mapper';
+import { UserEntity } from '../users/entities/user.entity';
 
 @Injectable()
 export class AuthService {
@@ -22,9 +26,17 @@ export class AuthService {
         return await bcrypt.compare(inputPassword, usersPasword);
     }
 
-    async login(token: any) {
+    createToken(tokenOptions: TokenOptions): string {
+        return this.jwtService.sign(tokenOptions);
+    }
+
+    async loginAsync(
+        user: UserEntity,
+        token: string
+    ): Promise<LoginResponseData> {
         return {
-            access_token: this.jwtService.sign(token),
+            userTokenData: toUserDto(user),
+            token: token,
         };
     }
 }

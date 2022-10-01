@@ -1,12 +1,12 @@
 import { Module } from '@nestjs/common';
-import { JwtStrategy } from '../auth/strategies/jwt.strategy';
+import { AuthModule } from '../auth/auth.module';
 import { BatteriesController } from './batteries.controller';
 import { batteriesProviders } from './batteries.providers';
 import { BatteriesService } from './batteries.service';
 
 @Module({
-    imports: [],
+    imports: [AuthModule],
     controllers: [BatteriesController],
-    providers: [BatteriesService, ...batteriesProviders, JwtStrategy],
+    providers: [BatteriesService, ...batteriesProviders],
 })
 export class BatteriesModule {}
