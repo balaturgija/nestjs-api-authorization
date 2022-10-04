@@ -5,11 +5,7 @@ import { UsersModule } from '../users/users.module';
 import { AuthController } from './auth.controller';
 import { AuthService } from './auth.service';
 import { LocalStrategy } from './strategies/local.strategy';
-import * as dotenv from 'dotenv';
 import { JwtStrategy } from './strategies/jwt.strategy';
-
-dotenv.config();
-
 @Module({
     imports: [
         UsersModule,
