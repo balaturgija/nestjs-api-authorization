@@ -1,4 +1,5 @@
-export interface Battery {
+interface Role {
     id: string;
     name: string;
+    abrv: string;
 }

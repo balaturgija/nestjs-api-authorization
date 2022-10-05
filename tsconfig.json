@@ -22,13 +22,6 @@
     "strict": true,
     "strictPropertyInitialization": false,
     "esModuleInterop": true,
-    "paths": {
-      "y/robot": [
-        "libs/robot/src"
-      ],
-      "y/robot/*": [
-        "libs/robot/src/*"
-      ]
-    }
-  }
+  },
+  "include": ["src", "types", "test"],
 }

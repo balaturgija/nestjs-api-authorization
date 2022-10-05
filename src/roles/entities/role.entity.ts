@@ -1,7 +1,6 @@
 import { Column, DataType, Table } from 'sequelize-typescript';
 import { BaseEntity } from '../../base/base.entity';
 import { TableName } from '../../constants';
-import { Role } from '../interfaces/role.interface';
 
 @Table({
     tableName: TableName.Roles,

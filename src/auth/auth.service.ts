@@ -2,9 +2,6 @@ import { Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { UsersService } from '../users/users.service';
 import bcrypt from 'bcryptjs';
-import { User } from '../users/interfaces/user.interface';
-import { TokenOptions } from './interfaces/token-options.interface';
-import { LoginResponseData } from './interfaces/login-response-data.interface';
 import { toUserDto } from '../helpers/Mapper';
 import { UserEntity } from '../users/entities/user.entity';
 

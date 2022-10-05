@@ -1,4 +1,4 @@
-export interface TokenOptions {
+interface User {
     id: string;
     username: string;
     email: string;

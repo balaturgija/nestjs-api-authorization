@@ -8,7 +8,6 @@ import {
 import { BaseEntity } from '../../base/base.entity';
 import { BatteryEntity } from '../../batteries/entities/battery.entity';
 import { TableName } from '../../constants';
-import { Robot } from '../interfaces/robot.interface';
 
 @Table({
     tableName: TableName.Robots,

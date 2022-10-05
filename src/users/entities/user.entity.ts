@@ -8,7 +8,6 @@ import {
 import { BaseEntity } from '../../base/base.entity';
 import { TableName } from '../../constants';
 import { RoleEntity } from '../../roles/entities/role.entity';
-import { User } from '../interfaces/user.interface';
 
 @Table({
     tableName: TableName.Users,

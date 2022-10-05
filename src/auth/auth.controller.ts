@@ -11,11 +11,9 @@ import { Response } from 'express';
 import BaseController from '../base/base.controller';
 import { UserLoginDto } from '../users/dto/login-user.dto';
 import { UserDto } from '../users/dto/user.dto';
-import { User } from '../users/interfaces/user.interface';
 import { AuthService } from './auth.service';
 import { JwtAuthGuard } from './guards/jwt.auth.guard';
 import { LocalAuthGuard } from './guards/local.auth.guard';
-import { TokenOptions } from './interfaces/token-options.interface';
 
 @Controller('auth')
 export class AuthController extends BaseController {
