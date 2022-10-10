@@ -22,7 +22,7 @@ import { BatteryDto } from './dto/battery.dto';
 import { BatteryFilterDto } from './dto/filter-battery.dto';
 import { BatteryParamsDto } from './dto/params-battery.dto';
 import { BatteryUpdateDto } from './dto/update-battery.dto';
-import { TableName } from '../constants';
+import { Role, TableName } from '../constants';
 import { JwtAuthGuard } from '../auth/guards/jwt.auth.guard';
 import { SampleGuard } from '../auth/guards/sample.guard';
 import { BaseController } from '../base/base.controller';
@@ -49,10 +49,12 @@ export class BatteriesController extends BaseController {
     }
 
     @Get(':id')
+    @Roles(Role.Admin)
     @UseGuards(
         JwtAuthGuard,
-        new SampleGuard('first'),
-        new SampleGuard('second')
+        RoleGuard
+        // new SampleGuard('first'),
+        // new SampleGuard('second')
     )
     //@UseGuards(new SampleGuard('third'))
     @ApiTags(TableName.Batteries)

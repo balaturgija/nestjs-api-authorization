@@ -8,6 +8,7 @@ import { Pager } from '../helpers/Pager';
 import { SortDirection, Sorter } from '../helpers/Sorter';
 import { PageResult } from '../helpers/PageResult';
 import { CreateActionResult } from '../helpers/CreateActionResult';
+import { toBatteryDto } from '../helpers/Mapper';
 
 @Injectable()
 export class BatteriesService {
@@ -43,7 +44,8 @@ export class BatteriesService {
     }
 
     async getByIdAsync(id: string): Promise<Battery | null> {
-        return await this.batteryRepository.findByPk(id);
+        const result = await this.batteryRepository.findByPk(id);
+        return toBatteryDto(result);
     }
 
     async createAsync(
