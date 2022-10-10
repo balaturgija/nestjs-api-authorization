@@ -12,7 +12,7 @@ import { UserCreateDto } from './dto/create-user.dto';
 import { UsersService } from './users.service';
 import bcrypt from 'bcryptjs';
 import { Response } from 'express';
-import { ApiProperty, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { ApiResponse, ApiTags } from '@nestjs/swagger';
 import { TableName } from '../constants';
 import { UserDto } from './dto/user.dto';
 import { RolesService } from '../roles/roles.service';

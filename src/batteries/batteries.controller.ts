@@ -23,7 +23,7 @@ import { BatteryDto } from './dto/battery.dto';
 import { BatteryFilterDto } from './dto/filter-battery.dto';
 import { BatteryParamsDto } from './dto/params-battery.dto';
 import { BatteryUpdateDto } from './dto/update-battery.dto';
-import { Role, TableName } from '../constants';
+import { TableName } from '../constants';
 import { JwtAuthGuard } from '../auth/guards/jwt.auth.guard';
 import { SampleGuard } from '../auth/guards/sample.guard';
 
