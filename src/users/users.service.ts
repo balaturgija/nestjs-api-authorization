@@ -16,6 +16,10 @@ export class UsersService extends BaseService<UserEntity> {
         super(userRepository);
     }
 
+    async getByEmailAsync(email: string): Promise<User | null> {
+        return this.getByAsync({ [getPropertyName<UserDto>().email]: email });
+    }
+
     async getByUsernameAsync(username: string): Promise<User | null> {
         const result = await this.getByAsync({
             [getPropertyName<UserDto>().username]: username,
