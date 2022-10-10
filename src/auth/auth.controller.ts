@@ -10,7 +10,6 @@ import {
 import { Response } from 'express';
 import BaseController from '../base/base.controller';
 import { UserLoginDto } from '../users/dto/login-user.dto';
-import { UserDto } from '../users/dto/user.dto';
 import { AuthService } from './auth.service';
 import { JwtAuthGuard } from './guards/jwt.auth.guard';
 import { LocalAuthGuard } from './guards/local.auth.guard';
@@ -37,6 +36,7 @@ export class AuthController extends BaseController {
             password: user.password,
             email: user.email,
             roleId: user.roleId,
+            role: user.role,
         };
 
         const token = this.authService.createToken(tokenOptions);

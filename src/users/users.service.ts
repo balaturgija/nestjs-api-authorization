@@ -3,6 +3,7 @@ import { Repository } from 'sequelize-typescript';
 import { BaseService } from '../base/base.service';
 import { Provider } from '../constants';
 import { getPropertyName } from '../helpers/GetPropertyName';
+import { toUserDto, toUserRoleDto } from '../helpers/Mapper';
 import { RoleEntity } from '../roles/entities/role.entity';
 import { UserDto } from './dto/user.dto';
 import { UserEntity } from './entities/user.entity';
@@ -15,23 +16,25 @@ export class UsersService extends BaseService<UserEntity> {
         super(userRepository);
     }
 
-    async getByEmailAsync(email: string): Promise<User | null> {
-        return this.getByAsync({ [getPropertyName<UserDto>().email]: email });
-    }
-
     async getByUsernameAsync(username: string): Promise<User | null> {
-        return await this.getByAsync({
+        const result = await this.getByAsync({
             [getPropertyName<UserDto>().username]: username,
         });
+        return toUserDto(result);
     }
 
-    async getUserProfileAsync(id: string): Promise<User | null> {
-        return await this.userRepository.findByPk(id, {
+    async getUserProfileAsync(email: string): Promise<UserRole | null> {
+        const result = await this.userRepository.findOne({
+            where: {
+                email: email,
+            },
             include: [
                 {
                     model: RoleEntity,
                 },
             ],
         });
+
+        return toUserRoleDto(result) ?? null;
     }
 }

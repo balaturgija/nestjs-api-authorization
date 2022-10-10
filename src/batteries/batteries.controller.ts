@@ -23,8 +23,9 @@ import { BatteryDto } from './dto/battery.dto';
 import { BatteryFilterDto } from './dto/filter-battery.dto';
 import { BatteryParamsDto } from './dto/params-battery.dto';
 import { BatteryUpdateDto } from './dto/update-battery.dto';
-import { TableName } from '../constants';
+import { Role, TableName } from '../constants';
 import { JwtAuthGuard } from '../auth/guards/jwt.auth.guard';
+import { SampleGuard } from '../auth/guards/sample.guard';
 
 @Controller('batteries')
 export class BatteriesController extends BaseController {
@@ -48,7 +49,12 @@ export class BatteriesController extends BaseController {
     }
 
     @Get(':id')
-    @UseGuards(JwtAuthGuard)
+    @UseGuards(
+        JwtAuthGuard,
+        new SampleGuard('first'),
+        new SampleGuard('second')
+    )
+    //@UseGuards(new SampleGuard('third'))
     @ApiTags(TableName.Batteries)
     @ApiBearerAuth('access-token')
     @ApiResponse({
@@ -64,9 +70,12 @@ export class BatteriesController extends BaseController {
         @Param() params: BatteryParamsDto,
         @Request() req
     ) {
-        console.log(req.user);
+        console.log('Controller method execution start.');
         const result = await this.batteriesService.getByIdAsync(params.id);
-        if (result != null) return this.Ok(res, result);
+        if (result != null) {
+            console.log('Controller method execution end.');
+            return this.Ok(res, result);
+        }
 
         return this.NotFound(res, 'Battery not found.');
     }

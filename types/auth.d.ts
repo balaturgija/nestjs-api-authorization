@@ -1,5 +1,5 @@
 interface LoginResponseData {
-    userTokenData: User;
+    userData: TokenOptions;
     token: string;
 }
 
@@ -9,4 +9,14 @@ interface TokenOptions {
     email: string;
     password: string;
     roleId: string;
+    role: Role;
+}
+
+interface UserRole {
+    id: string;
+    username: string;
+    email: string;
+    password: string;
+    roleId: string;
+    role: Role;
 }
