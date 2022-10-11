@@ -69,7 +69,7 @@ export class BatteriesController extends BaseController {
         @Res() res: Response,
         @Param() params: BatteryParamsDto,
         @Request() req
-    ) {
+    ): Promise<Response> {
         console.log('Controller method execution start.');
         const result = await this.batteriesService.getByIdAsync(params.id);
         if (result != null) {
