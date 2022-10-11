@@ -14,7 +14,6 @@ import {
 } from '@nestjs/common';
 import { ApiBearerAuth, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { Response } from 'express';
-import BaseController from '../base/base.controller';
 import { Pager } from '../helpers/Pager';
 import { Sorter } from '../helpers/Sorter';
 import { BatteriesService } from './batteries.service';
@@ -26,6 +25,7 @@ import { BatteryUpdateDto } from './dto/update-battery.dto';
 import { TableName } from '../constants';
 import { JwtAuthGuard } from '../auth/guards/jwt.auth.guard';
 import { SampleGuard } from '../auth/guards/sample.guard';
+import { BaseController } from '../base/base.controller';
 
 @Controller('batteries')
 export class BatteriesController extends BaseController {

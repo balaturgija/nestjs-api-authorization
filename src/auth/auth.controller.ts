@@ -8,7 +8,7 @@ import {
     Res,
 } from '@nestjs/common';
 import { Response } from 'express';
-import BaseController from '../base/base.controller';
+import { BaseController } from '../base/base.controller';
 import { UserLoginDto } from '../users/dto/login-user.dto';
 import { AuthService } from './auth.service';
 import { JwtAuthGuard } from './guards/jwt.auth.guard';

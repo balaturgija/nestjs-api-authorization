@@ -13,7 +13,7 @@ import {
 import { ApiResponse, ApiTags } from '@nestjs/swagger';
 import { Response } from 'express';
 import { TableName } from '../constants';
-import BaseController from '../base/base.controller';
+import { BaseController } from '../base/base.controller';
 import { Pager } from '../helpers/Pager';
 import { Sorter } from '../helpers/Sorter';
 import { RobotCreateDto } from './dto/create-robot.dto';

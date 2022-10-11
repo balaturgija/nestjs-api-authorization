@@ -1,7 +1,7 @@
 import { HttpStatus } from '@nestjs/common';
 import { Response } from 'express';
 
-export default class BaseController {
+export class BaseController {
     Ok = (res: Response, data?: any): Response => {
         return res.status(HttpStatus.OK).json(data);
     };
