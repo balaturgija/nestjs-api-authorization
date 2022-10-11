@@ -8,5 +8,6 @@ import { BatteriesService } from './batteries.service';
     imports: [AuthModule],
     controllers: [BatteriesController],
     providers: [BatteriesService, ...batteriesProviders],
+    exports: [BatteriesService],
 })
 export class BatteriesModule {}

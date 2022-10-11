@@ -28,10 +28,7 @@ export class AuthService {
         return this.jwtService.sign(tokenOptions);
     }
 
-    async loginAsync(
-        user: UserRole,
-        token: string
-    ): Promise<LoginResponseData> {
+    async loginAsync(user: User, token: string): Promise<LoginResponseData> {
         return {
             userData: user,
             token: token,

@@ -7,5 +7,6 @@ import { robotsProviders } from './robots.providers';
     imports: [],
     controllers: [RobotsController],
     providers: [RobotsService, ...robotsProviders],
+    exports: [RobotsService],
 })
 export class RobotsModule {}

@@ -9,14 +9,5 @@ interface TokenOptions {
     email: string;
     password: string;
     roleId: string;
-    role: Role;
-}
-
-interface UserRole {
-    id: string;
-    username: string;
-    email: string;
-    password: string;
-    roleId: string;
-    role: Role;
+    role?: Role;
 }

@@ -36,7 +36,7 @@ export const toRoleDto = (data: RoleEntity): RoleDto => {
     return roleDto;
 };
 
-export const toUserRoleDto = (userData: UserEntity): UserRole => {
+export const toUserRoleDto = (userData: UserEntity): User => {
     const userRole = {
         id: userData.id,
         username: userData.username,

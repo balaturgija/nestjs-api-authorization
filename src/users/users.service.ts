@@ -27,7 +27,7 @@ export class UsersService extends BaseService<UserEntity> {
         return toUserDto(result);
     }
 
-    async getUserProfileAsync(email: string): Promise<UserRole | null> {
+    async getUserProfileAsync(email: string): Promise<User | null> {
         const result = await this.userRepository.findOne({
             where: {
                 email: email,
