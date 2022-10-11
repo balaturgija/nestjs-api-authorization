@@ -1,5 +1,7 @@
 import { BatteryDto } from '../batteries/dto/battery.dto';
 import { BatteryEntity } from '../batteries/entities/battery.entity';
+import { RobotDto } from '../robots/dto/robot.dto';
+import { RobotEntity } from '../robots/entities/robot.entity';
 import { RoleDto } from '../roles/dto/role.dto';
 import { RoleEntity } from '../roles/entities/role.entity';
 import { UserDto } from '../users/dto/user.dto';
@@ -12,6 +14,16 @@ export const toBatteryDto = (data: BatteryEntity): BatteryDto => {
         name,
     };
     return batteryDto;
+};
+
+export const toRobtDto = (data: RobotEntity): RobotDto => {
+    const { id, name, batteryId } = data;
+    const robotDto: RobotDto = {
+        id,
+        name,
+        batteryId,
+    };
+    return robotDto;
 };
 
 export const toUserDto = (data: UserEntity): UserDto => {
