@@ -26,6 +26,8 @@ import { Role, TableName } from '../constants';
 import { JwtAuthGuard } from '../auth/guards/jwt.auth.guard';
 import { SampleGuard } from '../auth/guards/sample.guard';
 import { BaseController } from '../base/base.controller';
+import { RoleGuard } from '../roles/guards/role.guard';
+import { Roles } from '../roles/decorators/role.decorator';
 
 @Controller('batteries')
 export class BatteriesController extends BaseController {
