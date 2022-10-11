@@ -5,6 +5,8 @@ export enum Provider {
     RolesRepository = 'ROLES_REPOSITORY',
     UserRepository = 'USER_REPOSITORY',
     UserBatteryRepository = 'USER_BATTERY_REPOSITORY',
+    Jwt = 'jwt',
+    Local = 'local',
 }
 
 export enum TableName {
