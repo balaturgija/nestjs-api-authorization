@@ -51,12 +51,12 @@ export class BatteriesController extends BaseController {
     }
 
     @Get(':id')
-    @Roles(Role.Admin)
+    @Roles(Role.Admin, Role.Engineer)
     @UseGuards(
         JwtAuthGuard,
-        RoleGuard
-        // new SampleGuard('first'),
-        // new SampleGuard('second')
+        RoleGuard,
+        new SampleGuard('first'),
+        new SampleGuard('second')
     )
     //@UseGuards(new SampleGuard('third'))
     @ApiTags(TableName.Batteries)
@@ -86,6 +86,9 @@ export class BatteriesController extends BaseController {
 
     @Post()
     @ApiTags(TableName.Batteries)
+    @Roles(Role.Engineer)
+    @UseGuards(JwtAuthGuard, RoleGuard)
+    @ApiBearerAuth('access-token')
     @ApiResponse({
         status: HttpStatus.CREATED,
         type: BatteryDto,

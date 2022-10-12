@@ -38,7 +38,7 @@ export function validateBody(bodyClass: any) {
         res: Response,
         next: NextFunction
     ): Promise<Response | void> => {
-        console.log('Execute validate body middleware');
+        console.log('\x1b[34m Execute validate body middleware \x1b[0m');
         const mapped: any = plainToClass(bodyClass, req.body);
         const errors = await validate(mapped);
         if (errors && errors.length > 0) {
