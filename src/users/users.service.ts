@@ -24,7 +24,7 @@ export class UsersService extends BaseService<UserEntity> {
         const result = await this.getByAsync({
             [getPropertyName<UserDto>().username]: username,
         });
-        return toUserDto(result);
+        return result ? toUserDto(result) : null;
     }
 
     async getUserProfileAsync(email: string): Promise<User | null> {
@@ -39,6 +39,6 @@ export class UsersService extends BaseService<UserEntity> {
             ],
         });
 
-        return toUserRoleDto(result) ?? null;
+        return result ? toUserRoleDto(result) : null;
     }
 }
