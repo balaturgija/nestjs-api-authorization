@@ -35,8 +35,8 @@ module.exports = {
                 },
                 {
                     id: Sequelize.literal('uuid_generate_v4()'),
-                    name: 'Customer',
-                    abrv: 'Customer',
+                    name: 'Collector',
+                    abrv: 'Collector',
                     created_at: new Date(),
                     updated_at: new Date(),
                     deleted_at: null,
