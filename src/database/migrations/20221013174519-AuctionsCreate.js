@@ -1,5 +1,6 @@
 'use strict';
 
+/** @type {import('sequelize-cli').Migration} */
 module.exports = {
     async up(queryInterface, Sequelize) {
         /**
@@ -9,12 +10,11 @@ module.exports = {
          * await queryInterface.createTable('users', { id: Sequelize.INTEGER });
          */
         const transaction = await queryInterface.sequelize.transaction();
-
         try {
             let tableCreatePromises = [];
             let constraintsCreatePromises = [];
             const tableCreate = await queryInterface.createTable(
-                'robots',
+                'auctions',
                 {
                     id: {
                         field: 'id',
@@ -23,48 +23,15 @@ module.exports = {
                         allowNull: false,
                         primaryKey: true,
                     },
-                    name: {
-                        field: 'name',
-                        type: Sequelize.STRING(255),
-                        allowNull: false,
-                    },
-                    startPrice: {
-                        field: 'start_price',
-                        type: Sequelize.DECIMAL(9, 2),
-                        allowNull: false,
-                    },
-                    currentPrice: {
-                        field: 'current_price',
-                        type: Sequelize.DECIMAL(9, 2),
-                        allowNull: false,
-                    },
-                    bidId: {
-                        field: 'bid_id',
-                        type: Sequelize.UUID,
-                        defaultValue: Sequelize.UUIDV4,
-                        allowNull: false,
-                    },
-                    status: {
-                        field: 'status',
-                        type: Sequelize.ENUM({
-                            values: ['Auction', 'Collected', 'Created'],
-                        }),
-                        defaultValue: 'Created',
-                    },
-                    creatorsSignature: {
-                        field: 'creators_signature',
-                        type: Sequelize.STRING(255),
-                        allowNull: false,
-                    },
-                    batteryId: {
-                        field: 'battery_id',
+                    robotId: {
+                        field: 'robot_id',
                         type: Sequelize.UUID,
                         allowNull: false,
                         onDelete: 'CASCADE',
                         references: {
                             key: 'id',
                             model: {
-                                tableName: 'batteries',
+                                tableName: 'robots',
                             },
                         },
                     },
@@ -91,29 +58,21 @@ module.exports = {
             );
             tableCreatePromises.push(tableCreate);
 
-            const robotBatteriesConstraint = await queryInterface.addConstraint(
-                'robots',
+            const urRobotsConstraints = await queryInterface.addConstraint(
+                'auctions',
                 {
                     type: 'foreign key',
-                    fields: ['battery_id'],
-                    name: 'FK_robots_batteries_battery_id',
+                    fields: ['robot_id'],
+                    name: 'FK_auctions_robot_robot_id',
                     onDelete: 'CASCADE',
                     references: {
-                        table: 'batteries',
+                        table: 'robots',
                         field: 'id',
                     },
                 },
                 transaction
             );
-
-            constraintsCreatePromises.push(robotBatteriesConstraint);
-
-            if (tableCreatePromises.length > 0)
-                await Promise.all(tableCreatePromises);
-
-            if (constraintsCreatePromises.length > 0)
-                await Promise.all(constraintsCreatePromises);
-
+            constraintsCreatePromises.push(urRobotsConstraints);
             await transaction.commit();
         } catch (error) {
             transaction.rollback();
@@ -132,7 +91,7 @@ module.exports = {
         try {
             let tableRemovePromises = [];
             const tableRemove = await queryInterface.dropTable(
-                'robots',
+                'auctions',
                 transaction
             );
             tableRemovePromises.push(tableRemove);

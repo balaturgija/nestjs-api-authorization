@@ -23,7 +23,7 @@ module.exports = {
                     },
                     amount: {
                         field: 'amount',
-                        type: Sequelize.FLOAT(6, 2),
+                        type: Sequelize.DECIMAL(10, 2),
                         allowNull: false,
                     },
                     createdAt: {

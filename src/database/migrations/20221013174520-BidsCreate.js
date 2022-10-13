@@ -1,5 +1,6 @@
 'use strict';
 
+/** @type {import('sequelize-cli').Migration} */
 module.exports = {
     async up(queryInterface, Sequelize) {
         /**
@@ -14,7 +15,7 @@ module.exports = {
             let tableCreatePromises = [];
             let constraintsCreatePromises = [];
             const tableCreate = await queryInterface.createTable(
-                'robots',
+                'bids',
                 {
                     id: {
                         field: 'id',
@@ -23,48 +24,32 @@ module.exports = {
                         allowNull: false,
                         primaryKey: true,
                     },
-                    name: {
-                        field: 'name',
-                        type: Sequelize.STRING(255),
-                        allowNull: false,
-                    },
-                    startPrice: {
-                        field: 'start_price',
+                    offerPrice: {
+                        field: 'offer_price',
                         type: Sequelize.DECIMAL(9, 2),
                         allowNull: false,
                     },
-                    currentPrice: {
-                        field: 'current_price',
-                        type: Sequelize.DECIMAL(9, 2),
-                        allowNull: false,
-                    },
-                    bidId: {
-                        field: 'bid_id',
-                        type: Sequelize.UUID,
-                        defaultValue: Sequelize.UUIDV4,
-                        allowNull: false,
-                    },
-                    status: {
-                        field: 'status',
-                        type: Sequelize.ENUM({
-                            values: ['Auction', 'Collected', 'Created'],
-                        }),
-                        defaultValue: 'Created',
-                    },
-                    creatorsSignature: {
-                        field: 'creators_signature',
-                        type: Sequelize.STRING(255),
-                        allowNull: false,
-                    },
-                    batteryId: {
-                        field: 'battery_id',
+                    userId: {
+                        field: 'user_id',
                         type: Sequelize.UUID,
                         allowNull: false,
                         onDelete: 'CASCADE',
                         references: {
                             key: 'id',
                             model: {
-                                tableName: 'batteries',
+                                tableName: 'users',
+                            },
+                        },
+                    },
+                    auctionId: {
+                        field: 'auction_id',
+                        type: Sequelize.UUID,
+                        allowNull: false,
+                        onDelete: 'CASCADE',
+                        references: {
+                            key: 'id',
+                            model: {
+                                tableName: 'auctions',
                             },
                         },
                     },
@@ -91,22 +76,37 @@ module.exports = {
             );
             tableCreatePromises.push(tableCreate);
 
-            const robotBatteriesConstraint = await queryInterface.addConstraint(
-                'robots',
+            const userBidsConstraints = await queryInterface.addConstraint(
+                'bids',
                 {
                     type: 'foreign key',
-                    fields: ['battery_id'],
-                    name: 'FK_robots_batteries_battery_id',
+                    fields: ['user_id'],
+                    name: 'FK_bid_user_user_id',
                     onDelete: 'CASCADE',
                     references: {
-                        table: 'batteries',
+                        table: 'users',
                         field: 'id',
                     },
                 },
                 transaction
             );
+            constraintsCreatePromises.push(userBidsConstraints);
 
-            constraintsCreatePromises.push(robotBatteriesConstraint);
+            const auctionBidsConstraints = await queryInterface.addConstraint(
+                'bids',
+                {
+                    type: 'foreign key',
+                    fields: ['auction_id'],
+                    name: 'FK_bid_auction_auction_id',
+                    onDelete: 'CASCADE',
+                    references: {
+                        table: 'auctions',
+                        field: 'id',
+                    },
+                },
+                transaction
+            );
+            constraintsCreatePromises.push(auctionBidsConstraints);
 
             if (tableCreatePromises.length > 0)
                 await Promise.all(tableCreatePromises);
@@ -132,7 +132,7 @@ module.exports = {
         try {
             let tableRemovePromises = [];
             const tableRemove = await queryInterface.dropTable(
-                'robots',
+                'bids',
                 transaction
             );
             tableRemovePromises.push(tableRemove);
