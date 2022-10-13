@@ -19,12 +19,17 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
     }
 
     async validate(payload: TokenOptions) {
-        return {
-            id: payload.id,
-            username: payload.username,
-            email: payload.email,
-            roleId: payload.roleId,
-            role: payload.role,
-        };
+        console.log('\x1b[43m Executing Token Validation\x1b[0m');
+        try {
+            return {
+                id: payload.id,
+                username: payload.username,
+                email: payload.email,
+                roleId: payload.roleId,
+                role: payload.role,
+            };
+        } catch (error) {
+            console.log(error);
+        }
     }
 }
