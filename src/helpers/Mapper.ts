@@ -17,23 +17,36 @@ export const toBatteryDto = (data: BatteryEntity): BatteryDto => {
 };
 
 export const toRobtDto = (data: RobotEntity): RobotDto => {
-    const { id, name, batteryId } = data;
+    const {
+        id,
+        name,
+        startPrice,
+        currentPrice,
+        status,
+        createorsSignature,
+        batteryId,
+    } = data;
     const robotDto: RobotDto = {
         id,
         name,
+        startPrice,
+        currentPrice,
+        status,
+        createorsSignature,
         batteryId,
     };
     return robotDto;
 };
 
 export const toUserDto = (data: UserEntity): UserDto => {
-    const { id, username, email, password, roleId } = data;
+    const { id, username, email, password, walletId, roleId } = data;
     const userDto: UserDto = {
         id,
         username,
         email,
         password,
         roleId,
+        walletId,
     };
     return userDto;
 };
@@ -55,6 +68,7 @@ export const toUserRoleDto = (userData: UserEntity): User => {
         email: userData.email,
         password: userData.password,
         roleId: userData.roleId,
+        walletId: userData.walletId,
         role: {
             id: userData.role.id,
             name: userData.role.name,

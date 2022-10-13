@@ -14,5 +14,14 @@ export class UserDto implements User {
     password: string;
 
     @ApiProperty()
+    walletId: string;
+
+    @ApiProperty()
     roleId: string;
+
+    @ApiProperty()
+    role?: Role;
+
+    @ApiProperty()
+    wallet?: Wallet;
 }
