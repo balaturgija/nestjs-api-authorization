@@ -4,5 +4,7 @@ interface User {
     email: string;
     password: string;
     roleId: string;
+    walletId: string;
     role?: Role;
+    wallet?: Wallet;
 }

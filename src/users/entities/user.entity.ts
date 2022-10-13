@@ -8,6 +8,7 @@ import {
 import { BaseEntity } from '../../base/base.entity';
 import { TableName } from '../../constants';
 import { RoleEntity } from '../../roles/entities/role.entity';
+import { WalletEntity } from '../../wallets/entities/wallet.entity';
 
 @Table({
     tableName: TableName.Users,
@@ -39,7 +40,16 @@ export class UserEntity extends BaseEntity<UserEntity> implements User {
     })
     roleId: string;
 
+    @ForeignKey(() => WalletEntity)
+    @Column({
+        type: 'uuid',
+    })
+    walletId: string;
+
     /* Associations */
     @BelongsTo(() => RoleEntity, 'role_id')
-    role: RoleEntity;
+    role?: RoleEntity;
+
+    @BelongsTo(() => WalletEntity, 'wallet_id')
+    wallet?: WalletEntity;
 }

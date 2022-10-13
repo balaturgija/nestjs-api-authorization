@@ -38,12 +38,6 @@ module.exports = {
                         type: Sequelize.DECIMAL(9, 2),
                         allowNull: false,
                     },
-                    bidId: {
-                        field: 'bid_id',
-                        type: Sequelize.UUID,
-                        defaultValue: Sequelize.UUIDV4,
-                        allowNull: false,
-                    },
                     status: {
                         field: 'status',
                         type: Sequelize.ENUM({

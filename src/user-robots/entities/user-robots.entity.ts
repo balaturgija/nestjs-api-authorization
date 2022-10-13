@@ -1,5 +1,4 @@
 import { BelongsTo, Column, ForeignKey, Table } from 'sequelize-typescript';
-import { UserRobot } from '../../../types/user-robot';
 import { BaseEntity } from '../../base/base.entity';
 import { TableName } from '../../constants';
 import { RobotEntity } from '../../robots/entities/robot.entity';

@@ -52,6 +52,7 @@ export class UsersController extends BaseController {
         dto.username = body.username;
         dto.email = body.email;
         dto.roleId = body.roleId;
+        //create wallet
 
         const existingEmail = await this.usersService.getByEmailAsync(
             body.email

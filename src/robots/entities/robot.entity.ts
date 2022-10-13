@@ -7,7 +7,7 @@ import {
 } from 'sequelize-typescript';
 import { BaseEntity } from '../../base/base.entity';
 import { BatteryEntity } from '../../batteries/entities/battery.entity';
-import { TableName } from '../../constants';
+import { RobotStatus, TableName } from '../../constants';
 
 @Table({
     tableName: TableName.Robots,
@@ -22,6 +22,31 @@ export class RobotEntity extends BaseEntity<RobotEntity> implements Robot {
         unique: true,
     })
     name: string;
+
+    @Column({
+        type: DataType.DECIMAL(9, 2),
+    })
+    startPrice: number;
+
+    @Column({
+        type: DataType.DECIMAL(9, 2),
+    })
+    currentPrice: number;
+
+    @Column({
+        type: DataType.ENUM(
+            RobotStatus.Auction,
+            RobotStatus.Collected,
+            RobotStatus.Created
+        ),
+        defaultValue: RobotStatus.Created,
+    })
+    status: RobotStatus;
+
+    @Column({
+        type: DataType.STRING,
+    })
+    createorsSignature: string;
 
     @ForeignKey(() => BatteryEntity)
     @Column({

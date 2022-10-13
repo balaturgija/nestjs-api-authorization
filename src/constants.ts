@@ -14,18 +14,35 @@ export enum TableName {
     Robots = 'robots',
     Roles = 'roles',
     Users = 'users',
-    UserBatteries = 'user_batteries',
+    UserRobots = 'user_robots',
+    Wallets = 'wallets',
+    Bids = 'bids',
+    Auctions = 'auctions',
 }
 
 export enum Role {
     Admin = 'Admin',
     Engineer = 'Engineer',
-    Customer = 'Customer',
+    Auctioneer = 'Collector',
+}
+
+export enum RobotStatus {
+    Created = 'Created',
+    Collected = 'Collected',
+    Auction = 'Auction',
 }
 
 export const SWAGGER_CONFIG = {
     title: 'title',
     description: 'descrioption',
     version: '0.0.00',
-    tags: ['robots', 'batteries', 'auth'],
+    tags: [
+        'robots',
+        'batteries',
+        'auth',
+        'wallets',
+        'user_robots',
+        'bids',
+        'auctions',
+    ],
 };
