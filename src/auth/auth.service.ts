@@ -17,13 +17,6 @@ export class AuthService {
         return await this.usersService.getUserProfileAsync(email);
     }
 
-    async validatePasswordAsync(
-        inputPassword: string,
-        usersPasword: string
-    ): Promise<boolean> {
-        return await bcrypt.compare(inputPassword, usersPasword);
-    }
-
     async createToken(tokenOptions: TokenOptions): Promise<string> {
         return await this.jwtService.signAsync(tokenOptions);
     }
@@ -33,5 +26,12 @@ export class AuthService {
             userData: user,
             token: token,
         };
+    }
+
+    async validatePasswordAsync(
+        inputPassword: string,
+        usersPasword: string
+    ): Promise<boolean> {
+        return await bcrypt.compare(inputPassword, usersPasword);
     }
 }

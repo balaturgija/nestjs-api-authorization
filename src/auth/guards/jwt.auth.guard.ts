@@ -12,10 +12,14 @@ export class JwtAuthGuard extends AuthGuard(Provider.Jwt) {
     canActivate(
         context: ExecutionContext
     ): boolean | Promise<boolean> | Observable<boolean> {
+        // const request = context.switchToHttp().getRequest();
+        // const token: string = request.headers.authorization;
+        // if (!token) throw new Error('Access denied, Authorization missing');
+        // if (!token.startsWith('Bearer')) throw new Error('Wrong token format.');
         return super.canActivate(context);
     }
 
-    handleRequest<TUser = any>(
+    handleRequest<TUser = User>(
         err: any,
         user: any,
         info: any,

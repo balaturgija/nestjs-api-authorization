@@ -1,6 +1,6 @@
 import { ExtractJwt, Strategy } from 'passport-jwt';
 import { PassportStrategy } from '@nestjs/passport';
-import { Injectable } from '@nestjs/common';
+import { Injectable, UnauthorizedException } from '@nestjs/common';
 import * as dotenv from 'dotenv';
 
 dotenv.config();
@@ -29,7 +29,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
                 role: payload.role,
             };
         } catch (error) {
-            console.log(error);
+            throw new UnauthorizedException(error);
         }
     }
 }
