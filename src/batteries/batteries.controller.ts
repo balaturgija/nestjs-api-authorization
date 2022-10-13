@@ -54,11 +54,11 @@ export class BatteriesController extends BaseController {
     @Roles(Role.Admin, Role.Engineer)
     @UseGuards(
         JwtAuthGuard,
-        RoleGuard,
-        new SampleGuard('first'),
-        new SampleGuard('second')
+        RoleGuard
+        // new SampleGuard('first'),
+        // new SampleGuard('second')
     )
-    //@UseGuards(new SampleGuard('third'))
+    // @UseGuards(new SampleGuard('third'))
     @ApiTags(TableName.Batteries)
     @ApiBearerAuth('access-token')
     @ApiResponse({
@@ -74,10 +74,10 @@ export class BatteriesController extends BaseController {
         @Param() params: BatteryParamsDto,
         @Request() req
     ): Promise<Response> {
-        console.log('Controller method execution start.');
+        console.log('\x1b[35m Controller method execution start. \x1b[0m');
         const result = await this.batteriesService.getByIdAsync(params.id);
         if (result != null) {
-            console.log('Controller method execution end.');
+            console.log('\x1b[35m Controller method execution end. \x1b[0m');
             return this.Ok(res, result);
         }
 

@@ -39,7 +39,10 @@ export class BatteriesService {
             offset: (pager.pageNumber() - 1) * pager.pageSize(),
         };
         const data = await this.batteryRepository.findAndCountAll(options);
-        const result = new PageResult<Battery>(data.count, data.rows);
+        const result = new PageResult<Battery>(
+            data.count,
+            data.rows.map((x) => toBatteryDto(x))
+        );
         return result;
     }
 

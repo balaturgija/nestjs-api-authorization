@@ -7,6 +7,7 @@ import {
     Body,
     Res,
 } from '@nestjs/common';
+import { ApiTags } from '@nestjs/swagger';
 import { Response } from 'express';
 import { BaseController } from '../base/base.controller';
 import { UserLoginDto } from '../users/dto/login-user.dto';
@@ -23,6 +24,7 @@ export class AuthController extends BaseController {
         super();
     }
     @UseGuards(LocalAuthGuard)
+    @ApiTags('auth')
     @Post('login')
     async login(
         @Body() userLoginDto: UserLoginDto,
@@ -39,17 +41,20 @@ export class AuthController extends BaseController {
             role: user.role,
         };
 
-        const token = this.authService.createToken(tokenOptions);
-        if (!token) return this.Conflict(res, 'Token creation failed');
+        const token = await this.authService.createToken(tokenOptions);
+        if (!token) return this.Conflict(res, 'Token creation failed.');
         const loginResponseData = await this.authService.loginAsync(
             user,
             token
         );
 
+        if (!loginResponseData) return this.Unauthorized(res);
+
         return this.Created(res, loginResponseData);
     }
 
     @UseGuards(JwtAuthGuard)
+    @ApiTags('auth')
     @Get('profile')
     getProfile(@Request() req) {
         return req.user;

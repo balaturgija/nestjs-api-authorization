@@ -26,7 +26,7 @@ export class UsersController extends BaseController {
         super();
     }
 
-    @Post()
+    @Post('register')
     @ApiTags(TableName.Users)
     @ApiResponse({
         status: HttpStatus.CREATED,

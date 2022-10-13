@@ -24,8 +24,8 @@ export class AuthService {
         return await bcrypt.compare(inputPassword, usersPasword);
     }
 
-    createToken(tokenOptions: TokenOptions): string {
-        return this.jwtService.sign(tokenOptions);
+    async createToken(tokenOptions: TokenOptions): Promise<string> {
+        return await this.jwtService.signAsync(tokenOptions);
     }
 
     async loginAsync(user: User, token: string): Promise<LoginResponseData> {
