@@ -7,7 +7,7 @@ import {
     Body,
     Res,
 } from '@nestjs/common';
-import { ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { Response } from 'express';
 import { BaseController } from '../base/base.controller';
 import { UserLoginDto } from '../users/dto/login-user.dto';
@@ -54,6 +54,7 @@ export class AuthController extends BaseController {
     }
 
     @UseGuards(JwtAuthGuard)
+    @ApiBearerAuth('access-token')
     @ApiTags('auth')
     @Get('profile')
     getProfile(@Request() req) {

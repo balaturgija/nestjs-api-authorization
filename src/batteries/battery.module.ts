@@ -1,5 +1,5 @@
 import { MiddlewareConsumer, Module, RequestMethod } from '@nestjs/common';
-import { AuthModule } from '../auth/auth.module';
+import { JwtAuthGuard } from '../auth/guards/jwt.auth.guard';
 import { TableName } from '../constants';
 import { validateBody } from '../helpers/middlewares/validateBody.middleware';
 import { BatteriesController } from './batteries.controller';
@@ -8,9 +8,9 @@ import { BatteriesService } from './batteries.service';
 import { BatteryCreateDto } from './dto/create-battery.dto';
 
 @Module({
-    imports: [AuthModule],
+    imports: [],
     controllers: [BatteriesController],
-    providers: [BatteriesService, ...batteriesProviders],
+    providers: [JwtAuthGuard, BatteriesService, ...batteriesProviders],
     exports: [BatteriesService],
 })
 export class BatteriesModule {
