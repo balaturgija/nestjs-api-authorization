@@ -12,6 +12,7 @@ import { Response } from 'express';
 import { BaseController } from '../base/base.controller';
 import { UserLoginDto } from '../users/dto/login-user.dto';
 import { AuthService } from './auth.service';
+import { Public } from './decorators/publicRoute.decorator';
 import { JwtAuthGuard } from './guards/jwt.auth.guard';
 import { LocalAuthGuard } from './guards/local.auth.guard';
 
@@ -23,6 +24,7 @@ export class AuthController extends BaseController {
     constructor(private authService: AuthService) {
         super();
     }
+    @Public()
     @UseGuards(LocalAuthGuard)
     @ApiTags('auth')
     @Post('login')
