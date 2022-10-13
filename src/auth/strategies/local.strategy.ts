@@ -16,6 +16,7 @@ export class LocalStrategy extends PassportStrategy(Strategy) {
     }
 
     async validate(email: string, password: string): Promise<any> {
+        console.log('\x1b[43m Executing Credentials Validation\x1b[0m');
         const userExists = await this.authService.getByEmailAsync(email);
         if (!userExists) {
             throw new HttpException(
