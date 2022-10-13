@@ -7,7 +7,6 @@ import { RobotsModule } from './robots/robots.module';
 import { RolesModule } from './roles/roles.module';
 import { UsersModule } from './users/users.module';
 import { UserRobotsModule } from './user-robots/user-robots.module';
-import { WalletModule } from './wallet/wallet.module';
 import { WalletsModule } from './wallets/wallets.module';
 import { BidsModule } from './bids/bids.module';
 import { AuctionsModule } from './auctions/auctions.module';
@@ -27,7 +26,6 @@ import { AuctionsModule } from './auctions/auctions.module';
         UsersModule,
         AuthModule,
         UserRobotsModule,
-        WalletModule,
         WalletsModule,
         BidsModule,
         AuctionsModule,
