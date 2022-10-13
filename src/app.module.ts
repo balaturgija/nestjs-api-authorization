@@ -1,11 +1,14 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { AuthModule } from './auth/auth.module';
-import { BatteriesModule } from './batteries/battery.module';
+import { BatteriesModule } from './batteries/batteries.module';
 import { DatabaseModule } from './database/database.module';
-import { RobotsModule } from './robots/robot.module';
+import { RobotsModule } from './robots/robots.module';
 import { RolesModule } from './roles/roles.module';
 import { UsersModule } from './users/users.module';
+import { UserRobotsModule } from './user-robots/user-robots.module';
+import { WalletModule } from './wallet/wallet.module';
+import { WalletsModule } from './wallets/wallets.module';
 
 @Module({
     imports: [
@@ -21,6 +24,9 @@ import { UsersModule } from './users/users.module';
         RolesModule,
         UsersModule,
         AuthModule,
+        UserRobotsModule,
+        WalletModule,
+        WalletsModule,
     ],
     controllers: [],
     providers: [],

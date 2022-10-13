@@ -24,7 +24,6 @@ module.exports = {
                     name: {
                         field: 'name',
                         type: Sequelize.STRING(255),
-                        unique: true,
                     },
                     createdAt: {
                         field: 'created_at',

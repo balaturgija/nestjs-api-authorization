@@ -11,9 +11,8 @@ module.exports = {
         const transaction = await queryInterface.sequelize.transaction();
         try {
             let tableCreatePromises = [];
-            let constraintsCreatePromises = [];
             const tableCreate = await queryInterface.createTable(
-                'users',
+                'wallets',
                 {
                     id: {
                         field: 'id',
@@ -22,31 +21,10 @@ module.exports = {
                         allowNull: false,
                         primaryKey: true,
                     },
-                    username: {
-                        field: 'username',
-                        type: Sequelize.STRING(255),
+                    amount: {
+                        field: 'amount',
+                        type: Sequelize.FLOAT(6, 2),
                         allowNull: false,
-                    },
-                    email: {
-                        field: 'email',
-                        type: Sequelize.STRING(255),
-                        allowNull: false,
-                    },
-                    password: {
-                        field: 'password',
-                        type: Sequelize.TEXT,
-                        allowNull: false,
-                    },
-                    roleId: {
-                        field: 'role_id',
-                        type: Sequelize.UUID,
-                        allowNull: false,
-                        references: {
-                            key: 'id',
-                            model: {
-                                tableName: 'roles',
-                            },
-                        },
                     },
                     createdAt: {
                         field: 'created_at',
@@ -69,28 +47,10 @@ module.exports = {
                 },
                 transaction
             );
+
             tableCreatePromises.push(tableCreate);
-
-            const userRolesConstraint = await queryInterface.addConstraint(
-                'users',
-                {
-                    type: 'foreign key',
-                    fields: ['role_id'],
-                    name: 'FK_users_roles_role_id',
-                    references: {
-                        table: 'roles',
-                        field: 'id',
-                    },
-                }
-            );
-
-            constraintsCreatePromises.push(userRolesConstraint);
-
             if (tableCreatePromises.length > 0)
                 await Promise.all(tableCreatePromises);
-
-            if (constraintsCreatePromises.length > 0)
-                await Promise.all(constraintsCreatePromises);
 
             await transaction.commit();
         } catch (error) {
@@ -110,7 +70,7 @@ module.exports = {
         try {
             let tableRemovePromises = [];
             const tableRemove = await queryInterface.dropTable(
-                'users',
+                'wallets',
                 transaction
             );
             tableRemovePromises.push(tableRemove);
