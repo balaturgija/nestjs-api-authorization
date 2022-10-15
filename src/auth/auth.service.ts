@@ -21,9 +21,12 @@ export class AuthService {
         return await this.jwtService.signAsync(tokenOptions);
     }
 
-    async loginAsync(user: User, token: string): Promise<LoginResponseData> {
+    async loginAsync(
+        tokenOptions: TokenOptions,
+        token: string
+    ): Promise<LoginResponseData> {
         return {
-            userData: user,
+            userData: tokenOptions,
             token: token,
         };
     }
