@@ -11,10 +11,9 @@ import { RobotCreateDto } from './dto/create-robot.dto';
 import { RobotFilterDto } from './dto/filter-robot.dto';
 import { RobotUpdateDto } from './dto/update-robot.dto';
 import { RobotEntity } from './entities/robot.entity';
-import { RobotService } from './interface/robot-service.interface';
 
 @Injectable()
-export class RobotsService implements RobotService {
+export class RobotsService {
     constructor(
         @Inject(Provider.RobotRepository)
         private readonly robotRepository: typeof RobotEntity
