@@ -41,7 +41,7 @@ export class RobotsService {
 
     async getByIdAsync(id: string): Promise<Robot | null> {
         const result = await this.robotRepository.findByPk(id);
-        return toRobtDto(result);
+        return result !== null ? toRobtDto(result) : null;
     }
 
     async createAsync(createBatteryDto: RobotCreateDto): Promise<Robot> {

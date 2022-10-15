@@ -67,10 +67,6 @@ export class RobotsController {
     @ApiResponse({ status: 200, type: RobotDto })
     @ApiResponse({ status: 404, description: 'Robot not found.' })
     @ApiResponse({
-        status: HttpStatus.OK,
-        type: RobotDto,
-    })
-    @ApiResponse({
         status: HttpStatus.NOT_FOUND,
         description: 'Robot not found.',
     })
