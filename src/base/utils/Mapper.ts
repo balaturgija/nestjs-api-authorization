@@ -1,11 +1,11 @@
-import { BatteryDto } from '../batteries/dto/battery.dto';
-import { BatteryEntity } from '../batteries/entities/battery.entity';
-import { RobotDto } from '../robots/dto/robot.dto';
-import { RobotEntity } from '../robots/entities/robot.entity';
-import { RoleDto } from '../roles/dto/role.dto';
-import { RoleEntity } from '../roles/entities/role.entity';
-import { UserDto } from '../users/dto/user.dto';
-import { UserEntity } from '../users/entities/user.entity';
+import { BatteryDto } from '../../batteries/dto/battery.dto';
+import { BatteryEntity } from '../../batteries/entities/battery.entity';
+import { RobotDto } from '../../robots/dto/robot.dto';
+import { RobotEntity } from '../../robots/entities/robot.entity';
+import { RoleDto } from '../../roles/dto/role.dto';
+import { RoleEntity } from '../../roles/entities/role.entity';
+import { UserDto } from '../../users/dto/user.dto';
+import { UserEntity } from '../../users/entities/user.entity';
 
 export const toBatteryDto = (data: BatteryEntity): BatteryDto => {
     const { id, name } = data;
@@ -23,7 +23,7 @@ export const toRobtDto = (data: RobotEntity): RobotDto => {
         startPrice,
         currentPrice,
         status,
-        createorsSignature,
+        creatorsSignature,
         batteryId,
     } = data;
     const robotDto: RobotDto = {
@@ -32,7 +32,7 @@ export const toRobtDto = (data: RobotEntity): RobotDto => {
         startPrice,
         currentPrice,
         status,
-        createorsSignature,
+        creatorsSignature,
         batteryId,
     };
     return robotDto;

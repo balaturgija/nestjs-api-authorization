@@ -8,11 +8,11 @@ import {
     ValidationError,
     WhereOptions,
 } from 'sequelize';
-import { ActionResult } from '../helpers/ActionResult';
-import { CreateActionResult } from '../helpers/CreateActionResult';
-import { Pager } from '../helpers/Pager';
-import { PageResult } from '../helpers/PageResult';
-import { SortDirection, Sorter } from '../helpers/Sorter';
+import { ActionResult } from './utils/ActionResult';
+import { CreateActionResult } from './utils/CreateActionResult';
+import { Pager } from './utils/Pager';
+import { PageResult } from './utils/PageResult';
+import { SortDirection, Sorter } from './utils/Sorter';
 import { BaseEntity } from './base.entity';
 
 export class BaseService<T extends BaseEntity<T>> {
