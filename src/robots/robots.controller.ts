@@ -3,6 +3,7 @@ import {
     Controller,
     Delete,
     Get,
+    HttpCode,
     HttpStatus,
     Param,
     Post,
@@ -10,12 +11,10 @@ import {
     Query,
     Res,
 } from '@nestjs/common';
-import { ApiResponse, ApiTags } from '@nestjs/swagger';
+import { ApiQuery, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { Response } from 'express';
+import { SortDirection } from '../base/utils/Sorter';
 import { TableName } from '../constants';
-import { BaseController } from '../base/base.controller';
-import { Pager } from '../helpers/Pager';
-import { Sorter } from '../helpers/Sorter';
 import { RobotCreateDto } from './dto/create-robot.dto';
 import { RobotFilterDto } from './dto/filter-robot.dto';
 import { RobotParamsDto } from './dto/params-robot.dto';
@@ -24,28 +23,49 @@ import { RobotUpdateDto } from './dto/update-robot.dto';
 import { RobotsService } from './robots.service';
 
 @Controller('robots')
-export class RobotsController extends BaseController {
-    constructor(private readonly robotService: RobotsService) {
-        super();
-    }
+export class RobotsController {
+    constructor(private readonly robotService: RobotsService) {}
 
     @Get()
     @ApiTags(TableName.Robots)
-    @ApiResponse({
-        status: HttpStatus.OK,
+    @HttpCode(HttpStatus.OK)
+    @ApiQuery({
+        name: 'page',
+        type: 'number',
+        required: false,
+        description: 'Default 1',
     })
+    @ApiQuery({
+        name: 'rpp',
+        type: 'number',
+        required: false,
+        description: 'Default 10',
+    })
+    @ApiQuery({
+        name: 'sortBy',
+        type: 'string',
+        required: false,
+        description: 'default: id, optional: name | price',
+    })
+    @ApiQuery({
+        name: 'sortDirection',
+        type: 'string',
+        enum: SortDirection,
+        required: false,
+    })
+    @ApiResponse({ status: 200, type: RobotDto, isArray: true })
     async findAll(
         @Res() res: Response,
         @Query() query: RobotFilterDto
     ): Promise<Response> {
-        const pager = new Pager(query.page, query.rpp);
-        const sorter = new Sorter(query.sortBy, query.sortDirection);
-        const result = await this.robotService.findAllAsync(pager, sorter);
-        return this.Ok(res, result);
+        const result = await this.robotService.findAllAsync(query);
+        return res.send(result);
     }
 
     @Get(':id')
     @ApiTags(TableName.Robots)
+    @ApiResponse({ status: 200, type: RobotDto })
+    @ApiResponse({ status: 404, description: 'Robot not found.' })
     @ApiResponse({
         status: HttpStatus.OK,
         type: RobotDto,
@@ -59,13 +79,14 @@ export class RobotsController extends BaseController {
         @Param() params: RobotParamsDto
     ): Promise<Response> {
         const result = await this.robotService.getByIdAsync(params.id);
-        if (result != null) return this.Ok(res, result);
+        if (result != null) return res.send(result);
 
-        return this.NotFound(res, 'Robot not found.');
+        return res.status(HttpStatus.NOT_FOUND).send('Robot not found');
     }
 
     @Post()
     @ApiTags(TableName.Robots)
+    @HttpCode(HttpStatus.CREATED)
     @ApiResponse({
         status: HttpStatus.CREATED,
         type: RobotDto,
@@ -79,13 +100,14 @@ export class RobotsController extends BaseController {
         @Body() body: RobotCreateDto
     ): Promise<Response> {
         const result = await this.robotService.createAsync(body);
-        if (result.success) return this.Created(res, body);
+        if (result) return res.send(result);
 
-        return this.Error(res, result.errors);
+        return res.status(HttpStatus.CONFLICT);
     }
 
     @Put(':id')
     @ApiTags(TableName.Robots)
+    @HttpCode(HttpStatus.CREATED)
     @ApiResponse({
         status: HttpStatus.OK,
     })
@@ -102,7 +124,7 @@ export class RobotsController extends BaseController {
         @Body() body: RobotUpdateDto
     ): Promise<Response> {
         const model = await this.robotService.getByIdAsync(params.id);
-        if (!model) return this.NotFound(res, 'Robot not found.');
+        if (!model) return res.status(HttpStatus.NOT_FOUND);
 
         Object.assign(model, body);
         const result = await this.robotService.putAsync(
@@ -110,13 +132,14 @@ export class RobotsController extends BaseController {
             JSON.parse(JSON.stringify(model))
         );
 
-        if (result.success) return this.Ok(res);
+        if (result) return res.send({ success: true });
 
-        return this.Error(res, result.errors);
+        return res.status(HttpStatus.CONFLICT);
     }
 
     @Delete(':id')
     @ApiTags(TableName.Robots)
+    @HttpCode(HttpStatus.CREATED)
     @ApiResponse({
         status: HttpStatus.OK,
     })
@@ -133,10 +156,10 @@ export class RobotsController extends BaseController {
         @Param() params: RobotParamsDto
     ): Promise<Response> {
         const model = await this.robotService.getByIdAsync(params.id);
-        if (!model) return this.NotFound(res, 'Robot not found.');
+        if (!model) return res.status(HttpStatus.NOT_FOUND);
         const result = await this.robotService.deleteAsync(params.id);
-        if (result.success) return this.Ok(res);
+        if (result) return res.send({ success: true });
 
-        return this.Error(res, result.errors);
+        return res.status(HttpStatus.CONFLICT);
     }
 }

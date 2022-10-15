@@ -18,7 +18,7 @@ export class RobotDto implements Robot {
     status: string;
 
     @ApiProperty()
-    createorsSignature: string;
+    creatorsSignature: string;
 
     @ApiProperty()
     batteryId: string;

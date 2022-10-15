@@ -46,7 +46,7 @@ export class RobotEntity extends BaseEntity<RobotEntity> implements Robot {
     @Column({
         type: DataType.STRING,
     })
-    createorsSignature: string;
+    creatorsSignature: string;
 
     @ForeignKey(() => BatteryEntity)
     @Column({
