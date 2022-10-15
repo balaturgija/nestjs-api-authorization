@@ -1,14 +1,15 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { BatteryEntity } from './entities/battery.entity';
 import { Provider } from '../constants';
-import { ActionResult } from '../helpers/ActionResult';
 import { OrderItem, WhereOptions } from 'sequelize';
 import { BatteryUpdateDto } from './dto/update-battery.dto';
-import { Pager } from '../helpers/Pager';
-import { SortDirection, Sorter } from '../helpers/Sorter';
-import { PageResult } from '../helpers/PageResult';
-import { CreateActionResult } from '../helpers/CreateActionResult';
-import { toBatteryDto } from '../helpers/Mapper';
+import { BatteryFilterDto } from './dto/filter-battery.dto';
+import { Pager } from '../base/utils/Pager';
+import { PageResult } from '../base/utils/PageResult';
+import { SortDirection, Sorter } from '../base/utils/Sorter';
+import { toBatteryDto } from '../base/utils/Mapper';
+import { CreateActionResult } from '../base/utils/CreateActionResult';
+import { ActionResult } from '../base/utils/ActionResult';
 
 @Injectable()
 export class BatteriesService {
@@ -17,10 +18,9 @@ export class BatteriesService {
         private readonly batteryRepository: typeof BatteryEntity
     ) {}
 
-    async findAllAsync(
-        pager?: Pager,
-        sorter?: Sorter
-    ): Promise<PageResult<Battery>> {
+    async findAllAsync(query: BatteryFilterDto): Promise<PageResult<Battery>> {
+        const pager = new Pager(query.page, query.rpp);
+        const sorter = new Sorter(query.sortBy, query.sortDirection);
         let orderBy: OrderItem[] = [
             ['id', sorter.direction() ? sorter.direction() : SortDirection.Asc],
         ];

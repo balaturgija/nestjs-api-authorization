@@ -3,19 +3,17 @@ import {
     Controller,
     Delete,
     Get,
+    HttpCode,
     HttpStatus,
     Param,
     Post,
     Put,
     Query,
-    Request,
     Res,
     UseGuards,
 } from '@nestjs/common';
 import { ApiBearerAuth, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { Response } from 'express';
-import { Pager } from '../helpers/Pager';
-import { Sorter } from '../helpers/Sorter';
 import { BatteriesService } from './batteries.service';
 import { BatteryCreateDto } from './dto/create-battery.dto';
 import { BatteryDto } from './dto/battery.dto';
@@ -25,29 +23,26 @@ import { BatteryUpdateDto } from './dto/update-battery.dto';
 import { Role, TableName } from '../constants';
 import { JwtAuthGuard } from '../auth/guards/jwt.auth.guard';
 import { SampleGuard } from '../auth/guards/sample.guard';
-import { BaseController } from '../base/base.controller';
 import { RoleGuard } from '../roles/guards/role.guard';
 import { Roles } from '../roles/decorators/role.decorator';
 
 @Controller('batteries')
-export class BatteriesController extends BaseController {
-    constructor(private readonly batteriesService: BatteriesService) {
-        super();
-    }
+export class BatteriesController {
+    constructor(private readonly batteriesService: BatteriesService) {}
 
     @Get()
     @ApiTags(TableName.Batteries)
+    @HttpCode(HttpStatus.OK)
     @ApiResponse({
         status: HttpStatus.OK,
     })
+    @HttpCode(HttpStatus.OK)
     async findAll(
         @Res() res: Response,
         @Query() query: BatteryFilterDto
     ): Promise<Response> {
-        const pager = new Pager(query.page, query.rpp);
-        const sorter = new Sorter(query.sortBy, query.sortDirection);
-        const result = await this.batteriesService.findAllAsync(pager, sorter);
-        return this.Ok(res, result);
+        const result = await this.batteriesService.findAllAsync(query);
+        return res.send(result);
     }
 
     @Get(':id')
@@ -71,17 +66,16 @@ export class BatteriesController extends BaseController {
     })
     async getById(
         @Res() res: Response,
-        @Param() params: BatteryParamsDto,
-        @Request() req
+        @Param() params: BatteryParamsDto
     ): Promise<Response> {
         console.log('\x1b[35m Controller method execution start. \x1b[0m');
         const result = await this.batteriesService.getByIdAsync(params.id);
-        if (result != null) {
+        if (result !== null) {
             console.log('\x1b[35m Controller method execution end. \x1b[0m');
-            return this.Ok(res, result);
+            return res.send(result);
         }
 
-        return this.NotFound(res, 'Battery not found.');
+        return res.status(HttpStatus.NOT_FOUND).send('Battery not found.');
     }
 
     @Post()
@@ -102,9 +96,9 @@ export class BatteriesController extends BaseController {
         @Body() body: BatteryCreateDto
     ): Promise<Response> {
         const result = await this.batteriesService.createAsync(body);
-        if (result.success) return this.Created(res, body);
+        if (result.success) return res.send({ success: true });
 
-        return this.Error(res, result.errors);
+        return res.status(HttpStatus.CONFLICT).send(result.errors);
     }
 
     @Put(':id')
@@ -125,7 +119,8 @@ export class BatteriesController extends BaseController {
         @Body() body: BatteryUpdateDto
     ): Promise<Response> {
         const model = await this.batteriesService.getByIdAsync(params.id);
-        if (!model) return this.NotFound(res, 'Battery not found.');
+        if (!model)
+            return res.send(HttpStatus.NOT_FOUND).send('Battery not found');
 
         Object.assign(model, body);
         const result = await this.batteriesService.updateAsync(
@@ -133,9 +128,9 @@ export class BatteriesController extends BaseController {
             JSON.parse(JSON.stringify(model))
         );
 
-        if (result.success) return this.Ok(res);
+        if (result.success) return res.send({ success: true });
 
-        return this.Error(res, result.errors);
+        return res.status(HttpStatus.INTERNAL_SERVER_ERROR).send(result.errors);
     }
 
     @Delete(':id')
@@ -156,10 +151,12 @@ export class BatteriesController extends BaseController {
         @Param() params: BatteryParamsDto
     ): Promise<Response> {
         const model = await this.batteriesService.getByIdAsync(params.id);
-        if (!model) return this.NotFound(res, 'Battery not found.');
-        const result = await this.batteriesService.deleteAsync(params.id);
-        if (result.success) return this.Ok(res);
+        if (!model)
+            return res.send(HttpStatus.NOT_FOUND).send('Battery not found');
 
-        return this.Error(res, result.errors);
+        const result = await this.batteriesService.deleteAsync(params.id);
+        if (result.success) return res.send({ success: true });
+
+        return res.status(HttpStatus.INTERNAL_SERVER_ERROR).send(result.errors);
     }
 }
