@@ -1,34 +1,49 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import {
+    Controller,
+    Get,
+    Post,
+    Body,
+    Patch,
+    Param,
+    Delete,
+} from '@nestjs/common';
+import { ApiTags } from '@nestjs/swagger';
+import { TableName } from '../constants';
 import { BidsService } from './bids.service';
 import { CreateBidDto } from './dto/create-bid.dto';
 import { UpdateBidDto } from './dto/update-bid.dto';
 
 @Controller('bids')
 export class BidsController {
-  constructor(private readonly bidsService: BidsService) {}
+    constructor(private readonly bidsService: BidsService) {}
 
-  @Post()
-  create(@Body() createBidDto: CreateBidDto) {
-    return this.bidsService.create(createBidDto);
-  }
+    @Post()
+    @ApiTags(TableName.Bids)
+    create(@Body() createBidDto: CreateBidDto) {
+        return this.bidsService.create(createBidDto);
+    }
 
-  @Get()
-  findAll() {
-    return this.bidsService.findAll();
-  }
+    @Get()
+    @ApiTags(TableName.Bids)
+    findAll() {
+        return this.bidsService.findAll();
+    }
 
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.bidsService.findOne(+id);
-  }
+    @Get(':id')
+    @ApiTags(TableName.Bids)
+    findOne(@Param('id') id: string) {
+        return this.bidsService.findOne(+id);
+    }
 
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateBidDto: UpdateBidDto) {
-    return this.bidsService.update(+id, updateBidDto);
-  }
+    @Patch(':id')
+    @ApiTags(TableName.Bids)
+    update(@Param('id') id: string, @Body() updateBidDto: UpdateBidDto) {
+        return this.bidsService.update(+id, updateBidDto);
+    }
 
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.bidsService.remove(+id);
-  }
+    @Delete(':id')
+    @ApiTags(TableName.Bids)
+    remove(@Param('id') id: string) {
+        return this.bidsService.remove(+id);
+    }
 }
