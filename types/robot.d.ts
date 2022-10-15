@@ -4,7 +4,7 @@ interface Robot {
     startPrice: number;
     currentPrice: number;
     status: string;
-    createorsSignature: string;
+    creatorsSignature: string;
     batteryId: string;
     battery?: Battery;
 }
