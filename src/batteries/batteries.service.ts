@@ -1,15 +1,14 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { BatteryEntity } from './entities/battery.entity';
 import { Provider } from '../constants';
-import { OrderItem, WhereOptions } from 'sequelize';
+import { OrderItem } from 'sequelize';
 import { BatteryUpdateDto } from './dto/update-battery.dto';
 import { BatteryFilterDto } from './dto/filter-battery.dto';
 import { Pager } from '../base/utils/Pager';
 import { PageResult } from '../base/utils/PageResult';
 import { SortDirection, Sorter } from '../base/utils/Sorter';
 import { toBatteryDto } from '../base/utils/Mapper';
-import { CreateActionResult } from '../base/utils/CreateActionResult';
-import { ActionResult } from '../base/utils/ActionResult';
+import { BatteryCreateDto } from './dto/create-battery.dto';
 
 @Injectable()
 export class BatteriesService {
@@ -51,43 +50,26 @@ export class BatteriesService {
         return toBatteryDto(result);
     }
 
-    async createAsync(
-        createBatteryDto: BatteryCreate
-    ): Promise<CreateActionResult<Battery>> {
-        const result = new CreateActionResult<Battery>();
-        const createResult = await this.batteryRepository.create(
-            createBatteryDto
-        );
-        if (!createResult) result.AddError('Battery not created.');
-
-        return result;
+    async createAsync(createBatteryDto: BatteryCreateDto): Promise<Battery> {
+        return await this.batteryRepository.create(createBatteryDto);
     }
 
-    async updateAsync(
+    async putAsync(
         id: string,
-        batteryUpdateDto: BatteryUpdateDto
-    ): Promise<ActionResult> {
-        const result = new ActionResult();
-        const resultUpdate = await this.batteryRepository.update(
-            batteryUpdateDto,
-            {
-                where: { id: id },
-            }
+        robotUpdateDto: BatteryUpdateDto
+    ): Promise<boolean> {
+        return (
+            (
+                await this.batteryRepository.update(robotUpdateDto, {
+                    where: { id: id },
+                })
+            )[0] > 0
         );
-
-        if (resultUpdate[0] != 1) result.AddError('Error on update.');
-
-        return result;
     }
 
-    async deleteAsync(id: string): Promise<ActionResult> {
-        const result = new ActionResult();
-        const whereClause: WhereOptions = { where: { id: id } };
-        const deleteResult =
-            (await this.batteryRepository.destroy(whereClause)) > 0;
-
-        if (!deleteResult) result.AddError('Error on delete');
-
-        return result;
+    async deleteAsync(id: string): Promise<boolean> {
+        return (
+            (await this.batteryRepository.destroy({ where: { id: id } })) > 0
+        );
     }
 }

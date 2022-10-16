@@ -28,7 +28,6 @@ export class RobotsController {
 
     @Get()
     @ApiTags(TableName.Robots)
-    @HttpCode(HttpStatus.OK)
     @ApiQuery({
         name: 'page',
         type: 'number',
@@ -66,10 +65,6 @@ export class RobotsController {
     @ApiTags(TableName.Robots)
     @ApiResponse({ status: 200, type: RobotDto })
     @ApiResponse({ status: 404, description: 'Robot not found.' })
-    @ApiResponse({
-        status: HttpStatus.NOT_FOUND,
-        description: 'Robot not found.',
-    })
     async getById(
         @Res() res: Response,
         @Param() params: RobotParamsDto
@@ -82,15 +77,8 @@ export class RobotsController {
 
     @Post()
     @ApiTags(TableName.Robots)
-    @HttpCode(HttpStatus.CREATED)
-    @ApiResponse({
-        status: HttpStatus.CREATED,
-        type: RobotDto,
-    })
-    @ApiResponse({
-        status: HttpStatus.INTERNAL_SERVER_ERROR,
-        description: 'Error on create.',
-    })
+    @ApiResponse({ status: 201, type: RobotDto })
+    @ApiResponse({ status: 409, description: 'Post failed' })
     async create(
         @Res() res: Response,
         @Body() body: RobotCreateDto
@@ -103,17 +91,9 @@ export class RobotsController {
 
     @Put(':id')
     @ApiTags(TableName.Robots)
-    @HttpCode(HttpStatus.CREATED)
-    @ApiResponse({
-        status: HttpStatus.OK,
-    })
-    @ApiResponse({
-        status: HttpStatus.NOT_FOUND,
-        description: 'Not found',
-    })
-    @ApiResponse({
-        status: HttpStatus.INTERNAL_SERVER_ERROR,
-    })
+    @ApiResponse({ status: 200, description: 'Update success.' })
+    @ApiResponse({ status: 404, description: 'Robot not found.' })
+    @ApiResponse({ status: 409, description: 'Update failed.' })
     async update(
         @Res() res: Response,
         @Param() params: RobotParamsDto,
@@ -136,23 +116,16 @@ export class RobotsController {
     @Delete(':id')
     @ApiTags(TableName.Robots)
     @HttpCode(HttpStatus.CREATED)
-    @ApiResponse({
-        status: HttpStatus.OK,
-    })
-    @ApiResponse({
-        status: HttpStatus.NOT_FOUND,
-        description: 'Not found',
-    })
-    @ApiResponse({
-        status: HttpStatus.INTERNAL_SERVER_ERROR,
-        description: 'Error on delete',
-    })
+    @ApiResponse({ status: 200, description: 'Delete success.' })
+    @ApiResponse({ status: 404, description: 'Robot not found.' })
+    @ApiResponse({ status: 409, description: 'Delete failed.' })
     async delete(
         @Res() res: Response,
         @Param() params: RobotParamsDto
     ): Promise<Response> {
         const model = await this.robotService.getByIdAsync(params.id);
         if (!model) return res.status(HttpStatus.NOT_FOUND);
+
         const result = await this.robotService.deleteAsync(params.id);
         if (result) return res.send({ success: true });
 

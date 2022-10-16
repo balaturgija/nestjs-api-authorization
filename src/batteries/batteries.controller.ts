@@ -3,7 +3,6 @@ import {
     Controller,
     Delete,
     Get,
-    HttpCode,
     HttpStatus,
     Param,
     Post,
@@ -12,7 +11,7 @@ import {
     Res,
     UseGuards,
 } from '@nestjs/common';
-import { ApiBearerAuth, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiQuery, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { Response } from 'express';
 import { BatteriesService } from './batteries.service';
 import { BatteryCreateDto } from './dto/create-battery.dto';
@@ -25,6 +24,7 @@ import { JwtAuthGuard } from '../auth/guards/jwt.auth.guard';
 import { SampleGuard } from '../auth/guards/sample.guard';
 import { RoleGuard } from '../roles/guards/role.guard';
 import { Roles } from '../roles/decorators/role.decorator';
+import { SortDirection } from '../base/utils/Sorter';
 
 @Controller('batteries')
 export class BatteriesController {
@@ -32,11 +32,31 @@ export class BatteriesController {
 
     @Get()
     @ApiTags(TableName.Batteries)
-    @HttpCode(HttpStatus.OK)
-    @ApiResponse({
-        status: HttpStatus.OK,
+    @ApiQuery({
+        name: 'page',
+        type: 'number',
+        required: false,
+        description: 'Default 1',
     })
-    @HttpCode(HttpStatus.OK)
+    @ApiQuery({
+        name: 'rpp',
+        type: 'number',
+        required: false,
+        description: 'Default 10',
+    })
+    @ApiQuery({
+        name: 'sortBy',
+        type: 'string',
+        required: false,
+        description: 'default: id, optional: name | price',
+    })
+    @ApiQuery({
+        name: 'sortDirection',
+        type: 'string',
+        enum: SortDirection,
+        required: false,
+    })
+    @ApiResponse({ status: 200, type: BatteryDto, isArray: true })
     async findAll(
         @Res() res: Response,
         @Query() query: BatteryFilterDto
@@ -46,6 +66,10 @@ export class BatteriesController {
     }
 
     @Get(':id')
+    @ApiTags(TableName.Batteries)
+    @ApiBearerAuth('access-token')
+    @ApiResponse({ status: 200, type: BatteryDto })
+    @ApiResponse({ status: 404, description: 'Battery not found.' })
     @Roles(Role.Admin, Role.Engineer)
     @UseGuards(
         JwtAuthGuard,
@@ -54,16 +78,6 @@ export class BatteriesController {
         // new SampleGuard('second')
     )
     // @UseGuards(new SampleGuard('third'))
-    @ApiTags(TableName.Batteries)
-    @ApiBearerAuth('access-token')
-    @ApiResponse({
-        status: HttpStatus.OK,
-        type: BatteryDto,
-    })
-    @ApiResponse({
-        status: HttpStatus.NOT_FOUND,
-        description: 'Not found',
-    })
     async getById(
         @Res() res: Response,
         @Param() params: BatteryParamsDto
@@ -75,44 +89,31 @@ export class BatteriesController {
             return res.send(result);
         }
 
-        return res.status(HttpStatus.NOT_FOUND).send('Battery not found.');
+        return res.status(HttpStatus.NOT_FOUND);
     }
 
     @Post()
     @ApiTags(TableName.Batteries)
+    @ApiBearerAuth('access-token')
+    @ApiResponse({ status: 201, type: BatteryDto })
+    @ApiResponse({ status: 409, description: 'Post failed' })
     @Roles(Role.Engineer)
     @UseGuards(JwtAuthGuard, RoleGuard)
-    @ApiBearerAuth('access-token')
-    @ApiResponse({
-        status: HttpStatus.CREATED,
-        type: BatteryDto,
-    })
-    @ApiResponse({
-        status: HttpStatus.INTERNAL_SERVER_ERROR,
-        description: 'Error on create',
-    })
     async create(
         @Res() res: Response,
         @Body() body: BatteryCreateDto
     ): Promise<Response> {
         const result = await this.batteriesService.createAsync(body);
-        if (result.success) return res.send({ success: true });
+        if (result) return res.send(result);
 
-        return res.status(HttpStatus.CONFLICT).send(result.errors);
+        return res.status(HttpStatus.CONFLICT);
     }
 
     @Put(':id')
     @ApiTags(TableName.Batteries)
-    @ApiResponse({
-        status: HttpStatus.OK,
-    })
-    @ApiResponse({
-        status: HttpStatus.NOT_FOUND,
-        description: 'Not found',
-    })
-    @ApiResponse({
-        status: HttpStatus.INTERNAL_SERVER_ERROR,
-    })
+    @ApiResponse({ status: 200, description: 'Update success.' })
+    @ApiResponse({ status: 404, description: 'Robot not found.' })
+    @ApiResponse({ status: 409, description: 'Update failed.' })
     async update(
         @Res() res: Response,
         @Param() params: BatteryParamsDto,
@@ -123,40 +124,31 @@ export class BatteriesController {
             return res.send(HttpStatus.NOT_FOUND).send('Battery not found');
 
         Object.assign(model, body);
-        const result = await this.batteriesService.updateAsync(
+        const result = await this.batteriesService.putAsync(
             params.id,
             JSON.parse(JSON.stringify(model))
         );
 
-        if (result.success) return res.send({ success: true });
+        if (result) return res.send({ success: true });
 
-        return res.status(HttpStatus.INTERNAL_SERVER_ERROR).send(result.errors);
+        return res.status(HttpStatus.CONFLICT);
     }
 
     @Delete(':id')
     @ApiTags(TableName.Batteries)
-    @ApiResponse({
-        status: HttpStatus.OK,
-    })
-    @ApiResponse({
-        status: HttpStatus.NOT_FOUND,
-        description: 'Not found',
-    })
-    @ApiResponse({
-        status: HttpStatus.INTERNAL_SERVER_ERROR,
-        description: 'Error on delete',
-    })
+    @ApiResponse({ status: 200, description: 'Delete success.' })
+    @ApiResponse({ status: 404, description: 'Battery not found.' })
+    @ApiResponse({ status: 409, description: 'Delete failed.' })
     async delete(
         @Res() res: Response,
         @Param() params: BatteryParamsDto
     ): Promise<Response> {
         const model = await this.batteriesService.getByIdAsync(params.id);
-        if (!model)
-            return res.send(HttpStatus.NOT_FOUND).send('Battery not found');
+        if (!model) return res.status(HttpStatus.NOT_FOUND);
 
         const result = await this.batteriesService.deleteAsync(params.id);
-        if (result.success) return res.send({ success: true });
+        if (result) return res.send({ success: true });
 
-        return res.status(HttpStatus.INTERNAL_SERVER_ERROR).send(result.errors);
+        return res.status(HttpStatus.CONFLICT);
     }
 }

@@ -44,17 +44,17 @@ export class RobotsService {
         return result !== null ? toRobtDto(result) : null;
     }
 
-    async createAsync(createBatteryDto: RobotCreateDto): Promise<Robot> {
-        return await this.robotRepository.create(createBatteryDto);
+    async createAsync(createRobotDto: RobotCreateDto): Promise<Robot> {
+        return await this.robotRepository.create(createRobotDto);
     }
 
     async putAsync(
         id: string,
-        batteryUpdateDto: RobotUpdateDto
+        robotUpdateDto: RobotUpdateDto
     ): Promise<boolean> {
         return (
             (
-                await this.robotRepository.update(batteryUpdateDto, {
+                await this.robotRepository.update(robotUpdateDto, {
                     where: { id: id },
                 })
             )[0] > 0
