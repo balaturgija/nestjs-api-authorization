@@ -22,11 +22,11 @@ export const databaseProviders = [
                 database: process.env.DB_NAME,
                 models: [
                     BatteryEntity,
+                    WalletEntity,
                     RobotEntity,
                     UserEntity,
                     RoleEntity,
                     UserRobotsEntity,
-                    WalletEntity,
                     BidEntity,
                     AuctionEntity,
                 ],

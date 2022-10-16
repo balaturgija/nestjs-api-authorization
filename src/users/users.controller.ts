@@ -17,14 +17,14 @@ import { TableName } from '../constants';
 import { UserDto } from './dto/user.dto';
 import { RolesService } from '../roles/roles.service';
 import { UserParamsDto } from './dto/params-user.dto';
+import { WalletsService } from '../wallets/wallets.service';
 @Controller('users')
-export class UsersController extends BaseController {
+export class UsersController {
     constructor(
         private readonly usersService: UsersService,
-        private readonly roleService: RolesService
-    ) {
-        super();
-    }
+        private readonly rolesService: RolesService,
+        private readonly walletsService: WalletsService
+    ) {}
 
     @Post('register')
     @ApiTags(TableName.Users)
@@ -57,26 +57,28 @@ export class UsersController extends BaseController {
         const existingEmail = await this.usersService.getByEmailAsync(
             body.email
         );
-        if (existingEmail)
-            return this.Conflict(res, 'User with this email already exists.');
+        if (existingEmail) return res.status(HttpStatus.CONFLICT);
 
         const exisitngUsername = await this.usersService.getByUsernameAsync(
             body.username
         );
-        if (exisitngUsername)
-            return this.Conflict(res, 'Username already taken.');
+        if (exisitngUsername) return res.status(HttpStatus.CONFLICT);
 
-        const existingRole = await this.roleService.getByIdAsync(body.roleId);
-        if (!existingRole) return this.Conflict(res, 'Role does not exist.');
+        const existingRole = await this.rolesService.getByIdAsync(body.roleId);
+        if (!existingRole) return res.status(HttpStatus.CONFLICT);
 
         const salt = await bcrypt.genSalt(10);
         const hashPassword = await bcrypt.hash(body.password, salt);
 
+        const wallet = await this.walletsService.createAsync();
+        if (!wallet) return res.status(HttpStatus.CONFLICT);
+
+        dto.walletId = wallet.id;
         dto.password = hashPassword;
         const result = await this.usersService.createAsync(dto);
-        if (result.success) return this.Created(res, result.data);
+        if (result) return res.status(HttpStatus.CREATED).send(result);
 
-        return this.Error(res, ['Registration failed.']);
+        return res.status(HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
     @Get(':id')

@@ -32,6 +32,14 @@ export class BatteriesService {
                 ],
             ];
 
+        if (sorter.orderBy() === 'created_at')
+            orderBy = [
+                [
+                    'created_at',
+                    sorter.direction() ? sorter.direction() : SortDirection.Asc,
+                ],
+            ];
+
         const options = {
             order: orderBy,
             limit: pager.pageSize(),
@@ -51,7 +59,8 @@ export class BatteriesService {
     }
 
     async createAsync(createBatteryDto: BatteryCreateDto): Promise<Battery> {
-        return await this.batteryRepository.create(createBatteryDto);
+        const result = await this.batteryRepository.create(createBatteryDto);
+        return toBatteryDto(result);
     }
 
     async putAsync(

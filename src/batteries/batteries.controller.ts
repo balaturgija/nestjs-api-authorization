@@ -48,7 +48,7 @@ export class BatteriesController {
         name: 'sortBy',
         type: 'string',
         required: false,
-        description: 'default: id, optional: name | price',
+        description: 'default: id, optional: name | created_at',
     })
     @ApiQuery({
         name: 'sortDirection',

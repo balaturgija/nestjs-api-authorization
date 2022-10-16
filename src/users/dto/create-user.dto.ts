@@ -1,4 +1,9 @@
-import { ApiProperty } from '@nestjs/swagger';
+import {
+    ApiHideProperty,
+    ApiProperty,
+    ApiPropertyOptional,
+} from '@nestjs/swagger';
+import { Exclude } from 'class-transformer';
 import {
     IsEmail,
     IsNotEmpty,
@@ -22,6 +27,10 @@ export class UserCreateDto {
     @IsString()
     @IsNotEmpty()
     password: string;
+
+    @ApiHideProperty()
+    @Exclude()
+    walletId: string;
 
     @ApiProperty()
     @IsUUID()
