@@ -3,34 +3,32 @@ import {
     Post,
     UseGuards,
     Get,
-    Body,
     Res,
     Req,
+    HttpStatus,
 } from '@nestjs/common';
-import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiBody, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { Response } from 'express';
-import { BaseController } from '../base/base.controller';
 import { UserLoginDto } from '../users/dto/login-user.dto';
 import { AuthService } from './auth.service';
 import { JwtAuthGuard } from './guards/jwt.auth.guard';
 import { LocalAuthGuard } from './guards/local.auth.guard';
 
 @Controller('auth')
-export class AuthController extends BaseController {
+export class AuthController {
     /**
      *
      */
-    constructor(private authService: AuthService) {
-        super();
-    }
-    @UseGuards(LocalAuthGuard)
-    @ApiTags('auth')
+    constructor(private authService: AuthService) {}
+
     @Post('login')
-    async login(
-        @Body() userLoginDto: UserLoginDto,
-        @Req() req,
-        @Res() res: Response
-    ): Promise<Response> {
+    @ApiTags('auth')
+    @ApiResponse({ status: 201, type: UserLoginDto })
+    @ApiResponse({ status: 401, description: 'Token creation failed.' })
+    @ApiResponse({ status: 409, description: 'Unauthorized.' })
+    @ApiBody({ type: UserLoginDto })
+    @UseGuards(LocalAuthGuard)
+    async login(@Req() req, @Res() res: Response): Promise<Response> {
         const user: User = req.user;
         const tokenOptions: TokenOptions = {
             id: user.id,
@@ -43,15 +41,15 @@ export class AuthController extends BaseController {
         };
 
         const token = await this.authService.createToken(tokenOptions);
-        if (!token) return this.Conflict(res, 'Token creation failed.');
+        if (!token) return res.send(HttpStatus.CONFLICT);
         const loginResponseData = await this.authService.loginAsync(
             tokenOptions,
             token
         );
 
-        if (!loginResponseData) return this.Unauthorized(res);
+        if (!loginResponseData) return res.status(HttpStatus.UNAUTHORIZED);
 
-        return this.Created(res, loginResponseData);
+        return res.status(HttpStatus.CREATED).send(loginResponseData);
     }
 
     @UseGuards(JwtAuthGuard)

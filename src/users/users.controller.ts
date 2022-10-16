@@ -7,7 +7,6 @@ import {
     Post,
     Res,
 } from '@nestjs/common';
-import { BaseController } from '../base/base.controller';
 import { UserCreateDto } from './dto/create-user.dto';
 import { UsersService } from './users.service';
 import bcrypt from 'bcryptjs';
