@@ -19,16 +19,16 @@ export class JwtAuthGuard extends AuthGuard(Provider.Jwt) {
         return super.canActivate(context);
     }
 
-    handleRequest<TUser = User>(
-        err: any,
-        user: any,
-        info: any,
-        context: ExecutionContext,
-        status?: any
-    ): TUser {
-        console.log('\x1b[32m Executing Jwt Auth Guard \x1b[0m');
-        if (err || !user) throw new err() || new UnauthorizedException();
+    // handleRequest<TUser = User>(
+    //     err: any,
+    //     user: any,
+    //     info: any,
+    //     context: ExecutionContext,
+    //     status?: any
+    // ): TUser {
+    //     console.log('\x1b[32m Executing Jwt Auth Guard \x1b[0m');
+    //     if (err || !user) throw new err() || new UnauthorizedException();
 
-        return user;
-    }
+    //     return user;
+    // }
 }

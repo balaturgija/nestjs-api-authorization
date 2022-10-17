@@ -9,6 +9,7 @@ import {
 } from '@nestjs/common';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { Response } from 'express';
+import { AuthUser } from '../auth/decorators/AuthUser';
 import { JwtAuthGuard } from '../auth/guards/jwt.auth.guard';
 import { MoneyAction, TableName } from '../constants';
 import { WalletParamsDto } from './dto/params.wallet.dto';
@@ -27,12 +28,11 @@ export class WalletsController {
     @UseGuards(JwtAuthGuard)
     @ApiBearerAuth('access-token')
     async deposit(
-        @Req() req,
+        @AuthUser() user: User,
         @Res() res: Response,
         @Param() walletParams: WalletParamsDto,
         @Body() patchWalletDto: WalletPatchDto
     ): Promise<Response> {
-        const user: User = req.user;
         if (user.walletId !== walletParams.id)
             return res
                 .status(409)
@@ -50,7 +50,7 @@ export class WalletsController {
 
         if (result)
             return res.status(201).send({
-                message: `You have increased your account for ${patchWalletDto.amount}`,
+                message: `You have increased your wallet for ${patchWalletDto.amount}`,
             });
 
         return res.status(409).send({ message: 'Deposit failed.' });
@@ -61,12 +61,11 @@ export class WalletsController {
     @UseGuards(JwtAuthGuard)
     @ApiBearerAuth('access-token')
     async withdraw(
-        @Req() req,
+        @AuthUser() user: User,
         @Res() res: Response,
         @Param() walletParams: WalletParamsDto,
         @Body() patchWalletDto: WalletPatchDto
     ): Promise<Response> {
-        const user: User = req.user;
         if (user.walletId !== walletParams.id)
             return res
                 .status(409)
@@ -84,7 +83,7 @@ export class WalletsController {
 
         if (result)
             return res.status(201).send({
-                message: `You have decrease your account for ${patchWalletDto.amount}`,
+                message: `You have decrease your wallet for ${patchWalletDto.amount}`,
             });
 
         return res.status(409).send({ message: 'Withdraw failed.' });
