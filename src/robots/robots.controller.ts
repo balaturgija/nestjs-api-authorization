@@ -13,7 +13,7 @@ import {
 } from '@nestjs/common';
 import { ApiQuery, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { Response } from 'express';
-import { SortDirection } from '../base/utils/Sorter';
+import { SortDirection } from '../base/utils/Sorter.util';
 import { TableName } from '../constants';
 import { RobotCreateDto } from './dto/create-robot.dto';
 import { RobotFilterDto } from './dto/filter-robot.dto';

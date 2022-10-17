@@ -1,12 +1,4 @@
-import {
-    Body,
-    Controller,
-    Get,
-    HttpStatus,
-    Param,
-    Post,
-    Res,
-} from '@nestjs/common';
+import { Body, Controller, Get, Param, Post, Res } from '@nestjs/common';
 import { UserCreateDto } from './dto/create-user.dto';
 import { UsersService } from './users.service';
 import bcrypt from 'bcryptjs';
@@ -28,19 +20,23 @@ export class UsersController {
     @Post('register')
     @ApiTags(TableName.Users)
     @ApiResponse({
-        status: HttpStatus.CREATED,
+        status: 201,
         type: UserDto,
     })
     @ApiResponse({
-        status: HttpStatus.CONFLICT,
-        description: 'User with this email already exists.',
+        status: 404,
+        description: 'Role not found.',
     })
     @ApiResponse({
-        status: HttpStatus.CONFLICT,
+        status: 409,
+        description: 'Email already taken.',
+    })
+    @ApiResponse({
+        status: 409,
         description: 'Username already taken.',
     })
     @ApiResponse({
-        status: HttpStatus.INTERNAL_SERVER_ERROR,
+        status: 500,
         description: 'Registration failed.',
     })
     async register(
@@ -51,33 +47,32 @@ export class UsersController {
         dto.username = body.username;
         dto.email = body.email;
         dto.roleId = body.roleId;
-        //create wallet
 
         const existingEmail = await this.usersService.getByEmailAsync(
             body.email
         );
-        if (existingEmail) return res.status(HttpStatus.CONFLICT);
+        if (existingEmail)
+            return res.status(409).send({ message: 'Email already taken.' });
 
         const exisitngUsername = await this.usersService.getByUsernameAsync(
             body.username
         );
-        if (exisitngUsername) return res.status(HttpStatus.CONFLICT);
+        if (exisitngUsername)
+            res.status(409).send({ message: 'Username already taken.' });
 
         const existingRole = await this.rolesService.getByIdAsync(body.roleId);
-        if (!existingRole) return res.status(HttpStatus.CONFLICT);
+        if (!existingRole)
+            return res.status(404).send({ message: 'Role not found' });
 
         const salt = await bcrypt.genSalt(10);
         const hashPassword = await bcrypt.hash(body.password, salt);
 
         const wallet = await this.walletsService.createAsync();
-        if (!wallet) return res.status(HttpStatus.CONFLICT);
 
         dto.walletId = wallet.id;
         dto.password = hashPassword;
         const result = await this.usersService.createAsync(dto);
-        if (result) return res.status(HttpStatus.CREATED).send(result);
-
-        return res.status(HttpStatus.INTERNAL_SERVER_ERROR);
+        return res.status(201).send(result);
     }
 
     @Get(':id')

@@ -1,7 +1,7 @@
 import { ApiPropertyOptional } from '@nestjs/swagger';
 import { Transform } from 'class-transformer';
 import { IsEnum, IsInt, IsOptional, IsString, Min } from 'class-validator';
-import { SortDirection } from '../../base/utils/Sorter';
+import { SortDirection } from '../../base/utils/Sorter.util';
 
 export class RobotFilterDto {
     @ApiPropertyOptional()

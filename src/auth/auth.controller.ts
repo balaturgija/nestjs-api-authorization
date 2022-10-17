@@ -6,6 +6,7 @@ import {
     Res,
     Req,
     HttpStatus,
+    UseFilters,
 } from '@nestjs/common';
 import { ApiBearerAuth, ApiBody, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { Response } from 'express';

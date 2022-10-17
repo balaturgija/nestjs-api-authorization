@@ -1,5 +1,5 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { toUserDto, toUserRoleDto } from '../base/utils/Mapper';
+import { toUserDto, toUserRoleDto } from '../base/utils/Mapper.util';
 import { Provider } from '../constants';
 import { RoleEntity } from '../roles/entities/role.entity';
 import { UserCreateDto } from './dto/create-user.dto';
@@ -12,7 +12,8 @@ export class UsersService {
     ) {}
 
     async createAsync(dto: UserCreateDto): Promise<User> {
-        return await this.userRepository.create(dto);
+        const result = await this.userRepository.create(dto);
+        return toUserDto(result);
     }
 
     async getByEmailAsync(email: string): Promise<User | null> {
