@@ -28,6 +28,8 @@ export class RoleGuard implements CanActivate {
 
         if (!user.role) return false;
 
-        return this.matchRoles(roles, user.role.name);
+        const result = this.matchRoles(roles, user.role.name);
+
+        return result;
     }
 }

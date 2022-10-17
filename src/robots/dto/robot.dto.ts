@@ -1,7 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 
 export class RobotDto implements Robot {
-    battery?: Battery;
     @ApiProperty()
     id: string;
 
@@ -22,4 +21,7 @@ export class RobotDto implements Robot {
 
     @ApiProperty()
     batteryId: string;
+
+    @ApiProperty()
+    battery?: Battery;
 }

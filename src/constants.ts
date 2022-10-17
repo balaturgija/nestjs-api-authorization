@@ -33,6 +33,11 @@ export enum RobotStatus {
     Auction = 'Auction',
 }
 
+export enum MoneyAction {
+    Deposit = 'Deposit',
+    Withdraw = 'Withdraw',
+}
+
 export const SWAGGER_CONFIG = {
     title: 'title',
     description: 'descrioption',

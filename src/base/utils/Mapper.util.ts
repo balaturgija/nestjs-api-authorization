@@ -6,6 +6,8 @@ import { RoleDto } from '../../roles/dto/role.dto';
 import { RoleEntity } from '../../roles/entities/role.entity';
 import { UserDto } from '../../users/dto/user.dto';
 import { UserEntity } from '../../users/entities/user.entity';
+import { WalletDto } from '../../wallets/dto/wallet.dto';
+import { WalletEntity } from '../../wallets/entities/wallet.entity';
 
 export const toBatteryDto = (data: BatteryEntity): BatteryDto => {
     const { id, name } = data;
@@ -77,4 +79,14 @@ export const toUserRoleDto = (userData: UserEntity): User => {
     };
 
     return userRole;
+};
+
+export const toWalletDto = (data: WalletEntity): Wallet => {
+    const { id, amount } = data;
+    const walletDto: WalletDto = {
+        id,
+        amount,
+    };
+
+    return walletDto;
 };

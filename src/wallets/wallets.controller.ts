@@ -1,4 +1,18 @@
-import { Controller } from '@nestjs/common';
+import {
+    Body,
+    Controller,
+    Param,
+    Patch,
+    Req,
+    Res,
+    UseGuards,
+} from '@nestjs/common';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
+import { Response } from 'express';
+import { JwtAuthGuard } from '../auth/guards/jwt.auth.guard';
+import { MoneyAction, TableName } from '../constants';
+import { WalletParamsDto } from './dto/params.wallet.dto';
+import { WalletPatchDto } from './dto/patch-wallet.dto';
 import { WalletsService } from './wallets.service';
 
 @Controller('wallets')
@@ -7,4 +21,72 @@ export class WalletsController {
      *
      */
     constructor(private readonly walletsService: WalletsService) {}
+
+    @Patch(':id/deposit')
+    @ApiTags(TableName.Wallets)
+    @UseGuards(JwtAuthGuard)
+    @ApiBearerAuth('access-token')
+    async deposit(
+        @Req() req,
+        @Res() res: Response,
+        @Param() walletParams: WalletParamsDto,
+        @Body() patchWalletDto: WalletPatchDto
+    ): Promise<Response> {
+        const user: User = req.user;
+        if (user.walletId !== walletParams.id)
+            return res
+                .status(409)
+                .send({ message: 'This is not your wallet.' });
+
+        const wallet = await this.walletsService.findByIdAsync(walletParams.id);
+        if (!wallet)
+            return res.status(404).send({ message: 'Wallet not found.' });
+
+        const result = await this.walletsService.moneyTransactionAsync(
+            walletParams.id,
+            patchWalletDto.amount,
+            MoneyAction.Deposit
+        );
+
+        if (result)
+            return res.status(201).send({
+                message: `You have increased your account for ${patchWalletDto.amount}`,
+            });
+
+        return res.status(409).send({ message: 'Deposit failed.' });
+    }
+
+    @Patch(':id/withdraw')
+    @ApiTags(TableName.Wallets)
+    @UseGuards(JwtAuthGuard)
+    @ApiBearerAuth('access-token')
+    async withdraw(
+        @Req() req,
+        @Res() res: Response,
+        @Param() walletParams: WalletParamsDto,
+        @Body() patchWalletDto: WalletPatchDto
+    ): Promise<Response> {
+        const user: User = req.user;
+        if (user.walletId !== walletParams.id)
+            return res
+                .status(409)
+                .send({ message: 'This is not your wallet.' });
+
+        const wallet = await this.walletsService.findByIdAsync(walletParams.id);
+        if (!wallet)
+            return res.status(404).send({ message: 'Wallet not found.' });
+
+        const result = await this.walletsService.moneyTransactionAsync(
+            walletParams.id,
+            patchWalletDto.amount,
+            MoneyAction.Withdraw
+        );
+
+        if (result)
+            return res.status(201).send({
+                message: `You have decrease your account for ${patchWalletDto.amount}`,
+            });
+
+        return res.status(409).send({ message: 'Withdraw failed.' });
+    }
 }
