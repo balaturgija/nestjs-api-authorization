@@ -1,6 +1,6 @@
 import { MiddlewareConsumer, Module, RequestMethod } from '@nestjs/common';
 import { JwtAuthGuard } from '../auth/guards/jwt.auth.guard';
-import { validateBody } from '../base/middlewares/validateBody.middleware';
+import { validateBody } from '../base/middlewares/ValidateBody.middleware';
 import { TableName } from '../constants';
 import { BatteriesController } from './batteries.controller';
 import { batteriesProviders } from './batteries.providers';

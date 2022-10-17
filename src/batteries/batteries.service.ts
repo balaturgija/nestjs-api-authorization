@@ -4,11 +4,11 @@ import { Provider } from '../constants';
 import { OrderItem } from 'sequelize';
 import { BatteryUpdateDto } from './dto/update-battery.dto';
 import { BatteryFilterDto } from './dto/filter-battery.dto';
-import { Pager } from '../base/utils/Pager';
-import { PageResult } from '../base/utils/PageResult';
-import { SortDirection, Sorter } from '../base/utils/Sorter';
-import { toBatteryDto } from '../base/utils/Mapper';
+import { PageResult } from '../base/utils/PageResult.util';
+import { SortDirection, Sorter } from '../base/utils/Sorter.util';
+import { toBatteryDto } from '../base/utils/Mapper.util';
 import { BatteryCreateDto } from './dto/create-battery.dto';
+import { Pager } from '../base/utils/Pager.util';
 
 @Injectable()
 export class BatteriesService {

@@ -10,6 +10,8 @@ import { UserRobotsModule } from './user-robots/user-robots.module';
 import { WalletsModule } from './wallets/wallets.module';
 import { BidsModule } from './bids/bids.module';
 import { AuctionsModule } from './auctions/auctions.module';
+import { APP_FILTER } from '@nestjs/core';
+import { GlobalExceptionsFilter } from './base/filters/GlobalExceptions.filter';
 
 @Module({
     imports: [
@@ -31,6 +33,11 @@ import { AuctionsModule } from './auctions/auctions.module';
         AuctionsModule,
     ],
     controllers: [],
-    providers: [],
+    providers: [
+        // {
+        //     provide: APP_FILTER,
+        //     useClass: GlobalExceptionsFilter,
+        // },
+    ],
 })
 export class AppModule {}

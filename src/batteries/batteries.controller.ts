@@ -24,7 +24,7 @@ import { JwtAuthGuard } from '../auth/guards/jwt.auth.guard';
 import { SampleGuard } from '../auth/guards/sample.guard';
 import { RoleGuard } from '../roles/guards/role.guard';
 import { Roles } from '../roles/decorators/role.decorator';
-import { SortDirection } from '../base/utils/Sorter';
+import { SortDirection } from '../base/utils/Sorter.util';
 
 @Controller('batteries')
 export class BatteriesController {
