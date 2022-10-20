@@ -10,8 +10,9 @@ import { UserRobotsModule } from './user-robots/user-robots.module';
 import { WalletsModule } from './wallets/wallets.module';
 import { BidsModule } from './bids/bids.module';
 import { AuctionsModule } from './auctions/auctions.module';
-import { APP_FILTER } from '@nestjs/core';
+import { APP_FILTER, APP_GUARD, APP_PIPE } from '@nestjs/core';
 import { GlobalExceptionsFilter } from './base/filters/GlobalExceptions.filter';
+import { RequestValidationPipe } from './base/pipes/RequestValidation.pipe';
 
 @Module({
     imports: [
@@ -38,6 +39,10 @@ import { GlobalExceptionsFilter } from './base/filters/GlobalExceptions.filter';
         //     provide: APP_FILTER,
         //     useClass: GlobalExceptionsFilter,
         // },
+        {
+            provide: APP_PIPE,
+            useClass: RequestValidationPipe,
+        },
     ],
 })
 export class AppModule {}

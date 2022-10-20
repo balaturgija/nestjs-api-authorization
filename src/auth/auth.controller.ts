@@ -12,6 +12,7 @@ import { ApiBearerAuth, ApiBody, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { Response } from 'express';
 import { UserLoginDto } from '../users/dto/login-user.dto';
 import { AuthService } from './auth.service';
+import { AuthUser } from './decorators/AuthUser';
 import { JwtAuthGuard } from './guards/jwt.auth.guard';
 import { LocalAuthGuard } from './guards/local.auth.guard';
 
@@ -29,8 +30,10 @@ export class AuthController {
     @ApiResponse({ status: 409, description: 'Unauthorized.' })
     @ApiBody({ type: UserLoginDto })
     @UseGuards(LocalAuthGuard)
-    async login(@Req() req, @Res() res: Response): Promise<Response> {
-        const user: User = req.user;
+    async login(
+        @AuthUser() user: User,
+        @Res() res: Response
+    ): Promise<Response> {
         const tokenOptions: TokenOptions = {
             id: user.id,
             username: user.username,

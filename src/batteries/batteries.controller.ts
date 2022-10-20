@@ -22,9 +22,9 @@ import { BatteryUpdateDto } from './dto/update-battery.dto';
 import { Role, TableName } from '../constants';
 import { JwtAuthGuard } from '../auth/guards/jwt.auth.guard';
 import { SampleGuard } from '../auth/guards/sample.guard';
-import { RoleGuard } from '../roles/guards/role.guard';
 import { Roles } from '../roles/decorators/role.decorator';
 import { SortDirection } from '../base/utils/Sorter.util';
+import { RoleGuard } from '../auth/guards/role.guard';
 
 @Controller('batteries')
 export class BatteriesController {
@@ -73,11 +73,11 @@ export class BatteriesController {
     @Roles(Role.Admin, Role.Engineer)
     @UseGuards(
         JwtAuthGuard,
-        RoleGuard
-        // new SampleGuard('first'),
-        // new SampleGuard('second')
+        RoleGuard,
+        new SampleGuard('first'),
+        new SampleGuard('second')
     )
-    // @UseGuards(new SampleGuard('third'))
+    @UseGuards(new SampleGuard('third'))
     async getById(
         @Res() res: Response,
         @Param() params: BatteryParamsDto
