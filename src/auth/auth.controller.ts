@@ -1,19 +1,9 @@
-import {
-    Controller,
-    Post,
-    UseGuards,
-    Get,
-    Res,
-    Req,
-    HttpStatus,
-    UseFilters,
-} from '@nestjs/common';
-import { ApiBearerAuth, ApiBody, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { Controller, Post, UseGuards, Res, HttpStatus } from '@nestjs/common';
+import { ApiBody, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { Response } from 'express';
 import { UserLoginDto } from '../users/dto/login-user.dto';
 import { AuthService } from './auth.service';
 import { AuthUser } from './decorators/AuthUser';
-import { JwtAuthGuard } from './guards/jwt.auth.guard';
 import { LocalAuthGuard } from './guards/local.auth.guard';
 
 @Controller('auth')
@@ -54,13 +44,5 @@ export class AuthController {
         if (!loginResponseData) return res.status(HttpStatus.UNAUTHORIZED);
 
         return res.status(HttpStatus.CREATED).send(loginResponseData);
-    }
-
-    @UseGuards(JwtAuthGuard)
-    @ApiBearerAuth('access-token')
-    @ApiTags('auth')
-    @Get('profile')
-    getProfile(@Req() req) {
-        return req.user;
     }
 }
