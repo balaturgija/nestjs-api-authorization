@@ -22,9 +22,9 @@ import { BatteryUpdateDto } from './dto/update-battery.dto';
 import { Role, TableName } from '../constants';
 import { JwtAuthGuard } from '../auth/guards/jwt.auth.guard';
 import { SampleGuard } from '../auth/guards/sample.guard';
-import { Roles } from '../roles/decorators/role.decorator';
 import { SortDirection } from '../base/utils/Sorter.util';
 import { RoleGuard } from '../auth/guards/role.guard';
+import { Roles } from '../auth/decorators/role.decorator';
 
 @Controller('batteries')
 export class BatteriesController {

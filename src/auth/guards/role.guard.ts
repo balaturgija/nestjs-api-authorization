@@ -2,6 +2,7 @@ import { CanActivate, ExecutionContext, Injectable } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 import { Observable } from 'rxjs';
 import { Role } from '../../constants';
+import { UserHaveNoRoleException } from '../exceptions/user-have-no-role.exception';
 
 @Injectable()
 export class RoleGuard implements CanActivate {
@@ -26,7 +27,7 @@ export class RoleGuard implements CanActivate {
 
         const user: User = request.user;
 
-        if (!user.role) return false;
+        if (!user.role) throw new UserHaveNoRoleException('User have no role.');
 
         const result = this.matchRoles(roles, user.role.name);
 

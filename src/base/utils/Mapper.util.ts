@@ -71,6 +71,10 @@ export const toUserRoleDto = (userData: UserEntity): User => {
         password: userData.password,
         roleId: userData.roleId,
         walletId: userData.walletId,
+        wallet: {
+            id: userData.wallet.id,
+            amount: userData.wallet.amount,
+        },
         role: {
             id: userData.role.id,
             name: userData.role.name,

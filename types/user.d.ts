@@ -5,6 +5,6 @@ interface User {
     password: string;
     roleId: string;
     walletId: string;
-    role?: Role;
     wallet?: Wallet;
+    role?: Role;
 }

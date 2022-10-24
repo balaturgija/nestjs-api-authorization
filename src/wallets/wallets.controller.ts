@@ -1,15 +1,7 @@
-import {
-    Body,
-    Controller,
-    Param,
-    Patch,
-    Req,
-    Res,
-    UseGuards,
-} from '@nestjs/common';
+import { Body, Controller, Param, Patch, Res, UseGuards } from '@nestjs/common';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { Response } from 'express';
-import { AuthUser } from '../auth/decorators/AuthUser';
+import { AuthUser } from '../auth/decorators/auth-user.decorator';
 import { JwtAuthGuard } from '../auth/guards/jwt.auth.guard';
 import { MoneyAction, TableName } from '../constants';
 import { WalletParamsDto } from './dto/params.wallet.dto';
@@ -33,18 +25,9 @@ export class WalletsController {
         @Param() walletParams: WalletParamsDto,
         @Body() patchWalletDto: WalletPatchDto
     ): Promise<Response> {
-        if (user.walletId !== walletParams.id)
-            return res
-                .status(409)
-                .send({ message: 'This is not your wallet.' });
-
-        const wallet = await this.walletsService.findByIdAsync(walletParams.id);
-        if (!wallet)
-            return res.status(404).send({ message: 'Wallet not found.' });
-
         const result = await this.walletsService.moneyTransactionAsync(
             walletParams.id,
-            patchWalletDto.amount,
+            patchWalletDto,
             MoneyAction.Deposit
         );
 
@@ -66,15 +49,6 @@ export class WalletsController {
         @Param() walletParams: WalletParamsDto,
         @Body() patchWalletDto: WalletPatchDto
     ): Promise<Response> {
-        if (user.walletId !== walletParams.id)
-            return res
-                .status(409)
-                .send({ message: 'This is not your wallet.' });
-
-        const wallet = await this.walletsService.findByIdAsync(walletParams.id);
-        if (!wallet)
-            return res.status(404).send({ message: 'Wallet not found.' });
-
         const result = await this.walletsService.moneyTransactionAsync(
             walletParams.id,
             patchWalletDto.amount,

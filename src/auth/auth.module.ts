@@ -7,18 +7,25 @@ import { AuthService } from './auth.service';
 import { LocalStrategy } from './strategies/local.strategy';
 import { JwtStrategy } from './strategies/jwt.strategy';
 import { Provider } from '../constants';
+import { AuthRepository } from './repository/auth.repository';
+import { EmailExists } from './validation/email-exists.validation';
+
+// eslint-disable-next-line @typescript-eslint/no-var-requires
+const JSONAPISerializer = require('json-api-serializer');
 @Module({
     imports: [
         UsersModule,
         PassportModule,
         JwtModule.register({
             secret: process.env.JWT_SECRET,
-            signOptions: { expiresIn: '1h' },
+            signOptions: { expiresIn: '24h' },
         }),
     ],
     controllers: [AuthController],
     providers: [
         AuthService,
+        AuthRepository,
+        EmailExists,
         {
             provide: Provider.Local,
             useClass: LocalStrategy,
@@ -26,6 +33,12 @@ import { Provider } from '../constants';
         {
             provide: Provider.Jwt,
             useClass: JwtStrategy,
+        },
+        {
+            provide: 'SERIALIZER',
+            useFactory() {
+                return new JSONAPISerializer();
+            },
         },
     ],
 })

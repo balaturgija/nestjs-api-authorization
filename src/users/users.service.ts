@@ -1,7 +1,9 @@
 import { Inject, Injectable } from '@nestjs/common';
+import { RequestUserProvider } from '../base/request-user.provider';
 import { toUserDto, toUserRoleDto } from '../base/utils/Mapper.util';
 import { Provider } from '../constants';
 import { RoleEntity } from '../roles/entities/role.entity';
+import { WalletEntity } from '../wallets/entities/wallet.entity';
 import { UserCreateDto } from './dto/create-user.dto';
 import { UserEntity } from './entities/user.entity';
 @Injectable()
@@ -38,6 +40,9 @@ export class UsersService {
             include: [
                 {
                     model: RoleEntity,
+                },
+                {
+                    model: WalletEntity,
                 },
             ],
         });

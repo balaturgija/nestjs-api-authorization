@@ -15,7 +15,7 @@ export class RequestValidationPipe implements PipeTransform {
         // data?: string;
         if (!this.hasValue(argumentMetadata)) return value;
 
-        const object = plainToInstance(argumentMetadata.metatype, value);
+        const object = await plainToInstance(argumentMetadata.metatype, value);
         const errors = this.buildErrors(await validate(object));
         console.log('\x1b[46m Executing Request Validation Pipe \x1b[0m');
 

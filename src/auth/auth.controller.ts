@@ -1,9 +1,16 @@
-import { Controller, Post, UseGuards, Res, HttpStatus } from '@nestjs/common';
+import {
+    Controller,
+    Post,
+    UseGuards,
+    Res,
+    HttpStatus,
+    Inject,
+} from '@nestjs/common';
 import { ApiBody, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { Response } from 'express';
 import { UserLoginDto } from '../users/dto/login-user.dto';
 import { AuthService } from './auth.service';
-import { AuthUser } from './decorators/AuthUser';
+import { AuthUser } from './decorators/auth-user.decorator';
 import { LocalAuthGuard } from './guards/local.auth.guard';
 
 @Controller('auth')
@@ -11,7 +18,10 @@ export class AuthController {
     /**
      *
      */
-    constructor(private authService: AuthService) {}
+    constructor(
+        private authService: AuthService,
+        @Inject('SERIALIZER') private readonly serializer: any
+    ) {}
 
     @Post('login')
     @ApiTags('auth')
@@ -31,6 +41,7 @@ export class AuthController {
             email: user.email,
             roleId: user.roleId,
             walletId: user.walletId,
+            wallet: user.wallet,
             role: user.role,
         };
 

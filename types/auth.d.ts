@@ -9,6 +9,7 @@ interface TokenOptions {
     email: string;
     password: string;
     roleId: string;
-    walletId: user.walletId;
+    walletId: string;
+    wallet: Wallet;
     role: Role;
 }
