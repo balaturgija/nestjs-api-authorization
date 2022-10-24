@@ -11,7 +11,7 @@ import { WalletsModule } from './wallets/wallets.module';
 import { BidsModule } from './bids/bids.module';
 import { AuctionsModule } from './auctions/auctions.module';
 import { APP_PIPE } from '@nestjs/core';
-import { RequestValidationPipe } from './base/pipes/RequestValidation.pipe';
+import { RequestBodyValidatePipe } from './base/pipes/RequestValidation.pipe';
 
 @Module({
     imports: [
@@ -40,7 +40,7 @@ import { RequestValidationPipe } from './base/pipes/RequestValidation.pipe';
         // },
         {
             provide: APP_PIPE,
-            useClass: RequestValidationPipe,
+            useClass: RequestBodyValidatePipe,
         },
     ],
 })

@@ -1,36 +1,38 @@
 import {
     ArgumentMetadata,
-    BadRequestException,
     Injectable,
     PipeTransform,
+    Type,
 } from '@nestjs/common';
-import { plainToInstance } from 'class-transformer';
+import { plainToClass } from 'class-transformer';
 import { validate, ValidationError } from 'class-validator';
+import { ValidationException } from '../exceptions/validation.exception';
 
 @Injectable()
-export class RequestValidationPipe implements PipeTransform {
-    async transform(value: any, argumentMetadata: ArgumentMetadata) {
-        // type: 'body' | 'query' | 'param' | 'custom';
-        // metatype?: Type<unknown>;
-        // data?: string;
-        if (!this.hasValue(argumentMetadata)) return value;
+export class RequestBodyValidatePipe implements PipeTransform<any> {
+    transform(value: any, metadata: ArgumentMetadata) {
+        if (metadata.type !== 'body') {
+            return value;
+        }
+        return this.validationHandle(value, metadata.metatype);
+    }
 
-        const object = await plainToInstance(argumentMetadata.metatype, value);
+    private async validationHandle(value: any, metatype: Type<any>) {
+        if (!metatype || !this.toValidate(metatype)) {
+            return value;
+        }
+
+        const object = plainToClass(metatype, value);
         const errors = this.buildErrors(await validate(object));
         console.log('\x1b[46m Executing Request Validation Pipe \x1b[0m');
 
-        if (errors) {
-            throw new BadRequestException({
-                success: false,
-                data: errors,
-            });
-        }
+        if (errors) throw new ValidationException(errors);
 
         return value;
     }
 
     private toValidate(metatype: any): boolean {
-        return ![String, Boolean, Number, Object].includes(metatype);
+        return ![String, Boolean, Number, Array, Object].includes(metatype);
     }
 
     private buildErrors(errors: ValidationError[]) {
@@ -41,9 +43,5 @@ export class RequestValidationPipe implements PipeTransform {
                 [error.property]: error.constraints,
             };
         });
-    }
-
-    private hasValue(argumentMetadata: ArgumentMetadata) {
-        return argumentMetadata || this.toValidate(argumentMetadata.metatype);
     }
 }
