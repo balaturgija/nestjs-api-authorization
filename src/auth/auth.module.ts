@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { forwardRef, Module } from '@nestjs/common';
 import { JwtModule } from '@nestjs/jwt';
 import { PassportModule } from '@nestjs/passport';
 import { UsersModule } from '../users/users.module';
@@ -7,14 +7,9 @@ import { AuthService } from './auth.service';
 import { LocalStrategy } from './strategies/local.strategy';
 import { JwtStrategy } from './strategies/jwt.strategy';
 import { Provider } from '../constants';
-import { AuthRepository } from './repository/auth.repository';
-import { EmailExists } from './validation/email-exists.validation';
-
-// eslint-disable-next-line @typescript-eslint/no-var-requires
-const JSONAPISerializer = require('json-api-serializer');
 @Module({
     imports: [
-        UsersModule,
+        forwardRef(() => UsersModule),
         PassportModule,
         JwtModule.register({
             secret: process.env.JWT_SECRET,
@@ -24,8 +19,6 @@ const JSONAPISerializer = require('json-api-serializer');
     controllers: [AuthController],
     providers: [
         AuthService,
-        AuthRepository,
-        EmailExists,
         {
             provide: Provider.Local,
             useClass: LocalStrategy,
@@ -34,12 +27,7 @@ const JSONAPISerializer = require('json-api-serializer');
             provide: Provider.Jwt,
             useClass: JwtStrategy,
         },
-        {
-            provide: 'SERIALIZER',
-            useFactory() {
-                return new JSONAPISerializer();
-            },
-        },
     ],
+    exports: [AuthService],
 })
 export class AuthModule {}

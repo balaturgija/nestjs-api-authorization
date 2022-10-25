@@ -1,10 +1,9 @@
 import { Injectable } from '@nestjs/common';
 import {
-    ValidationArguments,
     ValidatorConstraint,
     ValidatorConstraintInterface,
 } from 'class-validator';
-import { AuthRepository } from '../repository/auth.repository';
+import { UserRepository } from '../respository/user.repository';
 
 @Injectable()
 @ValidatorConstraint({ name: 'emailExists', async: true })
@@ -12,12 +11,9 @@ export class EmailExists implements ValidatorConstraintInterface {
     /**
      *
      */
-    constructor(private readonly authRepository: AuthRepository) {}
-    async validate(
-        email: string,
-        args?: ValidationArguments
-    ): Promise<boolean> {
-        return !(await this.authRepository.emailExists(email));
+    constructor(private readonly userRepository: UserRepository) {}
+    async validate(email: string): Promise<boolean> {
+        return !(await this.userRepository.emailExists(email));
     }
 
     defaultMessage(): string {

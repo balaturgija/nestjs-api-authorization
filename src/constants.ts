@@ -21,10 +21,10 @@ export enum TableName {
     Auctions = 'auctions',
 }
 
-export enum Role {
+export enum GlobalRole {
     Admin = 'Admin',
     Engineer = 'Engineer',
-    Auctioneer = 'Collector',
+    Collector = 'Collector',
 }
 
 export enum RobotStatus {

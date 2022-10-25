@@ -13,4 +13,16 @@ export class UserRepository {
 
         return Boolean(result);
     }
+
+    async emailExists(email: string): Promise<boolean> {
+        const user = await UserEntity.findOne({
+            where: {
+                email: email,
+            },
+            attributes: ['id'],
+            rejectOnEmpty: false,
+        });
+
+        return Boolean(user);
+    }
 }
