@@ -21,7 +21,6 @@ import { BatteryParamsDto } from './dto/params-battery.dto';
 import { BatteryUpdateDto } from './dto/update-battery.dto';
 import { Role, TableName } from '../constants';
 import { JwtAuthGuard } from '../auth/guards/jwt.auth.guard';
-import { SampleGuard } from '../auth/guards/sample.guard';
 import { SortDirection } from '../base/utils/Sorter.util';
 import { RoleGuard } from '../auth/guards/role.guard';
 import { Roles } from '../auth/decorators/role.decorator';
@@ -71,13 +70,7 @@ export class BatteriesController {
     @ApiResponse({ status: 200, type: BatteryDto })
     @ApiResponse({ status: 404, description: 'Battery not found.' })
     @Roles(Role.Admin, Role.Engineer)
-    @UseGuards(
-        JwtAuthGuard,
-        RoleGuard,
-        new SampleGuard('first'),
-        new SampleGuard('second')
-    )
-    @UseGuards(new SampleGuard('third'))
+    @UseGuards(JwtAuthGuard, RoleGuard)
     async getById(
         @Res() res: Response,
         @Param() params: BatteryParamsDto
