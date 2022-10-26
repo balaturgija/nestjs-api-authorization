@@ -19,7 +19,7 @@ import { BatteryDto } from './dto/battery.dto';
 import { BatteryFilterDto } from './dto/filter-battery.dto';
 import { BatteryParamsDto } from './dto/params-battery.dto';
 import { BatteryUpdateDto } from './dto/update-battery.dto';
-import { GlobalRole, TableName } from '../constants';
+import { Role, TableName } from '../constants';
 import { JwtAuthGuard } from '../auth/guards/jwt.auth.guard';
 import { SampleGuard } from '../auth/guards/sample.guard';
 import { SortDirection } from '../base/utils/Sorter.util';
@@ -70,7 +70,7 @@ export class BatteriesController {
     @ApiBearerAuth('access-token')
     @ApiResponse({ status: 200, type: BatteryDto })
     @ApiResponse({ status: 404, description: 'Battery not found.' })
-    @Roles(GlobalRole.Admin, GlobalRole.Engineer)
+    @Roles(Role.Admin, Role.Engineer)
     @UseGuards(
         JwtAuthGuard,
         RoleGuard,
@@ -97,7 +97,7 @@ export class BatteriesController {
     @ApiBearerAuth('access-token')
     @ApiResponse({ status: 201, type: BatteryDto })
     @ApiResponse({ status: 409, description: 'Post failed' })
-    @Roles(GlobalRole.Engineer)
+    @Roles(Role.Engineer)
     @UseGuards(JwtAuthGuard, RoleGuard)
     async create(
         @Res() res: Response,

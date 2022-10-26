@@ -1,5 +1,5 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { Sequelize, Transaction } from 'sequelize';
+import { Sequelize } from 'sequelize';
 import { UserHaveNoWalletException } from '../base/exceptions/user-have-no-wallet.exception';
 import { RequestUserProvider } from '../base/request-user.provider';
 import { toWalletDto } from '../base/utils/Mapper.util';
@@ -19,15 +19,13 @@ export class WalletsService {
         private readonly requestUserProvider: RequestUserProvider
     ) {}
 
-    async findByIdAsync(id: string, t?: Transaction): Promise<Wallet | null> {
-        const result = await this.walletRepository.findByPk(id, {
-            transaction: t,
-        });
+    async findByIdAsync(id: string): Promise<Wallet | null> {
+        const result = await this.walletRepository.findByPk(id);
         return result ? toWalletDto(result) : null;
     }
 
-    async createAsync(t?: Transaction): Promise<Wallet> {
-        return await this.walletRepository.create(t);
+    async createAsync(): Promise<Wallet> {
+        return await this.walletRepository.create({ amount: 0 });
     }
 
     async moneyTransactionAsync(
@@ -42,58 +40,26 @@ export class WalletsService {
 
         const transaction = await this.sequelize.transaction();
         try {
-            const wallet = await this.findByIdAsync(walletId, transaction);
-            // if (wallet.amount < patchWalletDto.amount)
-            //     throw new WithdrawDisabledException(
-            //         {
-            //             message: 'You cant withdraw this amount',
-            //             code: Codes.WITHDRAW_DISABLED,
-            //         },
-            //         500
-            //     );
+            const wallet = await this.walletRepository.findOne({
+                where: { id: walletId },
+                transaction: transaction,
+            });
+            let resultAmount = Number(wallet.amount);
 
-            await this.patchWaletAmount(
-                wallet,
-                patchWalletDto.amount,
-                action,
-                transaction
+            if (action === MoneyAction.Deposit)
+                resultAmount += Number(patchWalletDto.amount);
+            if (action === MoneyAction.Withdraw)
+                resultAmount -= Number(patchWalletDto.amount);
+
+            await this.walletRepository.update(
+                { amount: resultAmount },
+                { where: { id: walletId }, transaction }
             );
-
             await transaction.commit();
             return true;
         } catch (error) {
             await transaction.rollback();
             return false;
         }
-    }
-
-    private async patchWaletAmount(
-        wallet: Wallet,
-        amount: number,
-        action: MoneyAction,
-        t?: Transaction
-    ): Promise<boolean> {
-        if (action === MoneyAction.Deposit) {
-            wallet.amount += Number(amount);
-        }
-
-        if (action === MoneyAction.Withdraw) {
-            wallet.amount -= Number(action);
-        }
-
-        return await this.updateAmount(wallet.id, amount, t);
-    }
-
-    private async updateAmount(
-        id: string,
-        amount: number,
-        t?: Transaction
-    ): Promise<boolean> {
-        return (
-            (await this.walletRepository.update(
-                { amount: amount },
-                { where: { id: id }, transaction: t }
-            )[0]) > 0
-        );
     }
 }

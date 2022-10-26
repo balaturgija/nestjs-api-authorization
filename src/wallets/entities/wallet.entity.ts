@@ -13,7 +13,6 @@ import { TableName } from '../../constants';
 export class WalletEntity extends BaseEntity<WalletEntity> implements Wallet {
     @Column({
         type: DataType.DECIMAL(10, 2),
-        defaultValue: 0,
     })
     amount: number;
 

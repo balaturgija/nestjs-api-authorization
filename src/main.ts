@@ -1,7 +1,5 @@
-import { INestApplication, VersioningType } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
-import { useContainer } from 'class-validator';
 import { AppModule } from './app.module';
 import { SWAGGER_CONFIG } from './constants';
 // import * as express from 'express';
@@ -13,7 +11,9 @@ import { SWAGGER_CONFIG } from './constants';
 //     path: path.resolve(`.env`),
 // });
 
-function initDocs(app: INestApplication) {
+async function bootstrap() {
+    const app = await NestFactory.create(AppModule);
+
     const config = new DocumentBuilder()
         .setTitle(SWAGGER_CONFIG.title)
         .setDescription(SWAGGER_CONFIG.description)
@@ -25,17 +25,12 @@ function initDocs(app: INestApplication) {
     for (const tag of SWAGGER_CONFIG.tags) {
         config.addTag(tag);
     }
+
     const document = SwaggerModule.createDocument(app, config.build());
     SwaggerModule.setup('api', app, document);
-}
 
-async function bootstrap() {
-    const app = await NestFactory.create(AppModule);
-    useContainer(app.select(AppModule), { fallbackOnErrors: true });
-    initDocs(app);
     // app.use('/upload', express.static(path.join(process.cwd(), 'upload')));
     app.enableCors();
-    app.enableVersioning({ type: VersioningType.URI });
     await app.listen(3000);
 }
 

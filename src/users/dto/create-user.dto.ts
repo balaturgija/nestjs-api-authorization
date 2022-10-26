@@ -1,12 +1,12 @@
-import { ApiProperty } from '@nestjs/swagger';
+import { ApiHideProperty, ApiProperty } from '@nestjs/swagger';
+import { Exclude } from 'class-transformer';
 import {
     IsEmail,
-    IsEnum,
     IsNotEmpty,
     IsString,
+    IsUUID,
     Matches,
 } from 'class-validator';
-import { GlobalRole } from '../../constants';
 
 export class UserCreateDto {
     @ApiProperty()
@@ -24,9 +24,12 @@ export class UserCreateDto {
     @IsNotEmpty()
     password: string;
 
+    @ApiHideProperty()
+    @Exclude()
+    walletId: string;
+
     @ApiProperty()
-    @IsString()
+    @IsUUID()
     @IsNotEmpty()
-    @IsEnum(GlobalRole)
-    role?: string;
+    roleId: string;
 }
