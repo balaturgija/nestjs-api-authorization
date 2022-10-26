@@ -51,7 +51,7 @@ export class WalletsController {
     ): Promise<Response> {
         const result = await this.walletsService.moneyTransactionAsync(
             walletParams.id,
-            patchWalletDto.amount,
+            patchWalletDto,
             MoneyAction.Withdraw
         );
 
