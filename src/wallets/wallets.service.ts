@@ -7,6 +7,7 @@ import { MoneyAction, Provider } from '../constants';
 import { WalletPatchDto } from './dto/patch-wallet.dto';
 import { WalletEntity } from './entities/wallet.entity';
 import { MoneyTransactionDisabledException } from './exceptions/money-transaction-disabled.exception';
+import { TransactionFailedException } from './exceptions/transaction-failed.exception';
 
 @Injectable()
 export class WalletsService {
@@ -26,6 +27,7 @@ export class WalletsService {
             raw: true,
             transaction: t,
         });
+
         return result ? toWalletDto(result) : null;
     }
 
@@ -45,42 +47,42 @@ export class WalletsService {
 
         const transaction = await this.sequelize.transaction();
         try {
+            // sequelize read numeric type as string
             const wallet = await this.findByIdAsync(walletId, transaction);
-            await this.patchWaletAmount(
-                wallet,
-                Number(patchWalletDto.amount),
-                action,
-                transaction
+            const calculatedAmount = await this.calculateAmount(
+                Number(wallet.amount),
+                patchWalletDto.amount,
+                action
             );
+            await this.updateAmount(wallet.id, calculatedAmount, transaction);
             await transaction.commit();
             return true;
         } catch (error) {
             await transaction.rollback();
-            return false;
+            throw new TransactionFailedException('Transaction failed');
         }
     }
 
-    private async patchWaletAmount(
-        wallet: Wallet,
+    private async calculateAmount(
+        walletAmount: number,
         amount: number,
-        action: MoneyAction,
-        t?: Transaction
-    ): Promise<boolean> {
+        action: MoneyAction
+    ): Promise<number> {
         if (action === MoneyAction.Deposit) {
-            wallet.amount += Number(amount);
+            walletAmount += Number(amount);
         }
 
-        if (action === MoneyAction.Withdraw && wallet.amount < amount) {
+        if (action === MoneyAction.Withdraw && walletAmount < amount) {
             throw new MoneyTransactionDisabledException(
                 'Transaction declined.'
             );
         }
 
-        if (action === MoneyAction.Withdraw && wallet.amount > amount) {
-            wallet.amount -= Number(action);
+        if (action === MoneyAction.Withdraw && walletAmount > amount) {
+            walletAmount -= Number(action);
         }
 
-        return await this.updateAmount(wallet.id, amount, t);
+        return walletAmount;
     }
 
     private async updateAmount(
@@ -89,10 +91,12 @@ export class WalletsService {
         t?: Transaction
     ): Promise<boolean> {
         return (
-            (await this.walletRepository.update(
-                { amount: amount },
-                { where: { id: id }, transaction: t }
-            )[0]) > 0
+            (
+                await this.walletRepository.update(
+                    { amount: amount },
+                    { where: { id: id }, transaction: t }
+                )
+            )[0] > 0
         );
     }
 }
