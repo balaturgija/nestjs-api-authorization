@@ -1,6 +1,8 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { Provider } from '../constants';
+import { Transaction } from 'sequelize';
+import { Provider, Role } from '../constants';
 import { RoleEntity } from './entities/role.entity';
+import { UnsuportedRoleException } from './exceptions/unsuported-role.exception';
 
 @Injectable()
 export class RolesService {
@@ -9,7 +11,18 @@ export class RolesService {
         private readonly roleRepository: typeof RoleEntity
     ) {}
 
-    async getByIdAsync(id: string): Promise<Role | null> {
+    async getByName(name: string, t?: Transaction) {
+        if (name === Role.Admin) {
+            throw new UnsuportedRoleException();
+        } else {
+            return await this.roleRepository.findOne({
+                where: { name: name },
+                transaction: t,
+            });
+        }
+    }
+
+    async getByIdAsync(id: string) {
         return (await this.roleRepository.findByPk(id)) ?? null;
     }
 }
