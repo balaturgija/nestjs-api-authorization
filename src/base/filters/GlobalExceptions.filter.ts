@@ -1,33 +1,35 @@
 import {
-    ArgumentsHost,
-    Catch,
     ExceptionFilter,
+    Catch,
+    ArgumentsHost,
     HttpException,
+    Inject,
 } from '@nestjs/common';
-import { Request, Response } from 'express';
-import { ResponseBuilder } from '../utils/ResponseDataBuilder.util';
+import { Response } from 'express';
 
 @Catch()
 export class GlobalExceptionsFilter implements ExceptionFilter {
+    constructor(@Inject('SERIALIZER') private readonly serializer: any) {}
+
     catch(exception: HttpException, host: ArgumentsHost) {
         const ctx = host.switchToHttp();
         const response = ctx.getResponse<Response>();
-        const request = ctx.getRequest<Request>();
 
-        const path = `${request.protocol}://${request.hostname}${request.path}`;
-        const status = exception.getStatus();
-
-        response
-            .status(status)
-            .send(
-                ResponseBuilder.build(
-                    status,
-                    request.method,
-                    'error',
-                    exception.message,
-                    path,
-                    exception.getResponse()
-                )
+        if (!('getResponse' in exception)) {
+            response.status(500).json(
+                this.serializer.serializeError({
+                    message: 'Something went wrong',
+                })
             );
+
+            return;
+        }
+
+        response.status(exception.getStatus()).json(
+            this.serializer.serializeError({
+                message: 'There are some validation errors.',
+                meta: exception.getResponse(),
+            })
+        );
     }
 }
