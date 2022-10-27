@@ -7,7 +7,6 @@ import { MoneyAction, Provider } from '../constants';
 import { WalletPatchDto } from './dto/patch-wallet.dto';
 import { WalletEntity } from './entities/wallet.entity';
 import { MoneyTransactionDisabledException } from './exceptions/money-transaction-disabled.exception';
-import { TransactionFailedException } from './exceptions/transaction-failed.exception';
 
 @Injectable()
 export class WalletsService {
