@@ -34,12 +34,6 @@ const JSONAPISerializer = require('json-api-serializer');
             provide: Provider.Jwt,
             useClass: JwtStrategy,
         },
-        {
-            provide: 'SERIALIZER',
-            useFactory() {
-                return new JSONAPISerializer();
-            },
-        },
     ],
 })
 export class AuthModule {}

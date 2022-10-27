@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { Inject, Module, OnModuleInit } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { AuthModule } from './auth/auth.module';
 import { BatteriesModule } from './batteries/batteries.module';
@@ -47,4 +47,16 @@ import { BaseModule } from './base/base.module';
         },
     ],
 })
-export class AppModule {}
+export class AppModule implements OnModuleInit {
+    constructor(@Inject('SERIALIZER') private readonly serializer: any) {}
+    onModuleInit(): any {
+        this.serializer.register('users', {
+            id: 'id',
+            links: {
+                self: function (data) {
+                    return '/users/' + data.id;
+                },
+            },
+        });
+    }
+}

@@ -3,10 +3,10 @@ import {
     Post,
     UseGuards,
     Res,
-    HttpStatus,
     Inject,
+    HttpCode,
 } from '@nestjs/common';
-import { ApiBody, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { ApiBody, ApiTags } from '@nestjs/swagger';
 import { Response } from 'express';
 import { UserLoginDto } from '../users/dto/login-user.dto';
 import { AuthService } from './auth.service';
@@ -25,15 +25,10 @@ export class AuthController {
 
     @Post('login')
     @ApiTags('auth')
-    @ApiResponse({ status: 201, type: UserLoginDto })
-    @ApiResponse({ status: 401, description: 'Token creation failed.' })
-    @ApiResponse({ status: 409, description: 'Unauthorized.' })
+    @HttpCode(200)
     @ApiBody({ type: UserLoginDto })
     @UseGuards(LocalAuthGuard)
-    async login(
-        @AuthUser() user: User,
-        @Res() res: Response
-    ): Promise<Response> {
+    async login(@AuthUser() user: User, @Res() res: Response) {
         const tokenOptions: TokenOptions = {
             id: user.id,
             username: user.username,
@@ -46,14 +41,13 @@ export class AuthController {
         };
 
         const token = await this.authService.createToken(tokenOptions);
-        if (!token) return res.send(HttpStatus.CONFLICT);
-        const loginResponseData = await this.authService.loginAsync(
-            tokenOptions,
-            token
+        res.header('access-token', token);
+        res.send(
+            this.serializer.serialize('users', {
+                id: user.id,
+                username: user.username,
+                email: user.email,
+            })
         );
-
-        if (!loginResponseData) return res.status(HttpStatus.UNAUTHORIZED);
-
-        return res.status(HttpStatus.CREATED).send(loginResponseData);
     }
 }
