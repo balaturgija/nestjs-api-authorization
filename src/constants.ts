@@ -24,7 +24,7 @@ export enum TableName {
 export enum Role {
     Admin = 'Admin',
     Engineer = 'Engineer',
-    Auctioneer = 'Collector',
+    Collector = 'Collector',
 }
 
 export enum RobotStatus {
