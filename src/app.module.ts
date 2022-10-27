@@ -13,6 +13,7 @@ import { AuctionsModule } from './auctions/auctions.module';
 import { APP_FILTER, APP_PIPE } from '@nestjs/core';
 import { RequestBodyValidatePipe } from './base/pipes/RequestValidation.pipe';
 import { GlobalExceptionsFilter } from './base/filters/GlobalExceptions.filter';
+import { BaseModule } from './base/base.module';
 
 @Module({
     imports: [
@@ -23,6 +24,7 @@ import { GlobalExceptionsFilter } from './base/filters/GlobalExceptions.filter';
             cache: true,
         }),
         DatabaseModule,
+        BaseModule,
         BatteriesModule,
         RobotsModule,
         WalletsModule,
