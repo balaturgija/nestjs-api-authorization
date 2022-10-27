@@ -59,7 +59,7 @@ export class WalletsService {
             return true;
         } catch (error) {
             await transaction.rollback();
-            throw new TransactionFailedException('Transaction failed');
+            return false;
         }
     }
 
