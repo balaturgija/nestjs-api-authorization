@@ -1,5 +1,4 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { RequestUserProvider } from '../base/request-user.provider';
 import { toUserDto, toUserRoleDto } from '../base/utils/Mapper.util';
 import { Provider } from '../constants';
 import { RoleEntity } from '../roles/entities/role.entity';
