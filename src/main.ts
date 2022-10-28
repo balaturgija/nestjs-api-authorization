@@ -1,5 +1,6 @@
 import { NestFactory } from '@nestjs/core';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
+import { useContainer } from 'class-validator';
 import { AppModule } from './app.module';
 import { SWAGGER_CONFIG } from './constants';
 // import * as express from 'express';
@@ -13,6 +14,7 @@ import { SWAGGER_CONFIG } from './constants';
 
 async function bootstrap() {
     const app = await NestFactory.create(AppModule);
+    useContainer(app.select(AppModule), { fallbackOnErrors: true });
 
     const config = new DocumentBuilder()
         .setTitle(SWAGGER_CONFIG.title)

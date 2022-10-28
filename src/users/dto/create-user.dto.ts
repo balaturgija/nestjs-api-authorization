@@ -6,7 +6,9 @@ import {
     IsString,
     IsUUID,
     Matches,
+    Validate,
 } from 'class-validator';
+import { EmailExists } from '../../auth/validators/user-email-exists.validator';
 
 export class UserCreateDto {
     @ApiProperty()
@@ -17,6 +19,7 @@ export class UserCreateDto {
     @ApiProperty()
     @IsEmail(undefined, { each: true })
     @Matches(/\S+@\S+\.\S+/, { message: 'Email is not in valid format.' })
+    @Validate(EmailExists)
     email: string;
 
     @ApiProperty()
