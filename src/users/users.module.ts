@@ -4,9 +4,9 @@ import { UsersController } from './users.controller';
 import { usersProviders } from './users.providers';
 import { RolesModule } from '../roles/roles.module';
 import { WalletsModule } from '../wallets/wallets.module';
-import { DatabaseModule } from '../database/database.module';
+
 @Module({
-    imports: [RolesModule, WalletsModule, DatabaseModule],
+    imports: [RolesModule, WalletsModule],
     controllers: [UsersController],
     providers: [UsersService, ...usersProviders],
     exports: [UsersService],
