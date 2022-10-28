@@ -14,8 +14,8 @@ export class AuthService {
         private jwtService: JwtService
     ) {}
 
-    async createAsync(dto: UserCreateDto) {
-        return await this.usersService.createAsync(dto);
+    async createAsync(user: UserCreateDto) {
+        return await this.usersService.createAsync(user);
     }
 
     async getByEmailAsync(email: string): Promise<User | null> {
