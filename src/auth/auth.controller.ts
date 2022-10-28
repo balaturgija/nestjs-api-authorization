@@ -5,11 +5,9 @@ import {
     Res,
     Inject,
     HttpCode,
-    Body,
 } from '@nestjs/common';
 import { ApiBody, ApiTags } from '@nestjs/swagger';
 import { Response } from 'express';
-import { UserCreateDto } from '../users/dto/create-user.dto';
 import { UserLoginDto } from '../users/dto/login-user.dto';
 import { AuthService } from './auth.service';
 import { AuthUser } from './decorators/auth-user.decorator';
@@ -24,20 +22,6 @@ export class AuthController {
         private authService: AuthService,
         @Inject('SERIALIZER') private readonly serializer: any
     ) {}
-
-    @Post('register')
-    @ApiTags('auth')
-    @HttpCode(200)
-    async register(@Res() res: Response, @Body() user: UserCreateDto) {
-        const createdUser = await this.authService.createAsync(user);
-        res.send(
-            this.serializer.serialize('users', {
-                id: createdUser.id,
-                username: createdUser.username,
-                email: createdUser.email,
-            })
-        );
-    }
 
     @Post('login')
     @UseGuards(LocalAuthGuard)
