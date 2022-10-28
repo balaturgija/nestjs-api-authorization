@@ -5,9 +5,6 @@ import { usersProviders } from './users.providers';
 import { RolesModule } from '../roles/roles.module';
 import { WalletsModule } from '../wallets/wallets.module';
 import { DatabaseModule } from '../database/database.module';
-
-// eslint-disable-next-line @typescript-eslint/no-var-requires
-const JSONAPISerializer = require('json-api-serializer');
 @Module({
     imports: [RolesModule, WalletsModule, DatabaseModule],
     controllers: [UsersController],

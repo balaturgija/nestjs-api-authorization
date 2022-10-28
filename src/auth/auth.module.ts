@@ -6,12 +6,7 @@ import { AuthController } from './auth.controller';
 import { AuthService } from './auth.service';
 import { LocalStrategy } from './strategies/local.strategy';
 import { JwtStrategy } from './strategies/jwt.strategy';
-import { Provider } from '../constants';
-import { AuthRepository } from './repository/auth.repository';
-import { EmailExists } from './validation/email-exists.validation';
 
-// eslint-disable-next-line @typescript-eslint/no-var-requires
-const JSONAPISerializer = require('json-api-serializer');
 @Module({
     imports: [
         UsersModule,
@@ -22,18 +17,6 @@ const JSONAPISerializer = require('json-api-serializer');
         }),
     ],
     controllers: [AuthController],
-    providers: [
-        AuthService,
-        AuthRepository,
-        EmailExists,
-        {
-            provide: Provider.Local,
-            useClass: LocalStrategy,
-        },
-        {
-            provide: Provider.Jwt,
-            useClass: JwtStrategy,
-        },
-    ],
+    providers: [AuthService, LocalStrategy, JwtStrategy],
 })
 export class AuthModule {}

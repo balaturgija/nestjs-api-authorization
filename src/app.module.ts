@@ -23,8 +23,9 @@ import { BaseModule } from './base/base.module';
             isGlobal: true,
             cache: true,
         }),
-        DatabaseModule,
         BaseModule,
+        AuthModule,
+        DatabaseModule,
         BatteriesModule,
         RobotsModule,
         WalletsModule,
@@ -38,12 +39,12 @@ import { BaseModule } from './base/base.module';
     controllers: [],
     providers: [
         {
-            provide: APP_FILTER,
-            useClass: GlobalExceptionsFilter,
-        },
-        {
             provide: APP_PIPE,
             useClass: RequestBodyValidatePipe,
+        },
+        {
+            provide: APP_FILTER,
+            useClass: GlobalExceptionsFilter,
         },
     ],
 })

@@ -1,7 +1,6 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { Sequelize, Transaction } from 'sequelize';
-import { RequestUserProvider } from '../base/request-user.provider';
-import { toUserDto, toUserRoleDto } from '../base/utils/Mapper.util';
+import { toUserRoleDto } from '../base/utils/Mapper.util';
 import { Provider } from '../constants';
 import { RoleEntity } from '../roles/entities/role.entity';
 import { RolesService } from '../roles/roles.service';
@@ -70,13 +69,6 @@ export class UsersService {
     private async createPassword(password: string): Promise<string> {
         const salt = await bcrypt.genSalt(10);
         return await bcrypt.hash(password, salt);
-    }
-
-    async getByUsernameAsync(username: string): Promise<User | null> {
-        const result = await this.userRepository.findOne({
-            where: { username: username },
-        });
-        return result ? toUserDto(result) : null;
     }
 
     async getUserProfileAsync(email: string): Promise<User | null> {
