@@ -1,7 +1,6 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { Sequelize, Transaction } from 'sequelize';
 import { UserHaveNoWalletException } from '../base/exceptions/user-have-no-wallet.exception';
-import { RequestUserProvider } from '../base/request-user.provider';
 import { toWalletDto } from '../base/utils/Mapper.util';
 import { MoneyAction, Provider } from '../constants';
 import { WalletPatchDto } from './dto/patch-wallet.dto';
@@ -10,15 +9,10 @@ import { MoneyTransactionDisabledException } from './exceptions/money-transactio
 
 @Injectable()
 export class WalletsService {
-    private get user(): User {
-        return this.requestUserProvider.user;
-    }
-
     constructor(
         @Inject(Provider.WalletRepository)
         private readonly walletRepository: typeof WalletEntity,
-        @Inject(Provider.Sequelize) private readonly sequelize: Sequelize,
-        private readonly requestUserProvider: RequestUserProvider
+        @Inject(Provider.Sequelize) private readonly sequelize: Sequelize
     ) {}
 
     async findByIdAsync(id: string, t?: Transaction): Promise<Wallet | null> {
@@ -35,11 +29,12 @@ export class WalletsService {
     }
 
     async moneyTransactionAsync(
+        wallet: Wallet,
         walletId: string,
         patchWalletDto: WalletPatchDto,
         action: MoneyAction
     ): Promise<boolean> {
-        if (this.user.walletId !== walletId)
+        if (wallet.id !== walletId)
             throw new UserHaveNoWalletException(
                 'User does not link with Wallet'
             );
@@ -47,7 +42,6 @@ export class WalletsService {
         const transaction = await this.sequelize.transaction();
         try {
             // sequelize read numeric type as string
-            const wallet = await this.findByIdAsync(walletId, transaction);
             const calculatedAmount = await this.calculateAmount(
                 Number(wallet.amount),
                 patchWalletDto.amount,

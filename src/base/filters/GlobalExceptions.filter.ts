@@ -16,6 +16,8 @@ export class GlobalExceptionsFilter implements ExceptionFilter {
         const response = ctx.getResponse<Response>();
 
         if (!('getResponse' in exception)) {
+            console.log(exception);
+
             response.status(500).json(
                 this.serializer.serializeError({
                     message: 'Something went wrong',
