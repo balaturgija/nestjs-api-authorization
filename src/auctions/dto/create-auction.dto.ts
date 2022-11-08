@@ -1,1 +1,6 @@
-export class CreateAuctionDto {}
+import { ApiProperty } from '@nestjs/swagger';
+
+export class CreateAuctionDto {
+    @ApiProperty()
+    robotId: string;
+}
