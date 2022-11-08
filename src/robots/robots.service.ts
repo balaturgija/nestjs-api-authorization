@@ -1,10 +1,12 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { OrderItem } from 'sequelize';
+import { OrderItem, Sequelize } from 'sequelize';
 import { toRobtDto } from '../base/utils/Mapper.util';
 import { Pager } from '../base/utils/Pager.util';
 import { PageResult } from '../base/utils/PageResult.util';
 import { SortDirection, Sorter } from '../base/utils/Sorter.util';
-import { Provider } from '../constants';
+import { Provider, RobotStatus } from '../constants';
+import { UserRobotsService } from '../user-robots/user-robots.service';
+import { UserRobotsFilterDto } from '../users/dto/filter-user-robots.dto';
 import { RobotCreateDto } from './dto/create-robot.dto';
 import { RobotFilterDto } from './dto/filter-robot.dto';
 import { RobotUpdateDto } from './dto/update-robot.dto';
@@ -14,7 +16,9 @@ import { RobotEntity } from './entities/robot.entity';
 export class RobotsService {
     constructor(
         @Inject(Provider.RobotRepository)
-        private readonly robotRepository: typeof RobotEntity
+        private readonly robotRepository: typeof RobotEntity,
+        private readonly userRobotsService: UserRobotsService,
+        @Inject(Provider.Sequelize) private readonly sequelize: Sequelize
     ) {}
 
     async findAllAsync(query: RobotFilterDto): Promise<PageResult<Robot>> {
@@ -42,8 +46,29 @@ export class RobotsService {
         return result !== null ? toRobtDto(result) : null;
     }
 
-    async createAsync(createRobotDto: RobotCreateDto): Promise<Robot> {
-        return await this.robotRepository.create(createRobotDto);
+    async createAsync(
+        createRobotDto: RobotCreateDto,
+        user: User
+    ): Promise<Robot> {
+        const transaction = await this.sequelize.transaction();
+        try {
+            const robot = await this.robotRepository.create(
+                {
+                    creatorsSignature: user.username,
+                    status: RobotStatus.Created,
+                    ...createRobotDto,
+                },
+                {
+                    transaction: transaction,
+                }
+            );
+            await this.userRobotsService.create(robot.id, user.id, transaction);
+            await transaction.commit();
+            return robot;
+        } catch (error) {
+            await transaction.rollback();
+            return null;
+        }
     }
 
     async putAsync(
@@ -61,5 +86,9 @@ export class RobotsService {
 
     async deleteAsync(id: string): Promise<boolean> {
         return (await this.robotRepository.destroy({ where: { id: id } })) > 0;
+    }
+
+    async getRobots(query: UserRobotsFilterDto, user: User) {
+        return await this.userRobotsService.getByUserId(query, user.id);
     }
 }

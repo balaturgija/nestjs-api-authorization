@@ -25,11 +25,13 @@ export class RobotEntity extends BaseEntity<RobotEntity> implements Robot {
 
     @Column({
         type: DataType.DECIMAL(9, 2),
+        defaultValue: 0,
     })
     startPrice: number;
 
     @Column({
         type: DataType.DECIMAL(9, 2),
+        defaultValue: 0,
     })
     currentPrice: number;
 
