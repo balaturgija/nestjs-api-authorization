@@ -59,5 +59,21 @@ export class AppModule implements OnModuleInit {
                 },
             },
         });
+        this.serializer.register('auctions', {
+            id: 'id',
+            links: {
+                self: function (data) {
+                    return '/auctions/' + data.id;
+                },
+            },
+        });
+        this.serializer.register('robots', {
+            id: 'id',
+            links: {
+                self: function (data) {
+                    return '/robots/' + data.id;
+                },
+            },
+        });
     }
 }
