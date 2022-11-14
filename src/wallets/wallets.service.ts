@@ -1,6 +1,5 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { Sequelize, Transaction } from 'sequelize';
-import { UserHaveNoWalletException } from '../base/exceptions/user-have-no-wallet.exception';
 import { toWalletDto } from '../base/utils/Mapper.util';
 import { MoneyAction, Provider } from '../constants';
 import { WalletPatchDto } from './dto/patch-wallet.dto';
@@ -34,11 +33,6 @@ export class WalletsService {
         patchWalletDto: WalletPatchDto,
         action: MoneyAction
     ): Promise<boolean> {
-        if (wallet.id !== walletId)
-            throw new UserHaveNoWalletException(
-                'User does not link with Wallet'
-            );
-
         const transaction = await this.sequelize.transaction();
         try {
             // sequelize read numeric type as string

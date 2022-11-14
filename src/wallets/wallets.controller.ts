@@ -15,7 +15,7 @@ export class WalletsController {
      */
     constructor(private readonly walletsService: WalletsService) {}
 
-    @Patch(':id/deposit')
+    @Patch('/deposit')
     @ApiTags(TableName.Wallets)
     @UseGuards(JwtAuthGuard)
     @ApiBearerAuth('access-token')
@@ -40,7 +40,7 @@ export class WalletsController {
         return res.status(409).send({ message: 'Deposit failed.' });
     }
 
-    @Patch(':id/withdraw')
+    @Patch('/withdraw')
     @ApiTags(TableName.Wallets)
     @UseGuards(JwtAuthGuard)
     @ApiBearerAuth('access-token')
