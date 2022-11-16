@@ -1,4 +1,7 @@
-import { PartialType } from '@nestjs/swagger';
-import { BatteryCreateDto } from './create-battery.dto';
+import { IsNotEmpty, IsString } from 'class-validator';
 
-export class BatteryUpdateDto extends PartialType(BatteryCreateDto) {}
+export class UpdateBatteryDto {
+    @IsNotEmpty()
+    @IsString()
+    name: string;
+}

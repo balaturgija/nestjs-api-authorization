@@ -3,34 +3,67 @@ import {
     Controller,
     Delete,
     Get,
-    HttpStatus,
+    HttpCode,
+    Inject,
     Param,
+    ParseIntPipe,
+    Patch,
     Post,
-    Put,
     Query,
-    Res,
     UseGuards,
 } from '@nestjs/common';
-import { ApiBearerAuth, ApiQuery, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiQuery, ApiTags } from '@nestjs/swagger';
 import { Response } from 'express';
 import { BatteriesService } from './batteries.service';
-import { BatteryCreateDto } from './dto/create-battery.dto';
-import { BatteryDto } from './dto/battery.dto';
-import { BatteryFilterDto } from './dto/filter-battery.dto';
-import { BatteryParamsDto } from './dto/params-battery.dto';
-import { BatteryUpdateDto } from './dto/update-battery.dto';
+import { CreateBatteryDto } from './dto/create-battery.dto';
+import { UpdateBatteryDto } from './dto/update-battery.dto';
 import { Role, TableName } from '../constants';
 import { JwtAuthGuard } from '../auth/guards/jwt.auth.guard';
 import { SortDirection } from '../base/utils/Sorter.util';
 import { RoleGuard } from '../auth/guards/role.guard';
 import { Roles } from '../auth/decorators/role.decorator';
+import { CreateBatteryResponseModel } from './models/create-battery-response.model';
+import { BatteryExistsPipe } from './pipes/battery-exists.pipe';
+import { CreateBatteryModel } from './models/create-battery.model';
 
 @Controller('batteries')
 export class BatteriesController {
-    constructor(private readonly batteriesService: BatteriesService) {}
+    constructor(
+        private readonly batteriesService: BatteriesService,
+        @Inject('SERIALIZER') private readonly serializer: any
+    ) {}
+
+    @Post()
+    @ApiTags(TableName.Batteries)
+    @HttpCode(201)
+    @UseGuards(JwtAuthGuard, RoleGuard)
+    @Roles(Role.Engineer)
+    @ApiBearerAuth('access-token')
+    async create(@Body() body: CreateBatteryDto): Promise<Response> {
+        const battery = await this.batteriesService.create(body.name);
+        return this.serializer('batteries', battery);
+    }
+
+    @Get(':id')
+    @ApiTags(TableName.Batteries)
+    @HttpCode(200)
+    @UseGuards(JwtAuthGuard, RoleGuard)
+    @Roles(Role.Admin, Role.Engineer)
+    @ApiBearerAuth('access-token')
+    async findOne(
+        @Param('id', BatteryExistsPipe) id: string
+    ): Promise<Response> {
+        const result = await this.batteriesService.findOne(id);
+
+        return this.serializer.serialize(
+            'batteries',
+            CreateBatteryResponseModel.fromEntity(result)
+        );
+    }
 
     @Get()
     @ApiTags(TableName.Batteries)
+    @HttpCode(200)
     @ApiQuery({
         name: 'page',
         type: 'number',
@@ -38,16 +71,10 @@ export class BatteriesController {
         description: 'Default 1',
     })
     @ApiQuery({
-        name: 'rpp',
+        name: 'size',
         type: 'number',
         required: false,
         description: 'Default 10',
-    })
-    @ApiQuery({
-        name: 'sortBy',
-        type: 'string',
-        required: false,
-        description: 'default: id, optional: name | created_at',
     })
     @ApiQuery({
         name: 'sortDirection',
@@ -55,93 +82,47 @@ export class BatteriesController {
         enum: SortDirection,
         required: false,
     })
-    @ApiResponse({ status: 200, type: BatteryDto, isArray: true })
     async findAll(
-        @Res() res: Response,
-        @Query() query: BatteryFilterDto
+        @Query('page', ParseIntPipe) page = 1,
+        @Query('size', ParseIntPipe) size = 10,
+        @Query('sortDirection') sortDirection = SortDirection.Asc
     ): Promise<Response> {
-        const result = await this.batteriesService.findAllAsync(query);
-        return res.send(result);
-    }
-
-    @Get(':id')
-    @ApiTags(TableName.Batteries)
-    @ApiBearerAuth('access-token')
-    @ApiResponse({ status: 200, type: BatteryDto })
-    @ApiResponse({ status: 404, description: 'Battery not found.' })
-    @Roles(Role.Admin, Role.Engineer)
-    @UseGuards(JwtAuthGuard, RoleGuard)
-    async getById(
-        @Res() res: Response,
-        @Param() params: BatteryParamsDto
-    ): Promise<Response> {
-        console.log('\x1b[35m Controller method execution start. \x1b[0m');
-        const result = await this.batteriesService.getByIdAsync(params.id);
-        if (result !== null) {
-            console.log('\x1b[35m Controller method execution end. \x1b[0m');
-            return res.send(result);
-        }
-
-        return res.status(HttpStatus.NOT_FOUND);
-    }
-
-    @Post()
-    @ApiTags(TableName.Batteries)
-    @ApiBearerAuth('access-token')
-    @ApiResponse({ status: 201, type: BatteryDto })
-    @ApiResponse({ status: 409, description: 'Post failed' })
-    @Roles(Role.Engineer)
-    @UseGuards(JwtAuthGuard, RoleGuard)
-    async create(
-        @Res() res: Response,
-        @Body() body: BatteryCreateDto
-    ): Promise<Response> {
-        const result = await this.batteriesService.createAsync(body);
-        if (result) return res.send(result);
-
-        return res.status(HttpStatus.CONFLICT);
-    }
-
-    @Put(':id')
-    @ApiTags(TableName.Batteries)
-    @ApiResponse({ status: 200, description: 'Update success.' })
-    @ApiResponse({ status: 404, description: 'Robot not found.' })
-    @ApiResponse({ status: 409, description: 'Update failed.' })
-    async update(
-        @Res() res: Response,
-        @Param() params: BatteryParamsDto,
-        @Body() body: BatteryUpdateDto
-    ): Promise<Response> {
-        const model = await this.batteriesService.getByIdAsync(params.id);
-        if (!model)
-            return res.send(HttpStatus.NOT_FOUND).send('Battery not found');
-
-        Object.assign(model, body);
-        const result = await this.batteriesService.putAsync(
-            params.id,
-            JSON.parse(JSON.stringify(model))
+        const paginationItems = await this.batteriesService.findAll(
+            page,
+            size,
+            sortDirection
         );
+        return this.serializer.serialize(
+            'batteriesPagination',
+            paginationItems
+        );
+    }
 
-        if (result) return res.send({ success: true });
+    @Patch(':id')
+    @ApiTags(TableName.Batteries)
+    @HttpCode(204)
+    async update(
+        @Param('id', BatteryExistsPipe) id: string,
+        @Body() request: UpdateBatteryDto
+    ): Promise<Response> {
+        await this.batteriesService.update(id, request.name);
 
-        return res.status(HttpStatus.CONFLICT);
+        return this.serializer.serialize(
+            'batteries',
+            CreateBatteryModel.fromEntity(
+                await this.batteriesService.findOne(id)
+            )
+        );
     }
 
     @Delete(':id')
     @ApiTags(TableName.Batteries)
-    @ApiResponse({ status: 200, description: 'Delete success.' })
-    @ApiResponse({ status: 404, description: 'Battery not found.' })
-    @ApiResponse({ status: 409, description: 'Delete failed.' })
+    @HttpCode(200)
     async delete(
-        @Res() res: Response,
-        @Param() params: BatteryParamsDto
+        @Param('id', BatteryExistsPipe) id: string
     ): Promise<Response> {
-        const model = await this.batteriesService.getByIdAsync(params.id);
-        if (!model) return res.status(HttpStatus.NOT_FOUND);
+        await this.batteriesService.delete(id);
 
-        const result = await this.batteriesService.deleteAsync(params.id);
-        if (result) return res.send({ success: true });
-
-        return res.status(HttpStatus.CONFLICT);
+        return this.serializer.serialize('batteries', null);
     }
 }

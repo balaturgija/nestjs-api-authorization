@@ -1,84 +1,47 @@
-import { Inject, Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { BatteryEntity } from './entities/battery.entity';
-import { Provider } from '../constants';
-import { OrderItem } from 'sequelize';
-import { BatteryUpdateDto } from './dto/update-battery.dto';
-import { BatteryFilterDto } from './dto/filter-battery.dto';
-import { PageResult } from '../base/utils/PageResult.util';
-import { SortDirection, Sorter } from '../base/utils/Sorter.util';
-import { toBatteryDto } from '../base/utils/Mapper.util';
-import { BatteryCreateDto } from './dto/create-battery.dto';
-import { Pager } from '../base/utils/Pager.util';
+import { SortDirection } from '../base/utils/Sorter.util';
+import { CreateBatteryModel } from './models/create-battery.model';
+import { BatteriesRepository } from './repositories/batteries.repository';
+import { BatteryModel } from './models/battery.model';
+import { BatteryPaginationModel } from './models/battery-pagination.model';
 
 @Injectable()
 export class BatteriesService {
-    constructor(
-        @Inject(Provider.BatteryRepository)
-        private readonly batteryRepository: typeof BatteryEntity
-    ) {}
+    constructor(private readonly batteryRepository: BatteriesRepository) {}
 
-    async findAllAsync(query: BatteryFilterDto): Promise<PageResult<Battery>> {
-        const pager = new Pager(query.page, query.rpp);
-        const sorter = new Sorter(query.sortBy, query.sortDirection);
-        let orderBy: OrderItem[] = [
-            ['id', sorter.direction() ? sorter.direction() : SortDirection.Asc],
-        ];
-
-        if (sorter.orderBy() === 'name')
-            orderBy = [
-                [
-                    'name',
-                    sorter.direction() ? sorter.direction() : SortDirection.Asc,
-                ],
-            ];
-
-        if (sorter.orderBy() === 'created_at')
-            orderBy = [
-                [
-                    'created_at',
-                    sorter.direction() ? sorter.direction() : SortDirection.Asc,
-                ],
-            ];
-
-        const options = {
-            order: orderBy,
-            limit: pager.pageSize(),
-            offset: (pager.pageNumber() - 1) * pager.pageSize(),
-        };
-        const data = await this.batteryRepository.findAndCountAll(options);
-        const result = new PageResult<Battery>(
-            data.count,
-            data.rows.map((x) => toBatteryDto(x))
-        );
-        return result;
-    }
-
-    async getByIdAsync(id: string): Promise<Battery | null> {
-        const result = await this.batteryRepository.findByPk(id);
-        return toBatteryDto(result);
-    }
-
-    async createAsync(createBatteryDto: BatteryCreateDto): Promise<Battery> {
-        const result = await this.batteryRepository.create(createBatteryDto);
-        return toBatteryDto(result);
-    }
-
-    async putAsync(
-        id: string,
-        robotUpdateDto: BatteryUpdateDto
-    ): Promise<boolean> {
-        return (
-            (
-                await this.batteryRepository.update(robotUpdateDto, {
-                    where: { id: id },
-                })
-            )[0] > 0
+    async findAll(page: number, size: number, order: SortDirection) {
+        const result = await this.batteryRepository.findAll(page, size, order);
+        return new BatteryPaginationModel(
+            size,
+            page,
+            result.count,
+            result.rows.map((battery) => BatteryModel.fromEntity(battery))
         );
     }
 
-    async deleteAsync(id: string): Promise<boolean> {
-        return (
-            (await this.batteryRepository.destroy({ where: { id: id } })) > 0
-        );
+    async create(name: string) {
+        const model = await this.batteryRepository.create(name);
+        return new CreateBatteryModel(model.id, model.name);
+    }
+
+    async exists(id: string) {
+        return await this.batteryRepository.exists(id);
+    }
+
+    async update(id: string, name: string) {
+        return await this.batteryRepository.update(id, name);
+    }
+
+    async findOne(id: string): Promise<BatteryEntity | null> {
+        const battery = await this.batteryRepository.find(id);
+
+        if (battery) return battery.get();
+
+        return null;
+    }
+
+    async delete(id: string) {
+        return await this.batteryRepository.delete(id);
     }
 }
