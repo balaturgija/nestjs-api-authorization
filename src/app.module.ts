@@ -1,4 +1,4 @@
-import { Inject, Module, OnModuleInit } from '@nestjs/common';
+import { Inject, Module, OnModuleInit, ParseIntPipe } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { AuthModule } from './auth/auth.module';
 import { BatteriesModule } from './batteries/batteries.module';
@@ -14,6 +14,7 @@ import { APP_FILTER, APP_PIPE } from '@nestjs/core';
 import { RequestBodyValidatePipe } from './base/pipes/RequestValidation.pipe';
 import { GlobalExceptionsFilter } from './base/filters/GlobalExceptions.filter';
 import { BaseModule } from './base/base.module';
+import { BatteryPaginationModel } from './batteries/models/battery-pagination.model';
 
 @Module({
     imports: [
@@ -59,19 +60,30 @@ export class AppModule implements OnModuleInit {
                 },
             },
         });
-        this.serializer.register('auctions', {
-            id: 'id',
-            links: {
-                self: function (data) {
-                    return '/auctions/' + data.id;
-                },
+        this.serializer.register('batteries', { id: 'id' });
+        this.serializer.register('robots', { id: 'id' });
+        this.serializer.register('auctions', { id: 'id' });
+        this.serializer.register('batteriesPagination', {
+            beforeSerialize: (data: BatteryPaginationModel) => {
+                return {
+                    page: parseInt(data.size + ''),
+                    size: parseInt(data.page + ''),
+                    total: data.total,
+                    items: data.items,
+                };
             },
-        });
-        this.serializer.register('robots', {
             id: 'id',
             links: {
-                self: function (data) {
-                    return '/robots/' + data.id;
+                self(data: BatteryPaginationModel) {
+                    return `/batteries?page=${data.page}&size=${data.size}`;
+                },
+                next(data: BatteryPaginationModel) {
+                    return `batteries?page=${data.page + 1}&size=${data.size}`;
+                },
+                previous(data: BatteryPaginationModel) {
+                    return `batteries?page=${
+                        data.page - 1 === 0 ? 1 : data.page - 1
+                    }&size=${data.size}`;
                 },
             },
         });
