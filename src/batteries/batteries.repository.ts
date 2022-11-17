@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
-import { SortDirection } from '../../base/utils/Sorter.util';
-import { BatteryEntity } from '../entities/battery.entity';
+import { SortDirection } from '../base/utils/Sorter.util';
+import { BatteryEntity } from './entities/battery.entity';
 
 @Injectable()
 export class BatteriesRepository {

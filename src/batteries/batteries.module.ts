@@ -3,7 +3,7 @@ import { JwtAuthGuard } from '../auth/guards/jwt.auth.guard';
 import { BatteriesController } from './batteries.controller';
 import { BatteriesService } from './batteries.service';
 import { BatteryExistsPipe } from './pipes/battery-exists.pipe';
-import { BatteriesRepository } from './repositories/batteries.repository';
+import { BatteriesRepository } from './batteries.repository';
 
 @Module({
     imports: [],
