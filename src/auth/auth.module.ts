@@ -7,10 +7,12 @@ import { AuthService } from './auth.service';
 import { LocalStrategy } from './strategies/local.strategy';
 import { JwtStrategy } from './strategies/jwt.strategy';
 import { EmailExists } from './validators/user-email-exists.validator';
+import { RolesModule } from '../roles/roles.module';
 
 @Module({
     imports: [
         UsersModule,
+        RolesModule,
         PassportModule,
         JwtModule.register({
             secret: process.env.JWT_SECRET,

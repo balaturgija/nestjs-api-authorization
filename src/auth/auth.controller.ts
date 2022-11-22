@@ -9,11 +9,14 @@ import {
 } from '@nestjs/common';
 import { ApiBody, ApiTags } from '@nestjs/swagger';
 import { Response } from 'express';
-import { UserCreateDto } from '../users/dto/create-user.dto';
+import { Role } from '../constants';
+import { CreateUserDto } from '../users/dto/create-user.dto';
 import { UserLoginDto } from '../users/dto/login-user.dto';
 import { AuthService } from './auth.service';
 import { AuthUser } from './decorators/auth-user.decorator';
+import { Roles } from './decorators/role.decorator';
 import { LocalAuthGuard } from './guards/local.auth.guard';
+import { RoleOnRegisterGuard } from './guards/role-on-register.guard';
 
 @Controller('auth')
 export class AuthController {
@@ -27,8 +30,15 @@ export class AuthController {
 
     @Post('register')
     @ApiTags('auth')
-    async register(@Body() user: UserCreateDto, @Res() res: Response) {
-        const createdUser = await this.authService.createAsync(user);
+    @UseGuards(RoleOnRegisterGuard)
+    @Roles(Role.Collector, Role.Engineer)
+    async register(@Body() user: CreateUserDto, @Res() res: Response) {
+        const createdUser = await this.authService.create(
+            user.username,
+            user.email,
+            user.password,
+            user.role
+        );
         res.send(this.serializer.serialize('users', createdUser));
     }
 
