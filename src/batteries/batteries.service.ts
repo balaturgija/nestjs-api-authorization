@@ -34,7 +34,7 @@ export class BatteriesService {
     }
 
     async findOne(id: string): Promise<BatteryEntity | null> {
-        const battery = await this.batteryRepository.find(id);
+        const battery = await this.batteryRepository.findOne(id);
 
         if (battery) return battery.get();
 

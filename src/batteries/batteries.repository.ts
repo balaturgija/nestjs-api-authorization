@@ -10,7 +10,7 @@ export class BatteriesRepository {
         });
     }
 
-    async find(id: string) {
+    async findOne(id: string) {
         return await BatteryEntity.findByPk(id);
     }
 
