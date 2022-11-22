@@ -6,14 +6,9 @@ import { UserHaveNoPermissions } from '../exceptions/user-have-no-permission.exc
 
 @Injectable()
 export class RoleGuard implements CanActivate {
-    /**
-     *
-     */
     constructor(private reflector: Reflector) {}
 
     matchRoles(roles: Role[], userRole: string): boolean {
-        console.log('\x1b[32m Executing Role Guard \x1b[0m');
-
         return roles.some((role) => role === userRole);
     }
 
@@ -24,9 +19,7 @@ export class RoleGuard implements CanActivate {
         if (!roles) return true;
 
         const request = context.switchToHttp().getRequest();
-
         const user: User = request.user;
-
         const result = this.matchRoles(roles, user.role.name);
 
         if (!result) throw new UserHaveNoPermissions();
