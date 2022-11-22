@@ -1,15 +1,13 @@
-import { Inject, Injectable } from '@nestjs/common';
-import { Provider } from '../constants';
-import { RoleEntity } from './entities/role.entity';
+import { Injectable } from '@nestjs/common';
+import { Transaction } from 'sequelize';
+import { RolesRepository } from './roles.repository';
 
 @Injectable()
 export class RolesService {
-    constructor(
-        @Inject(Provider.RolesRepository)
-        private readonly roleRepository: typeof RoleEntity
-    ) {}
+    constructor(private readonly rolesRepository: RolesRepository) {}
 
-    async getByIdAsync(id: string): Promise<Role | null> {
-        return (await this.roleRepository.findByPk(id)) ?? null;
+    async findRoleByName(role: string, t?: Transaction) {
+        const result = await this.rolesRepository.findRoleByName(role, t);
+        return result.id;
     }
 }
