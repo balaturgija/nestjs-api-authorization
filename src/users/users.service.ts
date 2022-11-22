@@ -1,34 +1,44 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { Sequelize, Transaction } from 'sequelize';
-import { toUserDto, toUserRoleDto } from '../base/utils/Mapper.util';
-import { Provider } from '../constants';
+import { toUserRoleDto } from '../base/utils/Mapper.util';
+import { Provider, Role } from '../constants';
 import { RoleEntity } from '../roles/entities/role.entity';
 import { WalletEntity } from '../wallets/entities/wallet.entity';
-import { UserCreateDto } from './dto/create-user.dto';
 import { UserEntity } from './entities/user.entity';
 import bcrypt from 'bcryptjs';
 import { WalletsService } from '../wallets/wallets.service';
 import { RegistrationFailed } from '../auth/exceptions/registration.failed.exception';
+import { RolesService } from '../roles/roles.service';
 @Injectable()
 export class UsersService {
     constructor(
         @Inject(Provider.UserRepository)
         private readonly userRepository: typeof UserEntity,
         @Inject(Provider.Sequelize) private readonly sequelize: Sequelize,
-        private readonly walletsService: WalletsService
+        private readonly walletsService: WalletsService,
+        private readonly rolesService: RolesService
     ) {}
 
-    async createAsync(user: UserCreateDto): Promise<User> {
+    async create(
+        username: string,
+        email: string,
+        password: string,
+        role: string
+    ): Promise<User> {
         const transaction = await this.sequelize.transaction();
         try {
-            const password = await this.createPassword(user.password);
+            const roleId = await this.rolesService.findRoleByName(
+                role,
+                transaction
+            );
+            const passwordHash = await this.createPassword(password);
             const wallet = await this.walletsService.createAsync(transaction);
             const userCreate = await this.userRepository.create(
                 {
-                    email: user.email,
-                    username: user.username,
-                    password: password,
-                    roleId: user.roleId,
+                    email: email,
+                    username: username,
+                    password: passwordHash,
+                    roleId: roleId,
                     walletId: wallet.id,
                 },
                 { transaction: transaction }
@@ -50,13 +60,6 @@ export class UsersService {
             where: { email: email },
             transaction: t,
         });
-    }
-
-    async getByUsernameAsync(username: string): Promise<User | null> {
-        const result = await this.userRepository.findOne({
-            where: { username: username },
-        });
-        return result ? toUserDto(result) : null;
     }
 
     async getUserProfileAsync(email: string): Promise<User | null> {
