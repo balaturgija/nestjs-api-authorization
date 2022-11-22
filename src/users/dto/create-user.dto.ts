@@ -1,16 +1,16 @@
-import { ApiHideProperty, ApiProperty } from '@nestjs/swagger';
-import { Exclude } from 'class-transformer';
+import { ApiProperty } from '@nestjs/swagger';
 import {
     IsEmail,
+    IsEnum,
     IsNotEmpty,
     IsString,
-    IsUUID,
     Matches,
     Validate,
 } from 'class-validator';
 import { EmailExists } from '../../auth/validators/user-email-exists.validator';
+import { Role } from '../../constants';
 
-export class UserCreateDto {
+export class CreateUserDto {
     @ApiProperty()
     @IsString()
     @IsNotEmpty()
@@ -27,12 +27,8 @@ export class UserCreateDto {
     @IsNotEmpty()
     password: string;
 
-    @ApiHideProperty()
-    @Exclude()
-    walletId: string;
-
-    @ApiProperty()
-    @IsUUID()
-    @IsNotEmpty()
-    roleId: string;
+    @ApiProperty({ enum: Role })
+    @IsString()
+    @IsEnum(Role)
+    role: Role;
 }
