@@ -1,4 +1,4 @@
-import { Inject, Module, OnModuleInit, ParseIntPipe } from '@nestjs/common';
+import { Inject, Module, OnModuleInit } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { AuthModule } from './auth/auth.module';
 import { BatteriesModule } from './batteries/batteries.module';
@@ -6,7 +6,6 @@ import { DatabaseModule } from './database/database.module';
 import { RobotsModule } from './robots/robots.module';
 import { RolesModule } from './roles/roles.module';
 import { UsersModule } from './users/users.module';
-import { UserRobotsModule } from './user-robots/user-robots.module';
 import { WalletsModule } from './wallets/wallets.module';
 import { BidsModule } from './bids/bids.module';
 import { AuctionsModule } from './auctions/auctions.module';
@@ -33,7 +32,6 @@ import { BatteryPaginationModel } from './batteries/models/battery-pagination.mo
         RolesModule,
         UsersModule,
         AuthModule,
-        UserRobotsModule,
         BidsModule,
         AuctionsModule,
     ],

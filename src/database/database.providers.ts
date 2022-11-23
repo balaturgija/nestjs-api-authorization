@@ -5,7 +5,6 @@ import { BidEntity } from '../bids/entities/bid.entity';
 import { Provider } from '../constants';
 import { RobotEntity } from '../robots/entities/robot.entity';
 import { RoleEntity } from '../roles/entities/role.entity';
-import { UserRobotsEntity } from '../user-robots/entities/user-robots.entity';
 import { UserEntity } from '../users/entities/user.entity';
 import { WalletEntity } from '../wallets/entities/wallet.entity';
 
@@ -26,7 +25,6 @@ export const databaseProviders = [
                     RobotEntity,
                     UserEntity,
                     RoleEntity,
-                    UserRobotsEntity,
                     BidEntity,
                     AuctionEntity,
                 ],
