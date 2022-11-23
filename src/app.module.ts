@@ -14,6 +14,7 @@ import { RequestBodyValidatePipe } from './base/pipes/RequestValidation.pipe';
 import { GlobalExceptionsFilter } from './base/filters/GlobalExceptions.filter';
 import { BaseModule } from './base/base.module';
 import { BatteryPaginationModel } from './batteries/models/battery-pagination.model';
+import { RobotPaginationModel } from './robots/models/robot-pagination.model';
 
 @Module({
     imports: [
@@ -61,6 +62,7 @@ export class AppModule implements OnModuleInit {
         this.serializer.register('batteries', { id: 'id' });
         this.serializer.register('robots', { id: 'id' });
         this.serializer.register('auctions', { id: 'id' });
+        this.serializer.register('wallets', { id: 'id' });
         this.serializer.register('batteriesPagination', {
             beforeSerialize: (data: BatteryPaginationModel) => {
                 return {
@@ -80,6 +82,30 @@ export class AppModule implements OnModuleInit {
                 },
                 previous(data: BatteryPaginationModel) {
                     return `batteries?page=${
+                        data.page - 1 === 0 ? 1 : data.page - 1
+                    }&size=${data.size}`;
+                },
+            },
+        });
+        this.serializer.register('robotsPagination', {
+            beforeSerialize: (data: RobotPaginationModel) => {
+                return {
+                    page: parseInt(data.size + ''),
+                    size: parseInt(data.page + ''),
+                    total: data.total,
+                    items: data.items,
+                };
+            },
+            id: 'id',
+            links: {
+                self(data: RobotPaginationModel) {
+                    return `/robots?page=${data.page}&size=${data.size}`;
+                },
+                next(data: RobotPaginationModel) {
+                    return `robots?page=${data.page + 1}&size=${data.size}`;
+                },
+                previous(data: RobotPaginationModel) {
+                    return `robots?page=${
                         data.page - 1 === 0 ? 1 : data.page - 1
                     }&size=${data.size}`;
                 },

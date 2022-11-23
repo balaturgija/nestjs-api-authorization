@@ -1,13 +1,5 @@
 export enum Provider {
     Sequelize = 'SEQUELIZE',
-    BatteryRepository = 'BATTERY_REPOSITORY',
-    RobotRepository = 'ROBOTS_REPOSITORY',
-    WalletRepository = 'WALLET_REPOSITORY',
-    RolesRepository = 'ROLES_REPOSITORY',
-    UserRepository = 'USER_REPOSITORY',
-    UserBatteryRepository = 'USER_BATTERY_REPOSITORY',
-    AuctionRepository = 'AUCTION_REPOSITORY',
-    UserRobotsRepository = 'USER_ROBOTS_REPOSITORY',
 }
 
 export enum TableName {
@@ -22,7 +14,6 @@ export enum TableName {
 }
 
 export enum Role {
-    Admin = 'Admin',
     Engineer = 'Engineer',
     Collector = 'Collector',
 }
@@ -42,13 +33,5 @@ export const SWAGGER_CONFIG = {
     title: 'title',
     description: 'descrioption',
     version: '0.0.00',
-    tags: [
-        'robots',
-        'batteries',
-        'auth',
-        'wallets',
-        'user_robots',
-        'bids',
-        'auctions',
-    ],
+    tags: ['robots', 'batteries', 'auth', 'wallets', 'bids', 'auctions'],
 };
