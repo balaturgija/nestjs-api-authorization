@@ -16,7 +16,7 @@ import { AuthService } from './auth.service';
 import { AuthUser } from './decorators/auth-user.decorator';
 import { Roles } from './decorators/role.decorator';
 import { LocalAuthGuard } from './guards/local.auth.guard';
-import { RoleOnRegisterGuard } from './guards/role-on-register.guard';
+import { RegistrationGuard } from './guards/registration.guard';
 
 @Controller('auth')
 export class AuthController {
@@ -30,7 +30,7 @@ export class AuthController {
 
     @Post('register')
     @ApiTags('auth')
-    @UseGuards(RoleOnRegisterGuard)
+    @UseGuards(RegistrationGuard)
     @Roles(Role.Collector, Role.Engineer)
     async register(@Body() user: CreateUserDto, @Res() res: Response) {
         const createdUser = await this.authService.create(

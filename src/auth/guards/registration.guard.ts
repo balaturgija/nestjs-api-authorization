@@ -5,7 +5,7 @@ import { Role } from '../../constants';
 import { UnsupportedRoleException } from '../exceptions/unsupported-role.exception';
 
 @Injectable()
-export class RoleOnRegisterGuard implements CanActivate {
+export class RegistrationGuard implements CanActivate {
     constructor(private reflector: Reflector) {}
 
     matchRoles(roles: Role[], inputRole: string): boolean {
@@ -22,7 +22,7 @@ export class RoleOnRegisterGuard implements CanActivate {
         const role = request.body.role;
         const match = this.matchRoles(roles, role);
 
-        if (role === Role.Admin || !match) throw new UnsupportedRoleException();
+        if (!match) throw new UnsupportedRoleException();
 
         return match;
     }
