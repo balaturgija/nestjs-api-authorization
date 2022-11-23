@@ -11,9 +11,7 @@ module.exports = {
         const transaction = await queryInterface.sequelize.transaction();
 
         try {
-            let tableCreatePromises = [];
-            let constraintsCreatePromises = [];
-            const tableCreate = await queryInterface.createTable(
+            await queryInterface.createTable(
                 'robots',
                 {
                     id: {
@@ -50,6 +48,18 @@ module.exports = {
                         type: Sequelize.STRING(255),
                         allowNull: false,
                     },
+                    userId: {
+                        field: 'user_id',
+                        type: Sequelize.UUID,
+                        allowNull: false,
+                        onDelete: 'CASCADE',
+                        references: {
+                            key: 'id',
+                            model: {
+                                tableName: 'users',
+                            },
+                        },
+                    },
                     batteryId: {
                         field: 'battery_id',
                         type: Sequelize.UUID,
@@ -83,9 +93,19 @@ module.exports = {
                 },
                 transaction
             );
-            tableCreatePromises.push(tableCreate);
 
-            const robotBatteriesConstraint = await queryInterface.addConstraint(
+            await queryInterface.addConstraint('robots', {
+                type: 'foreign key',
+                fields: ['user_id'],
+                name: 'FK_robots_users_user_id',
+                onDelete: 'CASCADE',
+                references: {
+                    table: 'users',
+                    field: 'id',
+                },
+            });
+
+            await queryInterface.addConstraint(
                 'robots',
                 {
                     type: 'foreign key',
@@ -99,14 +119,6 @@ module.exports = {
                 },
                 transaction
             );
-
-            constraintsCreatePromises.push(robotBatteriesConstraint);
-
-            if (tableCreatePromises.length > 0)
-                await Promise.all(tableCreatePromises);
-
-            if (constraintsCreatePromises.length > 0)
-                await Promise.all(constraintsCreatePromises);
 
             await transaction.commit();
         } catch (error) {
@@ -124,14 +136,7 @@ module.exports = {
          */
         const transaction = await queryInterface.sequelize.transaction();
         try {
-            let tableRemovePromises = [];
-            const tableRemove = await queryInterface.dropTable(
-                'robots',
-                transaction
-            );
-            tableRemovePromises.push(tableRemove);
-            if (tableRemovePromises.length > 0)
-                await Promise.all(tableRemovePromises);
+            await queryInterface.dropTable('robots', transaction);
 
             await transaction.commit;
         } catch (error) {

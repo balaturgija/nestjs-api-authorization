@@ -10,8 +10,7 @@ module.exports = {
          */
         const transaction = await queryInterface.sequelize.transaction();
         try {
-            let tableCreatePromises = [];
-            const tableCreate = await queryInterface.createTable(
+            await queryInterface.createTable(
                 'wallets',
                 {
                     id: {
@@ -48,10 +47,6 @@ module.exports = {
                 transaction
             );
 
-            tableCreatePromises.push(tableCreate);
-            if (tableCreatePromises.length > 0)
-                await Promise.all(tableCreatePromises);
-
             await transaction.commit();
         } catch (error) {
             transaction.rollback();
@@ -68,14 +63,7 @@ module.exports = {
          */
         const transaction = await queryInterface.sequelize.transaction();
         try {
-            let tableRemovePromises = [];
-            const tableRemove = await queryInterface.dropTable(
-                'wallets',
-                transaction
-            );
-            tableRemovePromises.push(tableRemove);
-            if (tableRemovePromises.length > 0)
-                await Promise.all(tableRemovePromises);
+            await queryInterface.dropTable('wallets', transaction);
 
             await transaction.commit();
         } catch (error) {

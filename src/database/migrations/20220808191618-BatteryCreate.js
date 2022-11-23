@@ -10,8 +10,7 @@ module.exports = {
          */
         const transaction = await queryInterface.sequelize.transaction();
         try {
-            let tableCreatePromises = [];
-            const tableCreate = await queryInterface.createTable(
+            await queryInterface.createTable(
                 'batteries',
                 {
                     id: {
@@ -44,9 +43,6 @@ module.exports = {
                 { paranoid: true },
                 transaction
             );
-            tableCreatePromises.push(tableCreate);
-            if (tableCreatePromises.length > 0)
-                await Promise.all(tableCreatePromises);
 
             await transaction.commit();
         } catch (error) {
@@ -64,14 +60,7 @@ module.exports = {
          */
         const transaction = await queryInterface.sequelize.transaction();
         try {
-            let tableRemovePromises = [];
-            const tableRemove = await queryInterface.dropTable(
-                'batteries',
-                transaction
-            );
-            tableRemovePromises.push(tableRemove);
-            if (tableRemovePromises.length > 0)
-                await Promise.all(tableRemovePromises);
+            await queryInterface.dropTable('batteries', transaction);
 
             await transaction.commit;
         } catch (error) {

@@ -12,9 +12,7 @@ module.exports = {
         const transaction = await queryInterface.sequelize.transaction();
 
         try {
-            let tableCreatePromises = [];
-            let constraintsCreatePromises = [];
-            const tableCreate = await queryInterface.createTable(
+            await queryInterface.createTable(
                 'bids',
                 {
                     id: {
@@ -74,9 +72,8 @@ module.exports = {
                 },
                 transaction
             );
-            tableCreatePromises.push(tableCreate);
 
-            const userBidsConstraints = await queryInterface.addConstraint(
+            await queryInterface.addConstraint(
                 'bids',
                 {
                     type: 'foreign key',
@@ -90,9 +87,8 @@ module.exports = {
                 },
                 transaction
             );
-            constraintsCreatePromises.push(userBidsConstraints);
 
-            const auctionBidsConstraints = await queryInterface.addConstraint(
+            await queryInterface.addConstraint(
                 'bids',
                 {
                     type: 'foreign key',
@@ -106,13 +102,6 @@ module.exports = {
                 },
                 transaction
             );
-            constraintsCreatePromises.push(auctionBidsConstraints);
-
-            if (tableCreatePromises.length > 0)
-                await Promise.all(tableCreatePromises);
-
-            if (constraintsCreatePromises.length > 0)
-                await Promise.all(constraintsCreatePromises);
 
             await transaction.commit();
         } catch (error) {
@@ -130,14 +119,7 @@ module.exports = {
          */
         const transaction = await queryInterface.sequelize.transaction();
         try {
-            let tableRemovePromises = [];
-            const tableRemove = await queryInterface.dropTable(
-                'bids',
-                transaction
-            );
-            tableRemovePromises.push(tableRemove);
-            if (tableRemovePromises.length > 0)
-                await Promise.all(tableRemovePromises);
+            await queryInterface.dropTable('bids', transaction);
 
             await transaction.commit;
         } catch (error) {

@@ -11,9 +11,7 @@ module.exports = {
          */
         const transaction = await queryInterface.sequelize.transaction();
         try {
-            let tableCreatePromises = [];
-            let constraintsCreatePromises = [];
-            const tableCreate = await queryInterface.createTable(
+            await queryInterface.createTable(
                 'auctions',
                 {
                     id: {
@@ -56,9 +54,8 @@ module.exports = {
                 },
                 transaction
             );
-            tableCreatePromises.push(tableCreate);
 
-            const urRobotsConstraints = await queryInterface.addConstraint(
+            await queryInterface.addConstraint(
                 'auctions',
                 {
                     type: 'foreign key',
@@ -72,7 +69,7 @@ module.exports = {
                 },
                 transaction
             );
-            constraintsCreatePromises.push(urRobotsConstraints);
+
             await transaction.commit();
         } catch (error) {
             transaction.rollback();
@@ -89,14 +86,7 @@ module.exports = {
          */
         const transaction = await queryInterface.sequelize.transaction();
         try {
-            let tableRemovePromises = [];
-            const tableRemove = await queryInterface.dropTable(
-                'auctions',
-                transaction
-            );
-            tableRemovePromises.push(tableRemove);
-            if (tableRemovePromises.length > 0)
-                await Promise.all(tableRemovePromises);
+            await queryInterface.dropTable('auctions', transaction);
 
             await transaction.commit;
         } catch (error) {

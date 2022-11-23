@@ -10,9 +10,7 @@ module.exports = {
          */
         const transaction = await queryInterface.sequelize.transaction();
         try {
-            let tableCreatePromises = [];
-            let constraintsCreatePromises = [];
-            const tableCreate = await queryInterface.createTable(
+            await queryInterface.createTable(
                 'users',
                 {
                     id: {
@@ -80,43 +78,26 @@ module.exports = {
                 },
                 transaction
             );
-            tableCreatePromises.push(tableCreate);
 
-            const userRolesConstraint = await queryInterface.addConstraint(
-                'users',
-                {
-                    type: 'foreign key',
-                    fields: ['role_id'],
-                    name: 'FK_users_roles_role_id',
-                    references: {
-                        table: 'roles',
-                        field: 'id',
-                    },
-                }
-            );
+            await queryInterface.addConstraint('users', {
+                type: 'foreign key',
+                fields: ['role_id'],
+                name: 'FK_users_roles_role_id',
+                references: {
+                    table: 'roles',
+                    field: 'id',
+                },
+            });
 
-            constraintsCreatePromises.push(userRolesConstraint);
-
-            const userWalletsConstraint = await queryInterface.addConstraint(
-                'users',
-                {
-                    type: 'foreign key',
-                    fields: ['wallet_id'],
-                    name: 'FK_users_wallets_wallet_id',
-                    references: {
-                        table: 'wallets',
-                        field: 'id',
-                    },
-                }
-            );
-
-            constraintsCreatePromises.push(userWalletsConstraint);
-
-            if (tableCreatePromises.length > 0)
-                await Promise.all(tableCreatePromises);
-
-            if (constraintsCreatePromises.length > 0)
-                await Promise.all(constraintsCreatePromises);
+            await queryInterface.addConstraint('users', {
+                type: 'foreign key',
+                fields: ['wallet_id'],
+                name: 'FK_users_wallets_wallet_id',
+                references: {
+                    table: 'wallets',
+                    field: 'id',
+                },
+            });
 
             await transaction.commit();
         } catch (error) {
@@ -134,14 +115,7 @@ module.exports = {
          */
         const transaction = await queryInterface.sequelize.transaction();
         try {
-            let tableRemovePromises = [];
-            const tableRemove = await queryInterface.dropTable(
-                'users',
-                transaction
-            );
-            tableRemovePromises.push(tableRemove);
-            if (tableRemovePromises.length > 0)
-                await Promise.all(tableRemovePromises);
+            await queryInterface.dropTable('users', transaction);
 
             await transaction.commit();
         } catch (error) {
