@@ -8,6 +8,7 @@ import {
 import { BaseEntity } from '../../base/base.entity';
 import { BatteryEntity } from '../../batteries/entities/battery.entity';
 import { RobotStatus, TableName } from '../../constants';
+import { UserEntity } from '../../users/entities/user.entity';
 
 @Table({
     tableName: TableName.Robots,
@@ -56,7 +57,16 @@ export class RobotEntity extends BaseEntity<RobotEntity> implements Robot {
     })
     batteryId: string;
 
+    @ForeignKey(() => UserEntity)
+    @Column({
+        type: 'uuid',
+    })
+    userId: string;
+
     /* Associations */
     @BelongsTo(() => BatteryEntity, 'battery_id')
     battery: BatteryEntity;
+
+    @BelongsTo(() => UserEntity, 'user_id')
+    user: UserEntity;
 }
