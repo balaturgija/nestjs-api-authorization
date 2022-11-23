@@ -8,10 +8,6 @@ import { UnsupportedRoleException } from '../exceptions/unsupported-role.excepti
 export class RegistrationGuard implements CanActivate {
     constructor(private reflector: Reflector) {}
 
-    matchRoles(roles: Role[], inputRole: string): boolean {
-        return roles.some((role) => role === inputRole);
-    }
-
     canActivate(
         context: ExecutionContext
     ): boolean | Promise<boolean> | Observable<boolean> {
@@ -25,5 +21,9 @@ export class RegistrationGuard implements CanActivate {
         if (!match) throw new UnsupportedRoleException();
 
         return match;
+    }
+
+    private matchRoles(roles: Role[], inputRole: string): boolean {
+        return roles.some((role) => role === inputRole);
     }
 }

@@ -2,10 +2,10 @@ import {
     Controller,
     Post,
     UseGuards,
-    Res,
     Inject,
     HttpCode,
     Body,
+    Res,
 } from '@nestjs/common';
 import { ApiBody, ApiTags } from '@nestjs/swagger';
 import { Response } from 'express';
@@ -32,14 +32,14 @@ export class AuthController {
     @ApiTags('auth')
     @UseGuards(RegistrationGuard)
     @Roles(Role.Collector, Role.Engineer)
-    async register(@Body() user: CreateUserDto, @Res() res: Response) {
+    async register(@Body() user: CreateUserDto) {
         const createdUser = await this.authService.create(
             user.username,
             user.email,
             user.password,
             user.role
         );
-        res.send(this.serializer.serialize('users', createdUser));
+        return this.serializer.serialize('users', createdUser);
     }
 
     @Post('login')

@@ -30,9 +30,8 @@ export class AuthService {
         return new CreatedUserModel(result.username, result.email);
     }
 
-    async findUserByEmail(email: string): Promise<User | null> {
-        const result = await this.usersService.getUserProfileAsync(email);
-        return result ?? null;
+    async findUserByEmail(email: string) {
+        return await this.usersService.findUserByEmail(email);
     }
 
     async createToken(tokenOptions: TokenOptions): Promise<string> {
