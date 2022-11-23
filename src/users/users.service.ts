@@ -1,19 +1,16 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { Sequelize, Transaction } from 'sequelize';
-import { toUserRoleDto } from '../base/utils/Mapper.util';
-import { Provider, Role } from '../constants';
-import { RoleEntity } from '../roles/entities/role.entity';
-import { WalletEntity } from '../wallets/entities/wallet.entity';
-import { UserEntity } from './entities/user.entity';
+import { Sequelize } from 'sequelize';
+import { Provider } from '../constants';
 import bcrypt from 'bcryptjs';
 import { WalletsService } from '../wallets/wallets.service';
 import { RegistrationFailed } from '../auth/exceptions/registration.failed.exception';
 import { RolesService } from '../roles/roles.service';
+import { UsersRepository } from './users.repository';
+import { ValidateUserEmailAndPassModel } from './models/validate-user-email-pass.model';
 @Injectable()
 export class UsersService {
     constructor(
-        @Inject(Provider.UserRepository)
-        private readonly userRepository: typeof UserEntity,
+        private readonly usersRepository: UsersRepository,
         @Inject(Provider.Sequelize) private readonly sequelize: Sequelize,
         private readonly walletsService: WalletsService,
         private readonly rolesService: RolesService
@@ -24,7 +21,7 @@ export class UsersService {
         email: string,
         password: string,
         role: string
-    ): Promise<User> {
+    ) {
         const transaction = await this.sequelize.transaction();
         try {
             const roleId = await this.rolesService.findRoleByName(
@@ -33,15 +30,13 @@ export class UsersService {
             );
             const passwordHash = await this.createPassword(password);
             const wallet = await this.walletsService.createAsync(transaction);
-            const userCreate = await this.userRepository.create(
-                {
-                    email: email,
-                    username: username,
-                    password: passwordHash,
-                    roleId: roleId,
-                    walletId: wallet.id,
-                },
-                { transaction: transaction }
+            const userCreate = await this.usersRepository.create(
+                email,
+                username,
+                passwordHash,
+                roleId,
+                wallet.id,
+                transaction
             );
             await transaction.commit();
             return userCreate;
@@ -52,32 +47,16 @@ export class UsersService {
         }
     }
 
-    async getByEmailAsync(
-        email: string,
-        t?: Transaction
-    ): Promise<User | null> {
-        return await this.userRepository.findOne({
-            where: { email: email },
-            transaction: t,
-        });
-    }
-
-    async getUserProfileAsync(email: string): Promise<User | null> {
-        const result = await this.userRepository.findOne({
-            where: {
-                email: email,
-            },
-            include: [
-                {
-                    model: RoleEntity,
-                },
-                {
-                    model: WalletEntity,
-                },
-            ],
-        });
-
-        return result ? toUserRoleDto(result) : null;
+    async findUserByEmail(email: string) {
+        const user = await this.usersRepository.findByEmail(email);
+        return new ValidateUserEmailAndPassModel(
+            user.id,
+            user.username,
+            user.email,
+            user.password,
+            user.role,
+            user.wallet
+        );
     }
 
     private async createPassword(password: string): Promise<string> {
@@ -86,12 +65,7 @@ export class UsersService {
     }
 
     async emailExists(email: string): Promise<boolean> {
-        const result = await this.userRepository.findOne({
-            where: { email },
-            attributes: ['id'],
-            rejectOnEmpty: false,
-        });
-
+        const result = await this.usersRepository.findByEmail(email);
         return Boolean(result);
     }
 }
