@@ -1,15 +1,10 @@
-import { Inject, Injectable } from '@nestjs/common';
-import { Provider } from '../constants';
-import { CreateAuctionDto } from './dto/create-auction.dto';
-import { AuctionEntity } from './entities/auction.entity';
+import { Injectable } from '@nestjs/common';
+import { AuctionsRepository } from './auctions.repository';
 
 @Injectable()
 export class AuctionsService {
-    constructor(
-        @Inject(Provider.AuctionRepository)
-        private readonly auctionRepository: typeof AuctionEntity
-    ) {}
-    async create(createAuctionDto: CreateAuctionDto) {
-        return await this.auctionRepository.create(createAuctionDto);
+    constructor(private readonly auctionsRepository: AuctionsRepository) {}
+    async create(robotId: string) {
+        return await this.auctionsRepository.create(robotId);
     }
 }
