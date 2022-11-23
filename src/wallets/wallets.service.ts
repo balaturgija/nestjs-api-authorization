@@ -1,38 +1,31 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { Sequelize, Transaction } from 'sequelize';
-import { toWalletDto } from '../base/utils/Mapper.util';
 import { MoneyAction, Provider } from '../constants';
 import { WalletPatchDto } from './dto/patch-wallet.dto';
-import { WalletEntity } from './entities/wallet.entity';
 import { MoneyTransactionDisabledException } from './exceptions/money-transaction-disabled.exception';
+import { WalletModel } from './models/wallet.model';
+import { WalletsRepository } from './wallets.repository';
 
 @Injectable()
 export class WalletsService {
     constructor(
-        @Inject(Provider.WalletRepository)
-        private readonly walletRepository: typeof WalletEntity,
+        private readonly walletsRepository: WalletsRepository,
         @Inject(Provider.Sequelize) private readonly sequelize: Sequelize
     ) {}
 
     async findByIdAsync(id: string, t?: Transaction): Promise<Wallet | null> {
-        const result = await this.walletRepository.findByPk(id, {
-            raw: true,
-            transaction: t,
-        });
-
-        return result ? toWalletDto(result) : null;
+        return await this.walletsRepository.findOne(id, t);
     }
 
     async createAsync(t?: Transaction): Promise<Wallet> {
-        return await this.walletRepository.create({}, { transaction: t });
+        return await this.walletsRepository.create(t);
     }
 
-    async moneyTransactionAsync(
+    async moneyTransaction(
         wallet: Wallet,
-        walletId: string,
         patchWalletDto: WalletPatchDto,
         action: MoneyAction
-    ): Promise<boolean> {
+    ) {
         const transaction = await this.sequelize.transaction();
         try {
             // sequelize read numeric type as string
@@ -42,11 +35,18 @@ export class WalletsService {
                 action
             );
             await this.updateAmount(wallet.id, calculatedAmount, transaction);
+            const updatedEntity = await this.walletsRepository.findOne(
+                wallet.id,
+                transaction
+            );
             await transaction.commit();
-            return true;
+            return WalletModel.fromEntity(updatedEntity);
         } catch (error) {
             await transaction.rollback();
-            return false;
+            throw new MoneyTransactionDisabledException(
+                `Action: ${action} not allowed`,
+                405
+            );
         }
     }
 
@@ -77,13 +77,6 @@ export class WalletsService {
         amount: number,
         t?: Transaction
     ): Promise<boolean> {
-        return (
-            (
-                await this.walletRepository.update(
-                    { amount: amount },
-                    { where: { id: id }, transaction: t }
-                )
-            )[0] > 0
-        );
+        return (await this.walletsRepository.update(id, amount, t))[0] > 0;
     }
 }
