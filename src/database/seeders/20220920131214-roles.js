@@ -19,14 +19,6 @@ module.exports = {
             [
                 {
                     id: Sequelize.literal('uuid_generate_v4()'),
-                    name: 'Admin',
-                    abrv: 'Admin',
-                    created_at: new Date(),
-                    updated_at: new Date(),
-                    deleted_at: null,
-                },
-                {
-                    id: Sequelize.literal('uuid_generate_v4()'),
                     name: 'Engineer',
                     abrv: 'Engineer',
                     created_at: new Date(),
