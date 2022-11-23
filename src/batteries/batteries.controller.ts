@@ -13,7 +13,6 @@ import {
     UseGuards,
 } from '@nestjs/common';
 import { ApiBearerAuth, ApiQuery, ApiTags } from '@nestjs/swagger';
-import { Response } from 'express';
 import { BatteriesService } from './batteries.service';
 import { CreateBatteryDto } from './dto/create-battery.dto';
 import { UpdateBatteryDto } from './dto/update-battery.dto';
@@ -41,24 +40,7 @@ export class BatteriesController {
     @ApiBearerAuth('access-token')
     async create(@Body() body: CreateBatteryDto): Promise<Response> {
         const battery = await this.batteriesService.create(body.name);
-        return this.serializer('batteries', battery);
-    }
-
-    @Get(':id')
-    @ApiTags(TableName.Batteries)
-    @HttpCode(200)
-    @UseGuards(JwtAuthGuard, RoleGuard)
-    @Roles(Role.Admin, Role.Engineer)
-    @ApiBearerAuth('access-token')
-    async findOne(
-        @Param('id', BatteryExistsPipe) id: string
-    ): Promise<Response> {
-        const result = await this.batteriesService.findOne(id);
-
-        return this.serializer.serialize(
-            'batteries',
-            CreateBatteryResponseModel.fromEntity(result)
-        );
+        return this.serializer.serialize('batteries', battery);
     }
 
     @Get()
@@ -86,7 +68,7 @@ export class BatteriesController {
         @Query('page', ParseIntPipe) page = 1,
         @Query('size', ParseIntPipe) size = 10,
         @Query('sortDirection') sortDirection = SortDirection.Asc
-    ): Promise<Response> {
+    ) {
         const paginationItems = await this.batteriesService.findAll(
             page,
             size,
@@ -98,13 +80,28 @@ export class BatteriesController {
         );
     }
 
+    @Get(':id')
+    @ApiTags(TableName.Batteries)
+    @HttpCode(200)
+    @UseGuards(JwtAuthGuard, RoleGuard)
+    @Roles(Role.Engineer)
+    @ApiBearerAuth('access-token')
+    async findOne(@Param('id', BatteryExistsPipe) id: string) {
+        const result = await this.batteriesService.findOne(id);
+
+        return this.serializer.serialize(
+            'batteries',
+            CreateBatteryResponseModel.fromEntity(result)
+        );
+    }
+
     @Patch(':id')
     @ApiTags(TableName.Batteries)
     @HttpCode(204)
     async update(
         @Param('id', BatteryExistsPipe) id: string,
         @Body() request: UpdateBatteryDto
-    ): Promise<Response> {
+    ) {
         await this.batteriesService.update(id, request.name);
 
         return this.serializer.serialize(
@@ -118,9 +115,7 @@ export class BatteriesController {
     @Delete(':id')
     @ApiTags(TableName.Batteries)
     @HttpCode(200)
-    async delete(
-        @Param('id', BatteryExistsPipe) id: string
-    ): Promise<Response> {
+    async delete(@Param('id', BatteryExistsPipe) id: string) {
         await this.batteriesService.delete(id);
 
         return this.serializer.serialize('batteries', null);
