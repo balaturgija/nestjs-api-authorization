@@ -6,17 +6,14 @@ import {
     HttpCode,
     Inject,
     Param,
-    ParseIntPipe,
     Post,
-    Query,
     UseGuards,
 } from '@nestjs/common';
-import { ApiBearerAuth, ApiQuery, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { AuthUser } from '../auth/decorators/auth-user.decorator';
 import { Roles } from '../auth/decorators/role.decorator';
 import { JwtAuthGuard } from '../auth/guards/jwt.auth.guard';
 import { RoleGuard } from '../auth/guards/role.guard';
-import { SortDirection } from '../base/utils/Sorter.util';
 import { RobotStatus, Role, TableName } from '../constants';
 import { RobotCreateDto } from './dto/create-robot.dto';
 import { CreateRobotResponseModel } from './models/create-robot-response.model';

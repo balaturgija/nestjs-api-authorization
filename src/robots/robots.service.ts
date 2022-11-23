@@ -1,7 +1,6 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { Sequelize } from 'sequelize';
-import { SortDirection } from '../base/utils/Sorter.util';
-import { Provider, RobotStatus } from '../constants';
+import { Provider, RobotStatus, SortDirection } from '../constants';
 import { CreateRobotModel } from './models/create-robot.model';
 import { RobotPaginationModel } from './models/robot-pagination.model';
 import { RobotModel } from './models/robot.model';

@@ -1,6 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { SortDirection } from '../base/utils/Sorter.util';
-import { RobotStatus } from '../constants';
+import { RobotStatus, SortDirection } from '../constants';
 import { RobotEntity } from './entities/robot.entity';
 
 @Injectable()

@@ -1,10 +1,10 @@
 import { Injectable } from '@nestjs/common';
 import { BatteryEntity } from './entities/battery.entity';
-import { SortDirection } from '../base/utils/Sorter.util';
 import { CreateBatteryModel } from './models/create-battery.model';
 import { BatteriesRepository } from './batteries.repository';
 import { BatteryModel } from './models/battery.model';
 import { BatteryPaginationModel } from './models/battery-pagination.model';
+import { SortDirection } from '../constants';
 
 @Injectable()
 export class BatteriesService {

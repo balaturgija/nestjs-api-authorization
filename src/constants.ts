@@ -29,6 +29,11 @@ export enum MoneyAction {
     Withdraw = 'Withdraw',
 }
 
+export enum SortDirection {
+    Asc = 'asc',
+    Desc = 'desc',
+}
+
 export const SWAGGER_CONFIG = {
     title: 'title',
     description: 'descrioption',
