@@ -1,16 +1,12 @@
+import { ConfigService } from '@nestjs/config';
 import { NestFactory } from '@nestjs/core';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { useContainer } from 'class-validator';
 import { AppModule } from './app.module';
 import { SWAGGER_CONFIG } from './constants';
+import { SocketIOAdapter } from './socket-io-adapter';
 // import * as express from 'express';
 //import { Cluster } from './cluster';
-// import * as dotenv from 'dotenv';
-// import * as path from 'path';
-
-// dotenv.config({
-//     path: path.resolve(`.env`),
-// });
 
 async function bootstrap() {
     const app = await NestFactory.create(AppModule);
@@ -32,7 +28,7 @@ async function bootstrap() {
     SwaggerModule.setup('api', app, document);
 
     // app.use('/upload', express.static(path.join(process.cwd(), 'upload')));
-    app.enableCors();
+    app.useWebSocketAdapter(new SocketIOAdapter(app, app.get(ConfigService)));
     await app.listen(3000);
 }
 

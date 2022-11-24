@@ -63,6 +63,7 @@ export class AppModule implements OnModuleInit {
         this.serializer.register('robots', { id: 'id' });
         this.serializer.register('auctions', { id: 'id' });
         this.serializer.register('wallets', { id: 'id' });
+        this.serializer.register('bids', { id: 'id' });
         this.serializer.register('batteriesPagination', {
             beforeSerialize: (data: BatteryPaginationModel) => {
                 return {
