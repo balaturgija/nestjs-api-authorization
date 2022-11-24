@@ -1,49 +1,31 @@
-import {
-    Controller,
-    Get,
-    Post,
-    Body,
-    Patch,
-    Param,
-    Delete,
-} from '@nestjs/common';
+import { Controller, Post, Body, Inject, Req } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { TableName } from '../constants';
 import { BidsService } from './bids.service';
 import { CreateBidDto } from './dto/create-bid.dto';
-import { UpdateBidDto } from './dto/update-bid.dto';
+import { JoinBidDto } from './dto/join-bid.dto';
 
 @Controller('bids')
 export class BidsController {
-    constructor(private readonly bidsService: BidsService) {}
+    constructor(
+        private readonly bidsService: BidsService,
+        @Inject('SERIALIZER') private readonly serializer: any
+    ) {}
 
     @Post()
     @ApiTags(TableName.Bids)
-    create(@Body() createBidDto: CreateBidDto) {
-        return this.bidsService.create(createBidDto);
+    async create(@Body() createBidDto: CreateBidDto) {
+        const bid = await this.bidsService.create(createBidDto);
+
+        return this.serializer.serialize('bids', bid);
     }
 
-    @Get()
-    @ApiTags(TableName.Bids)
-    findAll() {
-        return this.bidsService.findAll();
+    @Post('join')
+    async join(@Body() joinBidDto: JoinBidDto) {
+        const result = await this.bidsService.join(joinBidDto.bidId);
+        return result;
     }
 
-    @Get(':id')
-    @ApiTags(TableName.Bids)
-    findOne(@Param('id') id: string) {
-        return this.bidsService.findOne(+id);
-    }
-
-    @Patch(':id')
-    @ApiTags(TableName.Bids)
-    update(@Param('id') id: string, @Body() updateBidDto: UpdateBidDto) {
-        return this.bidsService.update(+id, updateBidDto);
-    }
-
-    @Delete(':id')
-    @ApiTags(TableName.Bids)
-    remove(@Param('id') id: string) {
-        return this.bidsService.remove(+id);
-    }
+    // @Post('rejoin')
+    // async rejoin(@Req() req) {}
 }
