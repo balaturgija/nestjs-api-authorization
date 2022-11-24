@@ -7,7 +7,7 @@ export class RobotsRepository {
     async create(
         name: string,
         startPrice: number,
-        currentPrice: number,
+        finalPrice: number,
         status: RobotStatus,
         creatorsSignature: string,
         batteryId: string,
@@ -16,7 +16,7 @@ export class RobotsRepository {
         return await RobotEntity.create({
             name,
             startPrice,
-            currentPrice,
+            finalPrice,
             status,
             creatorsSignature,
             batteryId,

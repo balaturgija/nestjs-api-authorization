@@ -36,8 +36,8 @@ export class RobotsController {
     async create(@Body() body: RobotCreateDto, @AuthUser() user) {
         const createdRobot = await this.robotsService.create(
             body.name,
+            body.startPrice,
             0,
-            body.currentPrice,
             RobotStatus.Created,
             user.username,
             body.batteryId,

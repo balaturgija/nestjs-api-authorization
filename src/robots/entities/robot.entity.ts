@@ -34,7 +34,7 @@ export class RobotEntity extends BaseEntity<RobotEntity> implements Robot {
         type: DataType.DECIMAL(9, 2),
         defaultValue: 0,
     })
-    currentPrice: number;
+    finalPrice: number;
 
     @Column({
         type: DataType.ENUM(

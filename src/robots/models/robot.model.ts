@@ -7,7 +7,7 @@ export class RobotModel {
         readonly id: string,
         readonly name: string,
         readonly startPrice: number,
-        readonly currentPrice: number,
+        readonly finalPrice: number,
         readonly status: RobotStatus,
         readonly batteryId: string,
         readonly userId: string
@@ -18,7 +18,7 @@ export class RobotModel {
             entity.id,
             entity.name,
             entity.startPrice,
-            entity.currentPrice,
+            entity.finalPrice,
             entity.status,
             entity.batteryId,
             entity.userId

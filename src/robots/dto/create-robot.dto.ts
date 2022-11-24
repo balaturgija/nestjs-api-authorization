@@ -10,7 +10,7 @@ export class RobotCreateDto {
     @ApiPropertyOptional()
     @IsNumber()
     @Min(1)
-    currentPrice: number;
+    startPrice: number;
 
     @ApiProperty()
     @IsUUID()
