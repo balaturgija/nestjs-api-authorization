@@ -3,3 +3,8 @@ interface Auction {
     robotId: string;
     robot?: Robot;
 }
+
+interface AuctionToken {
+    user: User;
+    auctionId: string;
+}
