@@ -34,7 +34,7 @@ export class AuthService {
         return await this.usersService.findUserByEmail(email);
     }
 
-    async createToken(tokenOptions: TokenOptions): Promise<string> {
+    async createToken(tokenOptions: any): Promise<string> {
         return await this.jwtService.signAsync(tokenOptions);
     }
 
