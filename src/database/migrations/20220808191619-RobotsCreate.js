@@ -31,8 +31,8 @@ module.exports = {
                         type: Sequelize.DECIMAL(9, 2),
                         allowNull: false,
                     },
-                    currentPrice: {
-                        field: 'current_price',
+                    finalPrice: {
+                        field: 'final_price',
                         type: Sequelize.DECIMAL(9, 2),
                         allowNull: false,
                     },

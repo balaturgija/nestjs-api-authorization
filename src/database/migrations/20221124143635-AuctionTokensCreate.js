@@ -12,7 +12,7 @@ module.exports = {
         const transaction = await queryInterface.sequelize.transaction();
         try {
             await queryInterface.createTable(
-                'auctions',
+                'auction_tokens',
                 {
                     id: {
                         field: 'id',
@@ -21,32 +21,29 @@ module.exports = {
                         allowNull: false,
                         primaryKey: true,
                     },
-                    robotId: {
-                        field: 'robot_id',
+                    userId: {
+                        field: 'user_id',
                         type: Sequelize.UUID,
                         allowNull: false,
                         onDelete: 'CASCADE',
                         references: {
                             key: 'id',
                             model: {
-                                tableName: 'robots',
+                                tableName: 'users',
                             },
                         },
                     },
-                    startAmount: {
-                        field: 'start_amount',
-                        type: Sequelize.DECIMAL(9, 2),
+                    auctionId: {
+                        field: 'auction_id',
+                        type: Sequelize.UUID,
                         allowNull: false,
-                    },
-                    currentamount: {
-                        field: 'current_amount',
-                        type: Sequelize.DECIMAL(9, 2),
-                        allowNull: false,
-                    },
-                    finalAmount: {
-                        field: 'final_amount',
-                        type: Sequelize.DECIMAL(9, 2),
-                        allowNull: false,
+                        onDelete: 'CASCADE',
+                        references: {
+                            key: 'id',
+                            model: {
+                                tableName: 'auctions',
+                            },
+                        },
                     },
                     createdAt: {
                         field: 'created_at',
@@ -64,27 +61,38 @@ module.exports = {
                         defaultValue: null,
                     },
                 },
-                {
-                    paranoid: true,
-                },
                 transaction
             );
 
             await queryInterface.addConstraint(
-                'auctions',
+                'auction_tokens',
                 {
-                    type: 'foreign key',
-                    fields: ['robot_id'],
-                    name: 'FK_auctions_robot_robot_id',
+                    type: 'foreign_key',
+                    fields: ['user_id'],
+                    name: 'FK_auction_tokens_users_user_id',
                     onDelete: 'CASCADE',
                     references: {
-                        table: 'robots',
+                        table: 'users',
                         field: 'id',
                     },
                 },
                 transaction
             );
 
+            await queryInterface.addConstraint(
+                'auction_tokens',
+                {
+                    type: 'foreign_key',
+                    fields: ['auction_id'],
+                    name: 'FK_auction_tokens_auctions_auction_id',
+                    onDelete: 'CASCADE',
+                    references: {
+                        table: 'auctions',
+                        field: 'id',
+                    },
+                },
+                transaction
+            );
             await transaction.commit();
         } catch (error) {
             transaction.rollback();
@@ -101,7 +109,7 @@ module.exports = {
          */
         const transaction = await queryInterface.sequelize.transaction();
         try {
-            await queryInterface.dropTable('auctions', transaction);
+            await queryInterface.dropTable('auction_tokens', transaction);
 
             await transaction.commit;
         } catch (error) {
