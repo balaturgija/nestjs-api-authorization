@@ -1,4 +1,10 @@
-import { BelongsTo, Column, ForeignKey, Table } from 'sequelize-typescript';
+import {
+    BelongsTo,
+    Column,
+    DataType,
+    ForeignKey,
+    Table,
+} from 'sequelize-typescript';
 import { BaseEntity } from '../../base/base.entity';
 import { TableName } from '../../constants';
 import { RobotEntity } from '../../robots/entities/robot.entity';
@@ -19,6 +25,24 @@ export class AuctionEntity
         type: 'uuid',
     })
     robotId: string;
+
+    @Column({
+        type: DataType.DECIMAL(9, 2),
+        defaultValue: 0,
+    })
+    startAmount: number;
+
+    @Column({
+        type: DataType.DECIMAL(9, 2),
+        defaultValue: 0,
+    })
+    currentAmount: number;
+
+    @Column({
+        type: DataType.DECIMAL(9, 2),
+        defaultValue: 0,
+    })
+    finalAmount: number;
 
     /* Associations */
     @BelongsTo(() => RobotEntity, 'robot_id')

@@ -1,6 +1,9 @@
 import { ApiProperty } from '@nestjs/swagger';
+import { IsNumber, Min } from 'class-validator';
 
 export class CreateAuctionDto {
     @ApiProperty()
-    robotId: string;
+    @IsNumber()
+    @Min(1)
+    startAmount: number;
 }
