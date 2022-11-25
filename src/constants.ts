@@ -7,10 +7,10 @@ export enum TableName {
     Robots = 'robots',
     Roles = 'roles',
     Users = 'users',
-    UserRobots = 'user_robots',
     Wallets = 'wallets',
     Bids = 'bids',
     Auctions = 'auctions',
+    AuctionTokens = 'auction_tokends',
 }
 
 export enum Role {

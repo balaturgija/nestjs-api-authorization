@@ -52,4 +52,9 @@ export class RobotsRepository {
     async getByUserId(userId: string) {
         return await RobotEntity.findAll({ where: { userId: userId } });
     }
+
+    async checkStatus(id: string) {
+        const entity = await RobotEntity.findByPk(id);
+        return entity.status;
+    }
 }

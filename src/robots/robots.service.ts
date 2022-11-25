@@ -64,4 +64,8 @@ export class RobotsService {
         const robots = await this.robotsRepository.getByUserId(userId);
         return robots.map((robot) => RobotModel.fromEntity(robot));
     }
+
+    async checkStatus(id: string) {
+        return await this.robotsRepository.checkStatus(id);
+    }
 }

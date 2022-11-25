@@ -9,7 +9,7 @@ import {
     Post,
     UseGuards,
 } from '@nestjs/common';
-import { ApiBearerAuth, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { AuthUser } from '../auth/decorators/auth-user.decorator';
 import { Roles } from '../auth/decorators/role.decorator';
 import { JwtAuthGuard } from '../auth/guards/jwt.auth.guard';
@@ -87,9 +87,6 @@ export class RobotsController {
     @Delete(':id')
     @ApiTags(TableName.Robots)
     @HttpCode(200)
-    @ApiResponse({ status: 200, description: 'Delete success.' })
-    @ApiResponse({ status: 404, description: 'Robot not found.' })
-    @ApiResponse({ status: 409, description: 'Delete failed.' })
     async delete(@Param('id', RobotExistsPipe) id: string) {
         await this.robotsService.delete(id);
         return this.serializer.serialize('robots', null);
