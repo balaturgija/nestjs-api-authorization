@@ -10,7 +10,7 @@ export enum TableName {
     Wallets = 'wallets',
     Bids = 'bids',
     Auctions = 'auctions',
-    AuctionTokens = 'auction_tokends',
+    AuctionTokens = 'auction_tokens',
 }
 
 export enum Role {

@@ -34,7 +34,7 @@ export class SocketIOAdapter extends IoAdapter {
         const jwtService = this.app.get(JwtService);
         const server: Server = super.createIOServer(port, optionsWithCORS);
 
-        server.of('bids').use(createTokenMiddleware(jwtService));
+        server.of('auctions').use(createTokenMiddleware(jwtService));
 
         return server;
     }
