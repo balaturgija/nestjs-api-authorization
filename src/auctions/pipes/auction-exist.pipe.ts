@@ -1,6 +1,6 @@
 import { Injectable, PipeTransform } from '@nestjs/common';
 import { CreateUserDto } from '../../users/dto/create-user.dto';
-import { AuctionsService } from '../auctions.service';
+import { AuctionsService } from '../services/auctions.service';
 import { AuctionNotExistsException } from '../exceptions/auction-not-exists.exception';
 
 @Injectable()

@@ -1,6 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { AuctionsController } from './auctions.controller';
-import { AuctionsService } from './auctions.service';
+import { AuctionsController } from './controllers/auctions.controller';
+import { AuctionsService } from './services/auctions.service';
 
 describe('AuctionsController', () => {
     let controller: AuctionsController;

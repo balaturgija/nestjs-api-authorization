@@ -21,6 +21,12 @@ module.exports = {
                         allowNull: false,
                         primaryKey: true,
                     },
+                    token: {
+                        field: 'token',
+                        type: Sequelize.TEXT,
+                        allowNull: false,
+                        onDelete: 'CASCADE',
+                    },
                     userId: {
                         field: 'user_id',
                         type: Sequelize.UUID,
@@ -67,7 +73,7 @@ module.exports = {
             await queryInterface.addConstraint(
                 'auction_tokens',
                 {
-                    type: 'foreign_key',
+                    type: 'foreign key',
                     fields: ['user_id'],
                     name: 'FK_auction_tokens_users_user_id',
                     onDelete: 'CASCADE',
@@ -82,7 +88,7 @@ module.exports = {
             await queryInterface.addConstraint(
                 'auction_tokens',
                 {
-                    type: 'foreign_key',
+                    type: 'foreign key',
                     fields: ['auction_id'],
                     name: 'FK_auction_tokens_auctions_auction_id',
                     onDelete: 'CASCADE',

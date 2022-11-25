@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { AuctionsRepository } from './auctions.repository';
+import { AuctionsRepository } from '../repositories/auctions.repository';
 
 @Injectable()
 export class AuctionsService {
