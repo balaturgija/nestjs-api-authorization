@@ -67,6 +67,8 @@ $ yarn run start
 ```
 
 ## Era diagram
+<img width="680" alt="Screenshot 2022-11-25 at 12 39 30" src="https://user-images.githubusercontent.com/48677626/204080215-e373186f-be12-44fc-be5f-816beef2fe96.png">
+
 
 ## Api Swagger documentation
 ```bash
