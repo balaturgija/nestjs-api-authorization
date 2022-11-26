@@ -15,6 +15,7 @@ import { GlobalExceptionsFilter } from './base/filters/GlobalExceptions.filter';
 import { BaseModule } from './base/base.module';
 import { BatteryPaginationModel } from './batteries/models/battery-pagination.model';
 import { RobotPaginationModel } from './robots/models/robot-pagination.model';
+import { AuctionPaginationModel } from './auctions/models/auction-pagination.model';
 
 @Module({
     imports: [
@@ -107,6 +108,30 @@ export class AppModule implements OnModuleInit {
                 },
                 previous(data: RobotPaginationModel) {
                     return `robots?page=${
+                        data.page - 1 === 0 ? 1 : data.page - 1
+                    }&size=${data.size}`;
+                },
+            },
+        });
+        this.serializer.register('auctionsPagination', {
+            beforeSerialize: (data: AuctionPaginationModel) => {
+                return {
+                    page: parseInt(data.size + ''),
+                    size: parseInt(data.page + ''),
+                    total: data.total,
+                    items: data.items,
+                };
+            },
+            id: 'id',
+            links: {
+                self(data: AuctionPaginationModel) {
+                    return `/auctions?page=${data.page}&size=${data.size}`;
+                },
+                next(data: AuctionPaginationModel) {
+                    return `auctions?page=${data.page + 1}&size=${data.size}`;
+                },
+                previous(data: AuctionPaginationModel) {
+                    return `auctions?page=${
                         data.page - 1 === 0 ? 1 : data.page - 1
                     }&size=${data.size}`;
                 },
