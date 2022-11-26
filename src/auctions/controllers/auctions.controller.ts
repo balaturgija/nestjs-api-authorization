@@ -7,14 +7,17 @@ import {
     HttpCode,
     Res,
     Param,
+    Get,
+    ParseIntPipe,
+    Query,
 } from '@nestjs/common';
-import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiQuery, ApiTags } from '@nestjs/swagger';
 import { AuthService } from '../../auth/auth.service';
 import { AuthUser } from '../../auth/decorators/auth-user.decorator';
 import { Roles } from '../../auth/decorators/role.decorator';
 import { JwtAuthGuard } from '../../auth/guards/jwt.auth.guard';
 import { RoleGuard } from '../../auth/guards/role.guard';
-import { Role, TableName } from '../../constants';
+import { Role, SortDirection, TableName } from '../../constants';
 import { AuctionsService } from '../services/auctions.service';
 import { CreateAuctionDto } from '../dto/create-auction.dto';
 import { Response } from 'express';
@@ -32,6 +35,46 @@ export class AuctionsController {
         @Inject('SERIALIZER') private readonly serializer: any
     ) {}
 
+    @Get()
+    @ApiTags(TableName.Auctions)
+    @HttpCode(200)
+    @UseGuards(JwtAuthGuard, RoleGuard)
+    @Roles(Role.Engineer, Role.Collector)
+    @ApiBearerAuth('access-token')
+    @ApiQuery({
+        name: 'page',
+        type: 'number',
+        required: false,
+        description: 'Default 1',
+    })
+    @ApiQuery({
+        name: 'size',
+        type: 'number',
+        required: false,
+        description: 'Default 10',
+    })
+    @ApiQuery({
+        name: 'sortDirection',
+        type: 'string',
+        enum: SortDirection,
+        required: false,
+    })
+    async get(
+        @Query('page', ParseIntPipe) page = 1,
+        @Query('size', ParseIntPipe) size = 10,
+        @Query('sortDirection') sortDirection = SortDirection.Desc
+    ) {
+        const paginationItems = await this.auctionsService.findAll(
+            page,
+            size,
+            sortDirection
+        );
+        return this.serializer.serialize(
+            'batteriesPagination',
+            paginationItems
+        );
+    }
+
     @Post(':robotId')
     @ApiTags(TableName.Auctions)
     @HttpCode(201)
@@ -41,7 +84,12 @@ export class AuctionsController {
     async create(
         @Res() res: Response,
         @AuthUser() user,
-        @Param('robotId', RobotExistsPipe, RobotAuctionStatusPipe)
+        @Param(
+            'robotId',
+            RobotExistsPipe,
+            RobotAuctionStatusPipe,
+            AuctionExistsPipe
+        )
         robotId: string,
         @Body() createAuctionDto: CreateAuctionDto
     ) {
