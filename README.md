@@ -26,7 +26,7 @@
 
 [Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
 
-## Installation
+## Install node_modueles
 
 ```bash
 $ yarn
@@ -36,11 +36,14 @@ $ yarn
 
 ```bash
   NODE_ENV=development
+  PORT=
+  HOST=
   DB_HOST=
   DB_PORT=
   DB_USER=
   DB_PASSWORD=
   DB_NAME=RoboBuilder
+  JWT_SECRET=
 ```
 
 ## Running the app in development mode
@@ -50,6 +53,7 @@ $ yarn
 $ docker-compose build
 
 # STEP2: run database create
+# Optional: because docker-compose will create databse
 $ yarn run db:create
 
 # STEP3: run migrations
@@ -58,11 +62,16 @@ $ yarn run db:migrate
 # STEP4: run seeders
 $ yarn run db:seed
 
-# STEP5: start the app with nodemon
+# STEP5: start the app
 $ yarn run start
 ```
 
+## Era diagram
 
+## Api Swagger documentation
+```bash
+  http://localhost:port/api#
+```
 
 ## Support
 
