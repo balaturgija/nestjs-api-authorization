@@ -10,20 +10,17 @@ import {
     Patch,
     Post,
     Query,
-    UseGuards,
 } from '@nestjs/common';
-import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { BatteriesService } from './batteries.service';
 import { CreateBatteryDto } from './dto/create-battery.dto';
 import { UpdateBatteryDto } from './dto/update-battery.dto';
-import { Role, TableName } from '../constants';
-import { JwtAuthGuard } from '../auth/guards/jwt.auth.guard';
-import { RoleGuard } from '../auth/guards/role.guard';
 import { Roles } from '../auth/decorators/role.decorator';
 import { CreateBatteryResponseModel } from './models/create-battery-response.model';
 import { BatteryExistsPipe } from './pipes/battery-exists.pipe';
 import { CreateBatteryModel } from './models/create-battery.model';
 import { Pagination } from '../base/decorators/pagination.decorator';
+import { BatteryAuthChallenge } from '../auth/decorators/battery-auth-challenge';
+import { Role } from '../constants';
 
 @Controller('batteries')
 export class BatteriesController {
@@ -33,19 +30,18 @@ export class BatteriesController {
     ) {}
 
     @Post()
-    @ApiTags(TableName.Batteries)
     @HttpCode(201)
-    @UseGuards(JwtAuthGuard, RoleGuard)
+    @BatteryAuthChallenge()
     @Roles(Role.Engineer)
-    @ApiBearerAuth('access-token')
     async create(@Body() body: CreateBatteryDto): Promise<Response> {
         const battery = await this.batteriesService.create(body.name);
         return this.serializer.serialize('batteries', battery);
     }
 
     @Get()
-    @ApiTags(TableName.Batteries)
     @HttpCode(200)
+    @BatteryAuthChallenge()
+    @Roles(Role.Engineer)
     @Pagination()
     async findAll(
         @Query('page', ParseIntPipe) page = 1,
@@ -64,11 +60,9 @@ export class BatteriesController {
     }
 
     @Get(':id')
-    @ApiTags(TableName.Batteries)
     @HttpCode(200)
-    @UseGuards(JwtAuthGuard, RoleGuard)
+    @BatteryAuthChallenge()
     @Roles(Role.Engineer)
-    @ApiBearerAuth('access-token')
     async findOne(@Param('id', BatteryExistsPipe) id: string) {
         const result = await this.batteriesService.findOne(id);
 
@@ -79,8 +73,9 @@ export class BatteriesController {
     }
 
     @Patch(':id')
-    @ApiTags(TableName.Batteries)
     @HttpCode(204)
+    @BatteryAuthChallenge()
+    @Roles(Role.Engineer)
     async update(
         @Param('id', BatteryExistsPipe) id: string,
         @Body() request: UpdateBatteryDto
@@ -96,8 +91,9 @@ export class BatteriesController {
     }
 
     @Delete(':id')
-    @ApiTags(TableName.Batteries)
     @HttpCode(200)
+    @BatteryAuthChallenge()
+    @Roles(Role.Engineer)
     async delete(@Param('id', BatteryExistsPipe) id: string) {
         await this.batteriesService.delete(id);
 
