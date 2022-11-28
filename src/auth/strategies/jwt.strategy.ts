@@ -20,6 +20,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
 
     async validate(payload: TokenOptions) {
         console.log('\x1b[43m Executing Jwt Strategy Token Validation\x1b[0m');
+        Number(payload.wallet.amount);
         try {
             return {
                 id: payload.id,
