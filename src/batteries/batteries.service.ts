@@ -8,10 +8,14 @@ import { SortDirection } from '../constants';
 
 @Injectable()
 export class BatteriesService {
-    constructor(private readonly batteryRepository: BatteriesRepository) {}
+    constructor(private readonly batteriesRepository: BatteriesRepository) {}
 
     async findAll(page: number, size: number, order: SortDirection) {
-        const result = await this.batteryRepository.findAll(page, size, order);
+        const result = await this.batteriesRepository.findAll(
+            page,
+            size,
+            order
+        );
         return new BatteryPaginationModel(
             size,
             page,
@@ -21,20 +25,20 @@ export class BatteriesService {
     }
 
     async create(name: string) {
-        const model = await this.batteryRepository.create(name);
+        const model = await this.batteriesRepository.create(name);
         return new CreateBatteryModel(model.id, model.name);
     }
 
     async exists(id: string) {
-        return await this.batteryRepository.exists(id);
+        return await this.batteriesRepository.exists(id);
     }
 
     async update(id: string, name: string) {
-        return await this.batteryRepository.update(id, name);
+        return await this.batteriesRepository.update(id, name);
     }
 
     async findOne(id: string): Promise<BatteryEntity | null> {
-        const battery = await this.batteryRepository.findOne(id);
+        const battery = await this.batteriesRepository.findOne(id);
 
         if (battery) return battery.get();
 
@@ -42,6 +46,6 @@ export class BatteriesService {
     }
 
     async delete(id: string) {
-        return await this.batteryRepository.delete(id);
+        return await this.batteriesRepository.delete(id);
     }
 }
