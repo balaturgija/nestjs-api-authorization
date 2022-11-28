@@ -55,17 +55,17 @@ export class WalletsService {
         amount: number,
         action: MoneyAction
     ): Promise<number> {
-        if (action === MoneyAction.Deposit) {
+        if (action === 'Deposit') {
             walletAmount += Number(amount);
         }
 
-        if (action === MoneyAction.Withdraw && walletAmount < amount) {
+        if (action === 'Withdraw' && walletAmount < amount) {
             throw new MoneyTransactionDisabledException(
                 'Transaction declined.'
             );
         }
 
-        if (action === MoneyAction.Withdraw && walletAmount > amount) {
+        if (action === 'Withdraw' && walletAmount > amount) {
             walletAmount -= Number(action);
         }
 

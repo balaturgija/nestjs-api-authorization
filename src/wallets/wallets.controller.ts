@@ -2,7 +2,7 @@ import { Body, Controller, Inject, Patch, UseGuards } from '@nestjs/common';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { AuthUser } from '../auth/decorators/auth-user.decorator';
 import { JwtAuthGuard } from '../auth/guards/jwt.auth.guard';
-import { MoneyAction, TableName } from '../constants';
+import { TableName } from '../constants';
 import { WalletPatchDto } from './dto/patch-wallet.dto';
 import { WalletsService } from './wallets.service';
 
@@ -27,7 +27,7 @@ export class WalletsController {
         const wallet = await this.walletsService.moneyTransaction(
             user.wallet,
             patchWalletDto,
-            MoneyAction.Deposit
+            'Deposit'
         );
 
         return this.serializer.serialize('wallets', wallet.toJSON());
@@ -44,7 +44,7 @@ export class WalletsController {
         const wallet = await this.walletsService.moneyTransaction(
             user.wallet,
             patchWalletDto,
-            MoneyAction.Withdraw
+            'Withdraw'
         );
 
         return this.serializer.serialize('wallets', wallet.toJSON());

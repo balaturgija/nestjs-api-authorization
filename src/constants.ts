@@ -24,10 +24,7 @@ export enum RobotStatus {
     Auction = 'Auction',
 }
 
-export enum MoneyAction {
-    Deposit = 'Deposit',
-    Withdraw = 'Withdraw',
-}
+export type MoneyAction = 'Deposit' | 'Withdraw';
 
 export enum SortDirection {
     Asc = 'asc',
