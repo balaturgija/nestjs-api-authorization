@@ -7,14 +7,11 @@ import {
     Inject,
     Param,
     Post,
-    UseGuards,
 } from '@nestjs/common';
-import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { AuthUser } from '../auth/decorators/auth-user.decorator';
+import { RobotAuthChallenge } from '../auth/decorators/robot-auth-challenge';
 import { Roles } from '../auth/decorators/role.decorator';
-import { JwtAuthGuard } from '../auth/guards/jwt.auth.guard';
-import { RoleGuard } from '../auth/guards/role.guard';
-import { RobotStatus, Role, TableName } from '../constants';
+import { RobotStatus, Role } from '../constants';
 import { RobotCreateDto } from './dto/create-robot.dto';
 import { CreateRobotResponseModel } from './models/create-robot-response.model';
 import { RobotExistsPipe } from './pipes/robot-exists.pipe';
@@ -28,11 +25,9 @@ export class RobotsController {
     ) {}
 
     @Post()
-    @ApiTags(TableName.Robots)
     @HttpCode(201)
-    @UseGuards(JwtAuthGuard, RoleGuard)
+    @RobotAuthChallenge()
     @Roles(Role.Engineer)
-    @ApiBearerAuth('access-token')
     async create(@Body() body: RobotCreateDto, @AuthUser() user) {
         const createdRobot = await this.robotsService.create(
             body.name,
@@ -51,30 +46,26 @@ export class RobotsController {
     }
 
     @Get('collection')
-    @ApiTags(TableName.Robots)
     @HttpCode(200)
-    @ApiBearerAuth('access-token')
+    @RobotAuthChallenge()
     @Roles(Role.Collector)
-    @UseGuards(JwtAuthGuard, RoleGuard)
     async getRobotsCollection(@AuthUser() user) {
         const robots = await this.robotsService.getRobots(user.id);
         return this.serializer.serialize('robots', robots);
     }
 
     @Get('factory')
-    @ApiTags(TableName.Robots)
     @HttpCode(200)
-    @ApiBearerAuth('access-token')
+    @RobotAuthChallenge()
     @Roles(Role.Engineer)
-    @UseGuards(JwtAuthGuard, RoleGuard)
     async getRobotsFactory(@AuthUser() user) {
         const robots = await this.robotsService.getRobots(user.id);
         return this.serializer.serialize('robots', robots);
     }
 
     @Get(':id')
-    @ApiTags(TableName.Robots)
     @HttpCode(200)
+    @RobotAuthChallenge()
     async findOne(@Param('id', RobotExistsPipe) id: string) {
         const result = await this.robotsService.getById(id);
 
@@ -85,8 +76,8 @@ export class RobotsController {
     }
 
     @Delete(':id')
-    @ApiTags(TableName.Robots)
     @HttpCode(200)
+    @RobotAuthChallenge()
     async delete(@Param('id', RobotExistsPipe) id: string) {
         await this.robotsService.delete(id);
         return this.serializer.serialize('robots', null);
