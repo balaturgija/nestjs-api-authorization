@@ -2,7 +2,6 @@ import {
     Controller,
     Post,
     Body,
-    UseGuards,
     Inject,
     HttpCode,
     Res,
@@ -11,13 +10,10 @@ import {
     ParseIntPipe,
     Query,
 } from '@nestjs/common';
-import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { AuthService } from '../../auth/auth.service';
 import { AuthUser } from '../../auth/decorators/auth-user.decorator';
 import { Roles } from '../../auth/decorators/role.decorator';
-import { JwtAuthGuard } from '../../auth/guards/jwt.auth.guard';
-import { RoleGuard } from '../../auth/guards/role.guard';
-import { Role, TableName } from '../../constants';
+import { Role } from '../../constants';
 import { AuctionsService } from '../services/auctions.service';
 import { CreateAuctionDto } from '../dto/create-auction.dto';
 import { Response } from 'express';
