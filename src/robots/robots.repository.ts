@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { RobotStatus, SortDirection } from '../constants';
+import { RobotStatus } from '../constants';
 import { RobotEntity } from './entities/robot.entity';
 
 @Injectable()
@@ -28,7 +28,7 @@ export class RobotsRepository {
         return await RobotEntity.findByPk(id);
     }
 
-    async findAll(page: number, size: number, order: SortDirection) {
+    async paginate(page: number, size: number, order: 'asc' | 'desc') {
         return await RobotEntity.findAndCountAll({
             order: [['id', order]],
             offset: (page - 1) * size,

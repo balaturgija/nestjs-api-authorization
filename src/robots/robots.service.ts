@@ -1,6 +1,6 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { Sequelize } from 'sequelize';
-import { Provider, RobotStatus, SortDirection } from '../constants';
+import { Provider, RobotStatus } from '../constants';
 import { CreateRobotModel } from './models/create-robot.model';
 import { RobotPaginationModel } from './models/robot-pagination.model';
 import { RobotModel } from './models/robot.model';
@@ -46,8 +46,8 @@ export class RobotsService {
         return await this.robotsRepository.exists(id);
     }
 
-    async findAll(page: number, size: number, order: SortDirection) {
-        const result = await this.robotsRepository.findAll(page, size, order);
+    async findAll(page: number, size: number, order: 'asc' | 'desc') {
+        const result = await this.robotsRepository.paginate(page, size, order);
         return new RobotPaginationModel(
             page,
             size,
