@@ -6,7 +6,7 @@ import { RoleGuard } from '../guards/role.guard';
 
 export function RobotAuthChallenge() {
     return applyDecorators(
-        ApiTags(TableName.Batteries),
+        ApiTags(TableName.Robots),
         UseGuards(JwtAuthGuard, RoleGuard),
         ApiBearerAuth('access-token')
     );
