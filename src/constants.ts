@@ -26,10 +26,7 @@ export enum RobotStatus {
 
 export type MoneyAction = 'Deposit' | 'Withdraw';
 
-export enum SortDirection {
-    Asc = 'asc',
-    Desc = 'desc',
-}
+export type Direction = 'asc' | 'desc';
 
 export const SWAGGER_CONFIG = {
     title: 'title',

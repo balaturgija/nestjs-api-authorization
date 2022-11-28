@@ -1,5 +1,4 @@
 import { Injectable } from '@nestjs/common';
-import { SortDirection } from '../constants';
 import { BatteryEntity } from './entities/battery.entity';
 
 @Injectable()
@@ -14,7 +13,7 @@ export class BatteriesRepository {
         return await BatteryEntity.findByPk(id);
     }
 
-    async findAll(page: number, size: number, order: SortDirection) {
+    async paginate(page: number, size: number, order: 'asc' | 'desc') {
         return await BatteryEntity.findAndCountAll({
             order: [['id', order]],
             offset: (page - 1) * size,

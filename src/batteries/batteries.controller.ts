@@ -12,17 +12,18 @@ import {
     Query,
     UseGuards,
 } from '@nestjs/common';
-import { ApiBearerAuth, ApiQuery, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { BatteriesService } from './batteries.service';
 import { CreateBatteryDto } from './dto/create-battery.dto';
 import { UpdateBatteryDto } from './dto/update-battery.dto';
-import { Role, SortDirection, TableName } from '../constants';
+import { Role, TableName } from '../constants';
 import { JwtAuthGuard } from '../auth/guards/jwt.auth.guard';
 import { RoleGuard } from '../auth/guards/role.guard';
 import { Roles } from '../auth/decorators/role.decorator';
 import { CreateBatteryResponseModel } from './models/create-battery-response.model';
 import { BatteryExistsPipe } from './pipes/battery-exists.pipe';
 import { CreateBatteryModel } from './models/create-battery.model';
+import { Pagination } from '../base/decorators/pagination.decorator';
 
 @Controller('batteries')
 export class BatteriesController {
@@ -45,33 +46,16 @@ export class BatteriesController {
     @Get()
     @ApiTags(TableName.Batteries)
     @HttpCode(200)
-    @ApiQuery({
-        name: 'page',
-        type: 'number',
-        required: false,
-        description: 'Default 1',
-    })
-    @ApiQuery({
-        name: 'size',
-        type: 'number',
-        required: false,
-        description: 'Default 10',
-    })
-    @ApiQuery({
-        name: 'sortDirection',
-        type: 'string',
-        enum: SortDirection,
-        required: false,
-    })
+    @Pagination()
     async findAll(
         @Query('page', ParseIntPipe) page = 1,
         @Query('size', ParseIntPipe) size = 10,
-        @Query('sortDirection') sortDirection = SortDirection.Asc
+        @Query('direction') direction
     ) {
-        const paginationItems = await this.batteriesService.findAll(
+        const paginationItems = await this.batteriesService.paginate(
             page,
             size,
-            sortDirection
+            direction
         );
         return this.serializer.serialize(
             'batteriesPagination',

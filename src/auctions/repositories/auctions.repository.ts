@@ -1,10 +1,9 @@
 import { Injectable } from '@nestjs/common';
-import { SortDirection } from '../../constants';
 import { AuctionEntity } from '../entities/auction.entity';
 
 @Injectable()
 export class AuctionsRepository {
-    async findAll(page: number, size: number, order: SortDirection) {
+    async paginate(page: number, size: number, order: 'asc' | 'desc') {
         return await AuctionEntity.findAndCountAll({
             order: [['createdAt', order]],
             offset: (page - 1) * size,

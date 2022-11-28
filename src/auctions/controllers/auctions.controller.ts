@@ -11,13 +11,13 @@ import {
     ParseIntPipe,
     Query,
 } from '@nestjs/common';
-import { ApiBearerAuth, ApiQuery, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { AuthService } from '../../auth/auth.service';
 import { AuthUser } from '../../auth/decorators/auth-user.decorator';
 import { Roles } from '../../auth/decorators/role.decorator';
 import { JwtAuthGuard } from '../../auth/guards/jwt.auth.guard';
 import { RoleGuard } from '../../auth/guards/role.guard';
-import { Role, SortDirection, TableName } from '../../constants';
+import { Role, TableName } from '../../constants';
 import { AuctionsService } from '../services/auctions.service';
 import { CreateAuctionDto } from '../dto/create-auction.dto';
 import { Response } from 'express';
@@ -25,6 +25,7 @@ import { RobotExistsPipe } from '../../robots/pipes/robot-exists.pipe';
 import { AuctionExistsPipe } from '../pipes/auction-exist.pipe';
 import { AuctionTokensServices } from '../services/auction-tokens.service';
 import { RobotAuctionStatusPipe } from '../../robots/pipes/robot-auction.pipe';
+import { Pagination } from '../../base/decorators/pagination.decorator';
 
 @Controller('auctions')
 export class AuctionsController {
@@ -36,38 +37,21 @@ export class AuctionsController {
     ) {}
 
     @Get()
-    @ApiTags(TableName.Auctions)
     @HttpCode(200)
+    @ApiTags(TableName.Auctions)
     @UseGuards(JwtAuthGuard, RoleGuard)
     @Roles(Role.Engineer, Role.Collector)
     @ApiBearerAuth('access-token')
-    @ApiQuery({
-        name: 'page',
-        type: 'number',
-        required: false,
-        description: 'Default 1',
-    })
-    @ApiQuery({
-        name: 'size',
-        type: 'number',
-        required: false,
-        description: 'Default 10',
-    })
-    @ApiQuery({
-        name: 'sortDirection',
-        type: 'string',
-        enum: SortDirection,
-        required: false,
-    })
+    @Pagination()
     async get(
         @Query('page', ParseIntPipe) page = 1,
         @Query('size', ParseIntPipe) size = 10,
-        @Query('sortDirection') sortDirection = SortDirection.Desc
+        @Query('direction') direction
     ) {
-        const paginationItems = await this.auctionsService.findAll(
+        const paginationItems = await this.auctionsService.paginate(
             page,
             size,
-            sortDirection
+            direction
         );
         return this.serializer.serialize(
             'batteriesPagination',
