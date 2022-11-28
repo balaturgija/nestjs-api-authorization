@@ -26,6 +26,7 @@ import { AuctionExistsPipe } from '../pipes/auction-exist.pipe';
 import { AuctionTokensServices } from '../services/auction-tokens.service';
 import { RobotAuctionStatusPipe } from '../../robots/pipes/robot-auction.pipe';
 import { Pagination } from '../../base/decorators/pagination.decorator';
+import { AuctionAuthChallenge } from '../../auth/decorators/auction-auth-challenge.decorator';
 
 @Controller('auctions')
 export class AuctionsController {
@@ -38,10 +39,8 @@ export class AuctionsController {
 
     @Get()
     @HttpCode(200)
-    @ApiTags(TableName.Auctions)
-    @UseGuards(JwtAuthGuard, RoleGuard)
+    @AuctionAuthChallenge()
     @Roles(Role.Engineer, Role.Collector)
-    @ApiBearerAuth('access-token')
     @Pagination()
     async get(
         @Query('page', ParseIntPipe) page = 1,
@@ -60,11 +59,9 @@ export class AuctionsController {
     }
 
     @Post(':robotId')
-    @ApiTags(TableName.Auctions)
     @HttpCode(201)
-    @UseGuards(JwtAuthGuard, RoleGuard)
+    @AuctionAuthChallenge()
     @Roles(Role.Engineer)
-    @ApiBearerAuth('access-token')
     async create(
         @Res() res: Response,
         @AuthUser() user,
@@ -99,11 +96,9 @@ export class AuctionsController {
     }
 
     @Post('/join/:id')
-    @ApiTags(TableName.Auctions)
     @HttpCode(201)
-    @UseGuards(JwtAuthGuard, RoleGuard)
+    @AuctionAuthChallenge()
     @Roles(Role.Collector)
-    @ApiBearerAuth('access-token')
     async join(
         @Res() res: Response,
         @AuthUser() user,
@@ -118,11 +113,9 @@ export class AuctionsController {
     }
 
     @Post('/rejoin/:id')
-    @ApiTags(TableName.Auctions)
     @HttpCode(201)
-    @UseGuards(JwtAuthGuard, RoleGuard)
+    @AuctionAuthChallenge()
     @Roles(Role.Collector, Role.Engineer)
-    @ApiBearerAuth('access-token')
     async rejoin(
         @Res() res: Response,
         @AuthUser() user,
