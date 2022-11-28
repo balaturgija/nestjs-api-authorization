@@ -8,11 +8,13 @@ import { LocalStrategy } from './strategies/local.strategy';
 import { JwtStrategy } from './strategies/jwt.strategy';
 import { EmailExists } from './validators/user-email-exists.validator';
 import { RolesModule } from '../roles/roles.module';
+import { WalletsModule } from '../wallets/wallets.module';
 
 @Module({
     imports: [
         UsersModule,
         RolesModule,
+        WalletsModule,
         PassportModule,
         JwtModule.register({
             secret: process.env.JWT_SECRET,

@@ -1,7 +1,6 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { Sequelize, Transaction } from 'sequelize';
 import { MoneyAction, Provider } from '../constants';
-import { WalletPatchDto } from './dto/patch-wallet.dto';
 import { MoneyTransactionDisabledException } from './exceptions/money-transaction-disabled.exception';
 import { WalletModel } from './models/wallet.model';
 import { WalletsRepository } from './wallets.repository';
@@ -13,7 +12,7 @@ export class WalletsService {
         @Inject(Provider.Sequelize) private readonly sequelize: Sequelize
     ) {}
 
-    async findByIdAsync(id: string, t?: Transaction): Promise<Wallet | null> {
+    async findById(id: string, t?: Transaction): Promise<Wallet | null> {
         return await this.walletsRepository.findOne(id, t);
     }
 
@@ -22,31 +21,31 @@ export class WalletsService {
     }
 
     async moneyTransaction(
-        wallet: Wallet,
-        patchWalletDto: WalletPatchDto,
+        walletId: string,
+        currentAmount: number,
+        incomingAmount: number,
         action: MoneyAction
     ) {
         const transaction = await this.sequelize.transaction();
         try {
             // sequelize read numeric type as string
             const calculatedAmount = await this.calculateAmount(
-                Number(wallet.amount),
-                patchWalletDto.amount,
+                currentAmount,
+                incomingAmount,
                 action
             );
-            await this.updateAmount(wallet.id, calculatedAmount, transaction);
+            await this.updateAmount(walletId, calculatedAmount, transaction);
             const updatedEntity = await this.walletsRepository.findOne(
-                wallet.id,
+                walletId,
                 transaction
             );
             await transaction.commit();
             return WalletModel.fromEntity(updatedEntity);
         } catch (error) {
             await transaction.rollback();
-            throw new MoneyTransactionDisabledException(
-                `Action: ${action} not allowed`,
-                405
-            );
+            throw new MoneyTransactionDisabledException({
+                message: `Action: ${action} not allowed`,
+            });
         }
     }
 
@@ -60,9 +59,9 @@ export class WalletsService {
         }
 
         if (action === 'Withdraw' && walletAmount < amount) {
-            throw new MoneyTransactionDisabledException(
-                'Transaction declined.'
-            );
+            throw new MoneyTransactionDisabledException({
+                message: 'Transaction declined.',
+            });
         }
 
         if (action === 'Withdraw' && walletAmount > amount) {

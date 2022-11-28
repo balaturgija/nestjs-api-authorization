@@ -1,8 +1,8 @@
-import { Body, Controller, Inject, Patch, UseGuards } from '@nestjs/common';
-import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
+import { Body, Controller, Inject, Patch } from '@nestjs/common';
+import { AuthChallenge } from '../auth/decorators/auth-challenge.decorator';
 import { AuthUser } from '../auth/decorators/auth-user.decorator';
-import { JwtAuthGuard } from '../auth/guards/jwt.auth.guard';
-import { TableName } from '../constants';
+import { Roles } from '../auth/decorators/role.decorator';
+import { Role, TableName } from '../constants';
 import { WalletPatchDto } from './dto/patch-wallet.dto';
 import { WalletsService } from './wallets.service';
 
@@ -17,16 +17,16 @@ export class WalletsController {
     ) {}
 
     @Patch('/deposit')
-    @ApiTags(TableName.Wallets)
-    @UseGuards(JwtAuthGuard)
-    @ApiBearerAuth('access-token')
+    @AuthChallenge(TableName.Wallets)
+    @Roles(Role.Collector, Role.Engineer)
     async deposit(
         @AuthUser() user: User,
         @Body() patchWalletDto: WalletPatchDto
     ) {
         const wallet = await this.walletsService.moneyTransaction(
-            user.wallet,
-            patchWalletDto,
+            user.wallet.id,
+            user.wallet.amount,
+            patchWalletDto.amount,
             'Deposit'
         );
 
@@ -34,16 +34,16 @@ export class WalletsController {
     }
 
     @Patch('/withdraw')
-    @ApiTags(TableName.Wallets)
-    @UseGuards(JwtAuthGuard)
-    @ApiBearerAuth('access-token')
+    @AuthChallenge(TableName.Wallets)
+    @Roles(Role.Collector, Role.Engineer)
     async withdraw(
         @AuthUser() user: User,
         @Body() patchWalletDto: WalletPatchDto
     ) {
         const wallet = await this.walletsService.moneyTransaction(
-            user.wallet,
-            patchWalletDto,
+            user.wallet.id,
+            user.wallet.amount,
+            patchWalletDto.amount,
             'Withdraw'
         );
 
