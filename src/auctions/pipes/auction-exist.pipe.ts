@@ -11,9 +11,9 @@ export class AuctionExistsPipe implements PipeTransform<CreateUserDto> {
         if (metadata.data === 'robotId') {
             const exists = await this.auctionsService.existByRobotId(value);
 
-            if (!exists) {
+            if (exists) {
                 throw new AuctionAlreadyExistsException({
-                    message: `Robot is already on auction with id: ${exists.id}.`,
+                    message: `Robot is already on auction with ID ${exists.id}.`,
                 });
             }
         }
