@@ -1,6 +1,6 @@
 import { HttpException } from '@nestjs/common';
 
-export class ValidationException extends HttpException {
+export class HttpValidationException extends HttpException {
     constructor(response: string | Record<string, any>) {
         super(response, 422);
     }

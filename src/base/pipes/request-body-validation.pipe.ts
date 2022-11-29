@@ -6,7 +6,7 @@ import {
 } from '@nestjs/common';
 import { plainToClass } from 'class-transformer';
 import { validate, ValidationError } from 'class-validator';
-import { ValidationException } from '../exceptions/validation.exception';
+import { HttpValidationException } from '../exceptions/http-validation.exception';
 
 @Injectable()
 export class RequestBodyValidatePipe implements PipeTransform<any> {
@@ -26,7 +26,7 @@ export class RequestBodyValidatePipe implements PipeTransform<any> {
         const errors = this.buildErrors(await validate(object));
         console.log('\x1b[46m Executing Request Validation Pipe \x1b[0m');
 
-        if (errors) throw new ValidationException(errors);
+        if (errors) throw new HttpValidationException(errors);
 
         return value;
     }
@@ -39,6 +39,7 @@ export class RequestBodyValidatePipe implements PipeTransform<any> {
         if (!Boolean(errors.length)) return;
 
         return errors.map((error) => {
+            console.log(errors);
             return {
                 [error.property]: error.constraints,
             };

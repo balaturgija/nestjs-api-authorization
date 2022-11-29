@@ -8,7 +8,7 @@ import {
 import { Response } from 'express';
 
 @Catch()
-export class GlobalExceptionsFilter implements ExceptionFilter {
+export class GlobalHttpExceptionsFilter implements ExceptionFilter {
     constructor(@Inject('SERIALIZER') private readonly serializer: any) {}
 
     catch(exception: HttpException, host: ArgumentsHost) {

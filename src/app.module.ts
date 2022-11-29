@@ -10,12 +10,12 @@ import { WalletsModule } from './wallets/wallets.module';
 import { BidsModule } from './bids/bids.module';
 import { AuctionsModule } from './auctions/auctions.module';
 import { APP_FILTER, APP_PIPE } from '@nestjs/core';
-import { RequestBodyValidatePipe } from './base/pipes/RequestValidation.pipe';
-import { GlobalExceptionsFilter } from './base/filters/GlobalExceptions.filter';
+import { RequestBodyValidatePipe } from './base/pipes/request-body-validation.pipe';
 import { BaseModule } from './base/base.module';
 import { BatteryPaginationModel } from './batteries/models/battery-pagination.model';
 import { RobotPaginationModel } from './robots/models/robot-pagination.model';
 import { AuctionPaginationModel } from './auctions/models/auction-pagination.model';
+import { GlobalHttpExceptionsFilter } from './base/filters/GlobalHttpExceptions.filter';
 
 @Module({
     imports: [
@@ -45,7 +45,7 @@ import { AuctionPaginationModel } from './auctions/models/auction-pagination.mod
         },
         {
             provide: APP_FILTER,
-            useClass: GlobalExceptionsFilter,
+            useClass: GlobalHttpExceptionsFilter,
         },
     ],
 })
