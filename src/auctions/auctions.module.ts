@@ -7,9 +7,10 @@ import { RobotsModule } from '../robots/robots.module';
 import { AuctionTokensServices } from './services/auction-tokens.service';
 import { AuctionTokensRepository } from './repositories/auction-tokens.repository';
 import { AuctionsGateway } from './auctions.gateway';
+import { BidsModule } from '../bids/bids.module';
 
 @Module({
-    imports: [AuthModule, RobotsModule],
+    imports: [BidsModule, AuthModule, RobotsModule],
     controllers: [AuctionsController],
     providers: [
         AuctionsGateway,

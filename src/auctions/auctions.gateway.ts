@@ -1,11 +1,17 @@
+import { Inject, UseFilters, UsePipes } from '@nestjs/common';
 import {
     OnGatewayConnection,
     OnGatewayDisconnect,
     OnGatewayInit,
+    SubscribeMessage,
     WebSocketGateway,
     WebSocketServer,
 } from '@nestjs/websockets';
 import { Socket, Server, Namespace } from 'socket.io';
+import { WsExceptionFilter } from '../base/filters/WsException.filter';
+import { RequestBodyValidatePipe } from '../base/pipes/request-body-validation.pipe';
+import { BidsService } from '../bids/bids.service';
+import { CreateBidDto } from '../bids/dto/create-bid.dto';
 import { AuctionsService } from './services/auctions.service';
 
 @WebSocketGateway({
@@ -14,7 +20,11 @@ import { AuctionsService } from './services/auctions.service';
 export class AuctionsGateway
     implements OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect
 {
-    constructor(private readonly auctionsService: AuctionsService) {}
+    constructor(
+        private readonly auctionsService: AuctionsService,
+        private readonly bidsService: BidsService,
+        @Inject('SERIALIZER') private readonly serializer: any
+    ) {}
 
     @WebSocketServer() io: Namespace;
 
@@ -27,7 +37,7 @@ export class AuctionsGateway
         );
         console.log(`Number of connected sockets: ${this.io.sockets.size}`);
 
-        this.io.emit('hello', client.auctionId);
+        this.io.emit('hello', `Welcome to auction id: ${client.auctionId}`);
     }
     handleDisconnect(client: Socket & AuctionToken) {
         console.log(
@@ -35,5 +45,14 @@ export class AuctionsGateway
         );
         console.log(`Number of connected sockets: ${this.io.sockets.size}`);
         this.io.emit('hello', client.auctionId);
+    }
+
+    @UsePipes(new RequestBodyValidatePipe())
+    @UseFilters(new WsExceptionFilter())
+    @SubscribeMessage('bid')
+    async test(client, data: CreateBidDto) {
+        const event = 'events';
+        // console.log({ data: data, event: event, client: client });
+        return { event, data };
     }
 }
