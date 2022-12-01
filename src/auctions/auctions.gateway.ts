@@ -1,5 +1,7 @@
 import { Inject, UseFilters, UsePipes } from '@nestjs/common';
 import {
+    ConnectedSocket,
+    MessageBody,
     OnGatewayConnection,
     OnGatewayDisconnect,
     OnGatewayInit,
@@ -8,6 +10,7 @@ import {
     WebSocketServer,
 } from '@nestjs/websockets';
 import { Socket, Server, Namespace } from 'socket.io';
+import { AuthUser } from '../auth/decorators/auth-user.decorator';
 import { WsExceptionFilter } from '../base/filters/WsException.filter';
 import { RequestBodyValidatePipe } from '../base/pipes/request-body-validation.pipe';
 import { BidsService } from '../bids/bids.service';
@@ -37,22 +40,27 @@ export class AuctionsGateway
         );
         console.log(`Number of connected sockets: ${this.io.sockets.size}`);
 
-        this.io.emit('hello', `Welcome to auction id: ${client.auctionId}`);
+        this.io.emit(
+            'hello',
+            `${client.user.username} join on aution with id: ${client.auctionId} and ${client.user.wallet.amount} credits.`
+        );
     }
     handleDisconnect(client: Socket & AuctionToken) {
         console.log(
             `Client disconnected with userId: ${client.user.id}, and auctionId: ${client.auctionId}`
         );
         console.log(`Number of connected sockets: ${this.io.sockets.size}`);
-        this.io.emit('hello', client.auctionId);
+        this.io.emit('goodbye', client.user.username);
     }
 
     @UsePipes(new RequestBodyValidatePipe())
-    @UseFilters(new WsExceptionFilter())
+    @UseFilters(WsExceptionFilter)
     @SubscribeMessage('bid')
-    async test(client, data: CreateBidDto) {
-        const event = 'events';
-        // console.log({ data: data, event: event, client: client });
-        return { event, data };
+    async test(
+        @ConnectedSocket() client: Socket,
+        @MessageBody() data: CreateBidDto,
+        @AuthUser() authUser
+    ) {
+        client.broadcast.emit('dodo', data);
     }
 }

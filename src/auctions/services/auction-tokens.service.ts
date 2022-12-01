@@ -28,4 +28,11 @@ export class AuctionTokensServices {
 
         return null;
     }
+
+    async existsByAuctionIdAndUserId(auctionId: string, userId: string) {
+        return await this.auctionTokensRepository.existsByAuctionIdAndUserId(
+            auctionId,
+            userId
+        );
+    }
 }
