@@ -2,7 +2,7 @@ import { CanActivate, ExecutionContext, Injectable } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 import { Observable } from 'rxjs';
 import { Role } from '../../constants';
-import { UserHaveNoPermissions } from '../exceptions/user-have-no-permission.exception';
+import { UserHaveNoPermissionsExcepton } from '../exceptions/user-have-no-permission.exception';
 
 @Injectable()
 export class RoleGuard implements CanActivate {
@@ -22,7 +22,7 @@ export class RoleGuard implements CanActivate {
         const user: User = request.user;
         const result = this.matchRoles(roles, user.role.name);
 
-        if (!result) throw new UserHaveNoPermissions();
+        if (!result) throw new UserHaveNoPermissionsExcepton();
 
         return result;
     }
