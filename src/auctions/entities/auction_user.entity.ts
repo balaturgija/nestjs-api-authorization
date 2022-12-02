@@ -1,10 +1,4 @@
-import {
-    BelongsTo,
-    Column,
-    DataType,
-    ForeignKey,
-    Table,
-} from 'sequelize-typescript';
+import { BelongsTo, Column, ForeignKey, Table } from 'sequelize-typescript';
 import { BaseEntity } from '../../base/base.entity';
 import { TableName } from '../../constants';
 import { UserEntity } from '../../users/entities/user.entity';
@@ -16,12 +10,7 @@ import { AuctionEntity } from './auction.entity';
     updatedAt: true,
     deletedAt: true,
 })
-export class AuctionTokenEntity extends BaseEntity<AuctionTokenEntity> {
-    @Column({
-        type: DataType.TEXT,
-    })
-    token: string;
-
+export class AuctionUserEntity extends BaseEntity<AuctionUserEntity> {
     @ForeignKey(() => UserEntity)
     @Column({
         type: 'uuid',

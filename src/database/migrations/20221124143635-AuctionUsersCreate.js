@@ -12,7 +12,7 @@ module.exports = {
         const transaction = await queryInterface.sequelize.transaction();
         try {
             await queryInterface.createTable(
-                'auction_tokens',
+                'auction_users',
                 {
                     id: {
                         field: 'id',
@@ -20,12 +20,6 @@ module.exports = {
                         defaultValue: Sequelize.UUIDV4,
                         allowNull: false,
                         primaryKey: true,
-                    },
-                    token: {
-                        field: 'token',
-                        type: Sequelize.TEXT,
-                        allowNull: false,
-                        onDelete: 'CASCADE',
                     },
                     userId: {
                         field: 'user_id',
@@ -71,11 +65,11 @@ module.exports = {
             );
 
             await queryInterface.addConstraint(
-                'auction_tokens',
+                'auction_users',
                 {
                     type: 'foreign key',
                     fields: ['user_id'],
-                    name: 'FK_auction_tokens_users_user_id',
+                    name: 'FK_auction_users_users_user_id',
                     onDelete: 'CASCADE',
                     references: {
                         table: 'users',
@@ -86,11 +80,11 @@ module.exports = {
             );
 
             await queryInterface.addConstraint(
-                'auction_tokens',
+                'auction_users',
                 {
                     type: 'foreign key',
                     fields: ['auction_id'],
-                    name: 'FK_auction_tokens_auctions_auction_id',
+                    name: 'FK_auction_users_auctions_auction_id',
                     onDelete: 'CASCADE',
                     references: {
                         table: 'auctions',
@@ -115,7 +109,7 @@ module.exports = {
          */
         const transaction = await queryInterface.sequelize.transaction();
         try {
-            await queryInterface.dropTable('auction_tokens', transaction);
+            await queryInterface.dropTable('auction_users', transaction);
 
             await transaction.commit;
         } catch (error) {

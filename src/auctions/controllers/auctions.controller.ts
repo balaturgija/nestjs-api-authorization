@@ -20,7 +20,7 @@ import { CreateAuctionDto } from '../dto/create-auction.dto';
 import { Response } from 'express';
 import { RobotExistsPipe } from '../../robots/pipes/robot-exists.pipe';
 import { AuctionExistsPipe } from '../pipes/auction-exist.pipe';
-import { AuctionTokensServices } from '../services/auction-tokens.service';
+import { AuctionUsersServices } from '../services/auction-users.service';
 import { RobotAuctionStatusPipe } from '../../robots/pipes/robot-auction.pipe';
 import { Pagination } from '../../base/decorators/pagination.decorator';
 import { AuctionAuthChallenge } from '../../auth/decorators/auction-auth-challenge.decorator';
@@ -31,7 +31,7 @@ export class AuctionsController {
     constructor(
         private readonly auctionsService: AuctionsService,
         private readonly authService: AuthService,
-        private readonly auctionTokensService: AuctionTokensServices,
+        private readonly auctionUsersService: AuctionUsersServices,
         @Inject('SERIALIZER') private readonly serializer: any
     ) {}
 
@@ -80,15 +80,14 @@ export class AuctionsController {
             user: user,
             auctionId: auction.id,
         });
-        const auctionToken = await this.auctionTokensService.create(
-            token,
+        const auctionUser = await this.auctionUsersService.create(
             user.id,
             auction.id
         );
         res.header('auction-token', token);
         res.send(
             this.serializer.serialize('auctions', {
-                id: auctionToken.id,
+                id: auction.id,
             })
         );
     }
@@ -108,7 +107,7 @@ export class AuctionsController {
             user: user,
             auctionId: auction.id,
         });
-        await this.auctionTokensService.create(auctionToken, user.id, id);
+        await this.auctionUsersService.create(auctionToken, user.id, id);
         res.header('auction-token', auctionToken);
         res.send(
             this.serializer.serialize('auctions', {
@@ -116,29 +115,6 @@ export class AuctionsController {
             })
         );
     }
-
-    @Post('/rejoin/:id')
-    @HttpCode(201)
-    @AuctionAuthChallenge()
-    @Roles(Role.Collector, Role.Engineer)
-    async rejoin(
-        @Res() res: Response,
-        @AuthUser() user,
-        @Param('id', AuctionExistsPipe) id: string
-    ) {
-        const auctionToken = await this.auctionTokensService.getExistingToken(
-            user.id,
-            id
-        );
-
-        res.header('auction-token', auctionToken);
-        res.send(
-            this.serializer.serialize('auctions', {
-                id: id,
-            })
-        );
-    }
-}
 
 // check case if user already join on auction, and after rejoin check wallet amount on token
 // case if user are biding on multiple auctions
