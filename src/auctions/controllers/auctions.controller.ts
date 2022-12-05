@@ -9,7 +9,6 @@ import {
     Get,
     ParseIntPipe,
     Query,
-    UseGuards,
 } from '@nestjs/common';
 import { AuthService } from '../../auth/auth.service';
 import { AuthUser } from '../../auth/decorators/auth-user.decorator';
@@ -24,7 +23,6 @@ import { AuctionUsersServices } from '../services/auction-users.service';
 import { RobotAuctionStatusPipe } from '../../robots/pipes/robot-auction.pipe';
 import { Pagination } from '../../base/decorators/pagination.decorator';
 import { AuctionAuthChallenge } from '../../auth/decorators/auction-auth-challenge.decorator';
-import { AuctionAuthGuard } from '../../auth/guards/auction.auth.guard';
 
 @Controller('auctions')
 export class AuctionsController {
@@ -80,10 +78,7 @@ export class AuctionsController {
             user: user,
             auctionId: auction.id,
         });
-        const auctionUser = await this.auctionUsersService.create(
-            user.id,
-            auction.id
-        );
+        await this.auctionUsersService.create(user.id, auction.id);
         res.header('auction-token', token);
         res.send(
             this.serializer.serialize('auctions', {
@@ -94,27 +89,24 @@ export class AuctionsController {
 
     @Post('/join/:id')
     @HttpCode(201)
-    @UseGuards(AuctionAuthGuard)
     @AuctionAuthChallenge()
-    @Roles(Role.Collector)
+    @Roles(Role.Collector, Role.Engineer)
     async join(
         @Res() res: Response,
         @AuthUser() user,
         @Param('id', AuctionExistsPipe) id: string
     ) {
         const auction = await this.auctionsService.getById(id);
-        const auctionToken = await this.authService.createToken({
+        const token = await this.authService.createToken({
             user: user,
             auctionId: auction.id,
         });
-        await this.auctionUsersService.create(auctionToken, user.id, id);
-        res.header('auction-token', auctionToken);
+        await this.auctionUsersService.create(user.id, id);
+        res.header('auction-token', token);
         res.send(
             this.serializer.serialize('auctions', {
                 id: auction.id,
             })
         );
     }
-
-// check case if user already join on auction, and after rejoin check wallet amount on token
-// case if user are biding on multiple auctions
+}

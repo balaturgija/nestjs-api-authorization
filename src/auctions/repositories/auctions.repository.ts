@@ -12,7 +12,11 @@ export class AuctionsRepository {
     }
 
     async create(robotId: string, startAmount: number) {
-        return await AuctionEntity.create({ robotId, startAmount });
+        return await AuctionEntity.create({
+            robotId: robotId,
+            startAmount: startAmount,
+            currentAmount: startAmount,
+        });
     }
 
     async findOne(id: string) {
@@ -25,5 +29,19 @@ export class AuctionsRepository {
 
     async existsByRobotId(robotId: string) {
         return await AuctionEntity.findOne({ where: { robotId: robotId } });
+    }
+
+    async updateCurrentAmount(id: string, currentAmount: number) {
+        return await AuctionEntity.update(
+            { currentAmount: currentAmount },
+            { where: { id: id } }
+        );
+    }
+
+    async updateFinalAmount(id: string, finalAmount: number) {
+        return await AuctionEntity.update(
+            { finalAmount: finalAmount },
+            { where: { id: id } }
+        );
     }
 }

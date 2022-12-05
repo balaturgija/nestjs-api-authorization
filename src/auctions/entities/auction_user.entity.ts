@@ -1,11 +1,10 @@
 import { BelongsTo, Column, ForeignKey, Table } from 'sequelize-typescript';
 import { BaseEntity } from '../../base/base.entity';
-import { TableName } from '../../constants';
 import { UserEntity } from '../../users/entities/user.entity';
 import { AuctionEntity } from './auction.entity';
 
 @Table({
-    tableName: TableName.AuctionTokens,
+    tableName: 'auction_users',
     createdAt: true,
     updatedAt: true,
     deletedAt: true,

@@ -1,5 +1,5 @@
 import { Sequelize } from 'sequelize-typescript';
-import { AuctionTokenEntity } from '../auctions/entities/auction-token.entity';
+import { AuctionUserEntity } from '../auctions/entities/auction_user.entity';
 import { AuctionEntity } from '../auctions/entities/auction.entity';
 import { BatteryEntity } from '../batteries/entities/battery.entity';
 import { BidEntity } from '../bids/entities/bid.entity';
@@ -28,7 +28,7 @@ export const databaseProviders = [
                     RoleEntity,
                     BidEntity,
                     AuctionEntity,
-                    AuctionTokenEntity,
+                    AuctionUserEntity,
                 ],
                 define: {
                     underscored: true,

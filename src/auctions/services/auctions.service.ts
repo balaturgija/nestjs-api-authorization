@@ -38,4 +38,18 @@ export class AuctionsService {
     async existByRobotId(robotId: string) {
         return await this.auctionsRepository.existsByRobotId(robotId);
     }
+
+    async updateCurrentAmount(auctionId: string, currentAmount: number) {
+        return await this.auctionsRepository.updateCurrentAmount(
+            auctionId,
+            currentAmount
+        );
+    }
+
+    async updateFinalAmount(auctionId: string, finalAmount: number) {
+        return await this.auctionsRepository.updateFinalAmount(
+            auctionId,
+            finalAmount
+        );
+    }
 }

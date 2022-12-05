@@ -12,7 +12,7 @@ export class WalletsService {
         @Inject(Provider.Sequelize) private readonly sequelize: Sequelize
     ) {}
 
-    async findById(id: string, t?: Transaction): Promise<Wallet | null> {
+    async getById(id: string, t?: Transaction): Promise<Wallet | null> {
         return await this.walletsRepository.findOne(id, t);
     }
 
