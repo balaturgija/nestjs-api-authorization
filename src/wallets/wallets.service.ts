@@ -22,15 +22,21 @@ export class WalletsService {
 
     async moneyTransaction(
         walletId: string,
-        currentAmount: number,
         incomingAmount: number,
-        action: MoneyAction
+        action: MoneyAction,
+        t?: Transaction
     ) {
-        const transaction = await this.sequelize.transaction();
+        let transaction: Transaction;
+        if (t) {
+            transaction = t;
+        } else {
+            transaction = await this.sequelize.transaction();
+        }
+
         try {
             // sequelize read numeric type as string
             const calculatedAmount = await this.calculateAmount(
-                currentAmount,
+                walletId,
                 incomingAmount,
                 action
             );
@@ -39,7 +45,9 @@ export class WalletsService {
                 walletId,
                 transaction
             );
-            await transaction.commit();
+            if (!t) {
+                await transaction.commit();
+            }
             return WalletModel.fromEntity(updatedEntity);
         } catch (error) {
             await transaction.rollback();
@@ -50,10 +58,13 @@ export class WalletsService {
     }
 
     private async calculateAmount(
-        walletAmount: number,
+        walletId: string,
         amount: number,
-        action: MoneyAction
+        action: MoneyAction,
+        t?: Transaction
     ): Promise<number> {
+        const wallet = await this.getById(walletId, t);
+        let walletAmount = Number(wallet.amount);
         if (action === 'Deposit') {
             walletAmount += Number(amount);
         }
@@ -65,7 +76,7 @@ export class WalletsService {
         }
 
         if (action === 'Withdraw' && walletAmount > amount) {
-            walletAmount -= Number(action);
+            walletAmount -= Number(amount);
         }
 
         return walletAmount;
@@ -77,5 +88,15 @@ export class WalletsService {
         t?: Transaction
     ): Promise<boolean> {
         return (await this.walletsRepository.update(id, amount, t))[0] > 0;
+    }
+
+    async swapBetweenWallet(
+        amount: number,
+        payingUserId: string,
+        receivingUserId: string,
+        t?: Transaction
+    ) {
+        await this.moneyTransaction(payingUserId, amount, 'Withdraw', t);
+        await this.moneyTransaction(receivingUserId, amount, 'Deposit', t);
     }
 }

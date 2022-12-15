@@ -1,5 +1,5 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { Sequelize } from 'sequelize';
+import { Sequelize, Transaction } from 'sequelize';
 import { Provider, RobotStatus } from '../constants';
 import { CreateRobotModel } from './models/create-robot.model';
 import { RobotPaginationModel } from './models/robot-pagination.model';
@@ -34,8 +34,8 @@ export class RobotsService {
         return new CreateRobotModel(model.id, model.name);
     }
 
-    async getById(id: string) {
-        const robot = await this.robotsRepository.findOne(id);
+    async getById(id: string, t?: Transaction) {
+        const robot = await this.robotsRepository.findOne(id, t);
 
         if (robot) return robot.get();
 
@@ -61,11 +61,28 @@ export class RobotsService {
     }
 
     async getRobots(userId: string) {
-        const robots = await this.robotsRepository.getByUserId(userId);
+        const robots = await this.robotsRepository.findAllByUserId(userId);
         return robots.map((robot) => RobotModel.fromEntity(robot));
     }
 
     async checkStatus(id: string) {
         return await this.robotsRepository.checkStatus(id);
+    }
+
+    async changeUserId(
+        id: string,
+        userId: string,
+        status: RobotStatus,
+        t?: Transaction
+    ) {
+        return await this.robotsRepository.updateUserId(id, userId, status, t);
+    }
+
+    async getByUserId(userId: string, t?: Transaction) {
+        return await this.robotsRepository.getByUserId(userId, t);
+    }
+
+    async changeFinalPrice(id: string, amount: number, t?: Transaction) {
+        return await this.robotsRepository.changeFinalPrice(id, amount, t);
     }
 }

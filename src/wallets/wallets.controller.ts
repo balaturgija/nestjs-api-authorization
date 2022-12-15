@@ -25,7 +25,6 @@ export class WalletsController {
     ) {
         const wallet = await this.walletsService.moneyTransaction(
             user.wallet.id,
-            user.wallet.amount,
             patchWalletDto.amount,
             'Deposit'
         );
@@ -42,7 +41,6 @@ export class WalletsController {
     ) {
         const wallet = await this.walletsService.moneyTransaction(
             user.wallet.id,
-            user.wallet.amount,
             patchWalletDto.amount,
             'Withdraw'
         );

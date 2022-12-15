@@ -1,4 +1,10 @@
-import { Inject, UseFilters, UseInterceptors, UsePipes } from '@nestjs/common';
+import {
+    Inject,
+    UseFilters,
+    UseGuards,
+    UseInterceptors,
+    UsePipes,
+} from '@nestjs/common';
 import {
     ConnectedSocket,
     MessageBody,
@@ -10,11 +16,15 @@ import {
     WebSocketServer,
 } from '@nestjs/websockets';
 import { Socket, Server } from 'socket.io';
+import { Roles } from '../auth/decorators/role.decorator';
+import { RoleGuard } from '../auth/guards/role.guard';
 import { WsExceptionFilter } from '../base/filters/WsException.filter';
 import { RequestBodyValidatePipe } from '../base/pipes/request-body-validation.pipe';
 import { BidsService } from '../bids/bids.service';
 import { CreateBidDto } from '../bids/dto/create-bid.dto';
 import { AuctionOfferInterceptor } from '../bids/interceptors/auction-offer.interceptor';
+import { Role } from '../constants';
+import { UsersService } from '../users/users.service';
 import { AuctionsService } from './services/auctions.service';
 
 @WebSocketGateway({
@@ -26,6 +36,7 @@ export class AuctionsGateway
     constructor(
         private readonly auctionsService: AuctionsService,
         private readonly bidsService: BidsService,
+        private readonly usersService: UsersService,
         @Inject('SERIALIZER') private readonly serializer: any
     ) {}
 
@@ -41,7 +52,7 @@ export class AuctionsGateway
             .to(client.auctionId)
             .emit(
                 'notify',
-                `${client.user.username} join on aution with id: ${auction.id} and ${client.user.wallet.amount} credits.`
+                `${client.user.username} join on aution withId: ${auction.id}, connection id: ${client.id} and ${client.user.wallet.amount} credits.`
             );
         client.join(auction.id);
         client.emit('joinRoom', `Welcome to room ${auction.id}`);
@@ -57,8 +68,8 @@ export class AuctionsGateway
     }
 
     @SubscribeMessage('bidSubmit')
-    @UsePipes(RequestBodyValidatePipe)
     @UseFilters(WsExceptionFilter)
+    @UsePipes(RequestBodyValidatePipe)
     @UseInterceptors(AuctionOfferInterceptor)
     async handleBid(
         @ConnectedSocket() client: Socket & AuctionToken,
@@ -84,18 +95,38 @@ export class AuctionsGateway
             );
     }
 
-    // @UsePipes(new RequestBodyValidatePipe())
-    // @UseFilters(WsExceptionFilter)
-    // @SubscribeMessage('bid')
-    // async test(
-    //     @ConnectedSocket() client: Socket & AuctionToken,
-    //     @MessageBody() data: CreateBidDto,
-    //     @AuthUser() authUser
-    // ) {
-    //     console.log({
-    //         clientId: client.id,
-    //         auctionId: client.auctionId,
-    //     });
-    //     this.wss.to(client.id).emit('sendBid', data);
-    // }
+    @SubscribeMessage('endAuction')
+    @UseFilters(WsExceptionFilter)
+    @UseGuards(RoleGuard)
+    @Roles(Role.Engineer)
+    async endAuction(@ConnectedSocket() client: Socket & AuctionToken) {
+        // this logic should be handl by interceptor
+        await this.auctionsService.getByIdAndUserId(
+            client.auctionId,
+            client.user.id
+        );
+        // send notify and pronounce a winner
+        const winningBid = await this.bidsService.getWinner(client.auctionId);
+        const winner = await this.usersService.getById(winningBid.userId);
+        this.wss
+            .to(client.auctionId)
+            .emit(
+                'notify',
+                `Auction has been ended and the winner is ${winner.username}`
+            );
+
+        // transfer money & send robot to winner
+        await this.auctionsService.swapMoneyAndRobot(
+            winningBid.offerPrice,
+            winningBid.auctionId,
+            winningBid.userId
+        );
+        await this.auctionsService.updateFinalAmount(
+            client.auctionId,
+            winningBid.offerPrice
+        );
+        await this.auctionsService.delete(client.auctionId);
+
+        this.wss.to(client.auctionId).disconnectSockets();
+    }
 }

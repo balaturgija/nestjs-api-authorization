@@ -1,5 +1,5 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { Sequelize } from 'sequelize';
+import { Sequelize, Transaction } from 'sequelize';
 import { Provider } from '../constants';
 import bcrypt from 'bcryptjs';
 import { WalletsService } from '../wallets/wallets.service';
@@ -67,5 +67,9 @@ export class UsersService {
     async emailExists(email: string): Promise<boolean> {
         const result = await this.usersRepository.findByEmail(email);
         return Boolean(result);
+    }
+
+    async getById(id: string, t?: Transaction) {
+        return await this.usersRepository.getById(id, t);
     }
 }

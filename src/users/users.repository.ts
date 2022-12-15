@@ -32,4 +32,8 @@ export class UsersRepository {
             { transaction: t }
         );
     }
+
+    async getById(id: string, t?: Transaction) {
+        return await UserEntity.findByPk(id, { transaction: t });
+    }
 }

@@ -35,6 +35,7 @@ export class BidEntity extends BaseEntity<BidEntity> implements Bid {
     })
     auctionId: string;
 
+    /* Associations */
     @BelongsTo(() => UserEntity, 'user_id')
     user?: UserEntity;
 

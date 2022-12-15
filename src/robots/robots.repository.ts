@@ -1,4 +1,5 @@
 import { Injectable } from '@nestjs/common';
+import { Transaction } from 'sequelize/types';
 import { RobotStatus } from '../constants';
 import { RobotEntity } from './entities/robot.entity';
 
@@ -24,8 +25,8 @@ export class RobotsRepository {
         });
     }
 
-    async findOne(id: string) {
-        return await RobotEntity.findByPk(id);
+    async findOne(id: string, t?: Transaction) {
+        return await RobotEntity.findByPk(id, { transaction: t });
     }
 
     async paginate(page: number, size: number, order: 'asc' | 'desc') {
@@ -37,7 +38,19 @@ export class RobotsRepository {
     }
 
     async update(id: string, name: string) {
-        return RobotEntity.update({ name }, { where: { id } });
+        return await RobotEntity.update({ name }, { where: { id } });
+    }
+
+    async updateUserId(
+        id: string,
+        userId: string,
+        status: RobotStatus,
+        t?: Transaction
+    ) {
+        return await RobotEntity.update(
+            { userId: userId, status: status },
+            { where: { id }, transaction: t }
+        );
     }
 
     async exists(id: string) {
@@ -49,12 +62,29 @@ export class RobotsRepository {
         return await RobotEntity.destroy({ where: { id } });
     }
 
-    async getByUserId(userId: string) {
-        return await RobotEntity.findAll({ where: { userId: userId } });
+    async findAllByUserId(userId: string, t?: Transaction) {
+        return await RobotEntity.findAll({
+            where: { userId: userId },
+            transaction: t,
+        });
     }
 
     async checkStatus(id: string) {
         const entity = await RobotEntity.findByPk(id);
         return entity.status;
+    }
+
+    async getByUserId(userId: string, t?: Transaction) {
+        return await RobotEntity.findOne({
+            where: { userId: userId },
+            transaction: t,
+        });
+    }
+
+    async changeFinalPrice(id: string, amount: number, t?: Transaction) {
+        return await RobotEntity.update(
+            { finalPrice: amount },
+            { where: { id: id }, transaction: t }
+        );
     }
 }

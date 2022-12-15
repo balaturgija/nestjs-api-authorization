@@ -1,4 +1,6 @@
 import { Injectable } from '@nestjs/common';
+import { Op } from 'sequelize';
+import { Transaction } from 'sequelize';
 import { AuctionEntity } from '../entities/auction.entity';
 
 @Injectable()
@@ -19,8 +21,8 @@ export class AuctionsRepository {
         });
     }
 
-    async findOne(id: string) {
-        return await AuctionEntity.findByPk(id);
+    async findOne(id: string, t?: Transaction) {
+        return await AuctionEntity.findByPk(id, { transaction: t });
     }
 
     async existsById(id: string) {
@@ -43,5 +45,9 @@ export class AuctionsRepository {
             { finalAmount: finalAmount },
             { where: { id: id } }
         );
+    }
+
+    async delete(id: string) {
+        return await AuctionEntity.destroy({ where: { id: id } });
     }
 }

@@ -21,7 +21,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
 
     async validate(payload: TokenOptions) {
         console.log('\x1b[43m Executing Jwt Strategy Token Validation\x1b[0m');
-        const wallet = await this.walletsService.findById(payload.wallet.id);
+        const wallet = await this.walletsService.getById(payload.wallet.id);
         wallet.amount = Number(wallet.amount);
         try {
             return {

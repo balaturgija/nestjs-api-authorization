@@ -1,11 +1,11 @@
 import { Module } from '@nestjs/common';
 import { BidsService } from './bids.service';
 import { BidsController } from './bids.controller';
-import { BidsGateway } from './bids.gateway';
 import { BidsRepository } from './bids.repository';
 
 @Module({
     controllers: [BidsController],
-    providers: [BidsService, BidsGateway, BidsRepository],
+    providers: [BidsService, BidsRepository],
+    exports: [BidsService],
 })
 export class BidsModule {}

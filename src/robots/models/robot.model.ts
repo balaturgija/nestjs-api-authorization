@@ -9,8 +9,8 @@ export class RobotModel {
         readonly startPrice: number,
         readonly finalPrice: number,
         readonly status: RobotStatus,
-        readonly batteryId: string,
-        readonly userId: string
+        readonly creatorsSignature: string,
+        readonly batteryId: string
     ) {}
 
     static fromEntity(entity: RobotEntity) {
@@ -20,8 +20,8 @@ export class RobotModel {
             entity.startPrice,
             entity.finalPrice,
             entity.status,
-            entity.batteryId,
-            entity.userId
+            entity.creatorsSignature,
+            entity.batteryId
         );
     }
 }

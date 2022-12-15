@@ -109,4 +109,6 @@ export class AuctionsController {
             })
         );
     }
+
+    //delete auction
 }

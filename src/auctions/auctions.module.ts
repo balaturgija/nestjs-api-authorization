@@ -9,9 +9,19 @@ import { BidsModule } from '../bids/bids.module';
 import { AuctionUsersServices } from './services/auction-users.service';
 import { AuctionUsersRepository } from './repositories/auction-users.repository';
 import { WalletsModule } from '../wallets/wallets.module';
+import { UsersModule } from '../users/users.module';
+import { DatabaseModule } from '../database/database.module';
 
 @Module({
-    imports: [BidsModule, AuthModule, RobotsModule, WalletsModule],
+    imports: [
+        BidsModule,
+        AuthModule,
+        RobotsModule,
+        WalletsModule,
+        UsersModule,
+        DatabaseModule,
+        UsersModule,
+    ],
     controllers: [AuctionsController],
     providers: [
         AuctionsGateway,
